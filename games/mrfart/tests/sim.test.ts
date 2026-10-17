@@ -104,7 +104,7 @@ describe('meter numbers (design §4.2)', () => {
 describe('map', () => {
   const map = buildMap(mapDef);
   test('size, border and building tiles', () => {
-    expect([map.w, map.h]).toEqual([34, 26]);
+    expect([map.w, map.h]).toEqual([98, 50]);
     expect(solidAt(map, 0, 0)).toBe(true);
     expect(solidAt(map, 17 * TILE, 8 * TILE)).toBe(false); // street
     expect(solidAt(map, 4 * TILE, 4 * TILE)).toBe(true); // house roof

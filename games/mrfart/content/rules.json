@@ -16,7 +16,11 @@
     "radius": 5,
     "mass": 1,
     "damping": 5,
-    "gain": 0.25
+    "gain": 0.25,
+    "dwellMinMs": 4000,
+    "dwellMaxMs": 20000,
+    "homeDwellMinMs": 10000,
+    "homeDwellMaxMs": 30000
   },
   "meter": {
     "max": 100,
@@ -96,6 +100,31 @@
     "spread": 14,
     "maxSubjects": 8,
     "despawnMs": 1500,
-    "dropDist": 14
+    "dropDist": 14,
+    "modChance": 0.25,
+    "fireStress": 5,
+    "fireRange": 30,
+    "pushSlack": 10, "pushMult": 0.7, "aimMs": 160,
+    "fleeRange": 100,
+    "fleeMult": 1.15
+  },
+  "stream": {
+    "every": 20,
+    "near": 400,
+    "far": 480
+  },
+  "items": {
+    "max": 6,
+    "findChance": 0.2,
+    "cursedChance": 0.25,
+    "stock": 3
+  },
+  "ending": {
+    "cursedHeld": 3,
+    "forceNeeded": 200,
+    "loudInShop": 3,
+    "tasksMayor": 500,
+    "tasksWin": 1000,
+    "shopRepeat": 0
   }
 }

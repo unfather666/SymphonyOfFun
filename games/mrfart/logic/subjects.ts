@@ -1,14 +1,15 @@
 // Subjects: the things a job is about (a cat, a goat, later an alligator). A fixed pool; bodies only while on the ground.
 import { NO_BODY } from '../physics/PhysicsApi';
-import { SS_CARRIED, SS_DONE, SS_FOLLOW, SS_IDLE, SS_NONE, SS_TREE } from './jobTypes';
+import { SS_CARRIED, SS_DONE, SS_FLEE, SS_FOLLOW, SS_IDLE, SS_NONE, SS_TREE } from './jobTypes';
 import type { Subject, SubjectDef } from './jobTypes';
+import { aimAt } from './trail';
 import { TAG_SUBJECT, tagOf } from './types';
 import type { Sim } from './sim';
 
 export function createSubjects(n: number): Subject[] {
   const out: Subject[] = [];
   for (let i = 0; i < n; i++)
-    out.push({ idx: i, active: false, def: null, x: 0, y: 0, px: 0, py: 0, h: NO_BODY, state: SS_NONE, leash: 0, tugAt: 0, tugX: 0, tugY: 0, tugUntil: 0, leaveAt: 0 });
+    out.push({ idx: i, active: false, def: null, x: 0, y: 0, px: 0, py: 0, h: NO_BODY, state: SS_NONE, leash: 0, tugAt: 0, tugX: 0, tugY: 0, tugUntil: 0, leaveAt: 0, aimX: 0, aimY: 0, aimUntil: 0 });
   return out;
 }
 
@@ -31,6 +32,7 @@ export function spawnSubject(sim: Sim, def: SubjectDef, x: number, y: number, st
   s.leaveAt = 0;
   s.tugAt = sim.now + sim.deps.rng.jobs.range(1000, 3000);
   s.tugUntil = 0;
+  s.aimUntil = 0;
   s.h = NO_BODY;
   if (state !== SS_TREE) addSubjectBody(sim, s);
   return s;
@@ -99,12 +101,19 @@ export function stepSubjects(sim: Sim): void {
     if (s.state === SS_TREE || s.h === NO_BODY) continue;
     let vx = 0, vy = 0;
     if (s.state === SS_FOLLOW && d.speed > 0) {
-      const dx = pl.x - s.x, dy = pl.y - s.y;
-      const dist = Math.hypot(dx, dy);
+      const dist = Math.hypot(pl.x - s.x, pl.y - s.y);
       if (dist > d.followDist) {
+        if (sim.now >= s.aimUntil) {
+          aimAt(sim, s.x, s.y, d.r);
+          s.aimX = sim.aim.x;
+          s.aimY = sim.aim.y;
+          s.aimUntil = sim.now + sim.deps.rules.jobs.aimMs;
+        }
+        const dx = s.aimX - s.x, dy = s.aimY - s.y;
+        const ad = Math.hypot(dx, dy) || 1;
         const k = Math.min(1, (dist - d.followDist) / 20) * d.speed;
-        vx = (dx / dist) * k;
-        vy = (dy / dist) * k;
+        vx = (dx / ad) * k;
+        vy = (dy / ad) * k;
       }
       if (d.tug > 0) {
         if (sim.now >= s.tugAt) {
@@ -118,6 +127,18 @@ export function stepSubjects(sim: Sim): void {
           vx += s.tugX;
           vy += s.tugY;
         }
+      }
+    }
+    if (s.state === SS_FLEE && d.speed > 0) {
+      const dx = s.x - pl.x, dy = s.y - pl.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < sim.deps.rules.jobs.fleeRange && dist > 0.01) {
+        // Away from the player with a sideways drift that swaps every two seconds, so it slides along walls instead of sticking.
+        const side = ((sim.now / 2000) | 0) % 2 === (s.idx & 1) ? 0.7 : -0.7;
+        const ax = dx / dist - (dy / dist) * side, ay = dy / dist + (dx / dist) * side;
+        const k = (d.speed * sim.deps.rules.jobs.fleeMult) / Math.hypot(ax, ay);
+        vx = ax * k;
+        vy = ay * k;
       }
     }
     physics.setTargetVelocity(s.h, vx, vy, 0.2);

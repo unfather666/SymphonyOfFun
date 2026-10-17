@@ -21,9 +21,8 @@ One section per area. Update your own section in each milestone commit (BUILD-PL
 - Check: `npm run check`. Browser smoke + budget numbers: `agent-tests/racer-smoke.mjs` (needs `playwright-core` outside the repo; header has the command).
 - Music: patterns are authored as data in `games/racer/content/patterns/*.json` (all in C; major and minor patterns share one chord progression each so genres mix). The generator script is not in the repo; add patterns by hand in the same format (see `songgen.ts` PatternDef) or ask for the script. Next: M3 hazards/death/pieces/power-ups, M4 10 levels/polish.
 
-## Mr Fart (M2 done 2026-10-17)
-- State: M0 (#2) physics + sim, M1 (#5) society/reputation merged. M2 (`mrfart-m2`): job generator + board, pipeline (verbs grab/carry/place/press/escort), 6 job types, subjects T0-T1, leash, rewards; 74 game tests.
-- Next: M3 Absurdity (all 20 job types, T2-T4 subjects, counts/modifiers, items + cursed items with sound key/pitch, endings via `?ending=<id>`, full 6x4 map, 60 people, pacing table). Branch `mrfart-m3` from main.
-- Adding a job type = a JSON def in `content/job_types/` (steps use verbs in `logic/verbs.ts`); a subject = JSON in `content/subjects/`; strings for each in `strings.json` (content test enforces).
-- Check: `npm run check`. Visual smoke: see README; `?game=mrfart&seed=1`.
-- Decisions: fart `force` in rules is a velocity change (px/s) at forceScale 4; pieces are cheap pool particles, not Rapier bodies; people/props get bodies only near the player from M3 (ledger).
+## Mr Fart (M3 done 2026-10-17)
+- State: M0 (#2), M1 (#5), M2 (#9) merged. M3 (`mrfart-m3`): all 20 job types, 20 subjects, modifiers, items, endings, 6x4 map, 60 people with streaming bodies, pacing table in `games/mrfart/README.md`.
+- Next: M4 pixel art, day/night tint, touch controls, reducedFx, save sections with a migration fixture, budget row, README. Branch `mrfart-m4` from main.
+- Adding content: a JSON def in the matching `content/` folder plus strings in `strings.json`; the content tests enforce counts and strings.
+- Check: `npm run check`. Visual smoke: `?game=mrfart&seed=1`.

@@ -1,28 +1,35 @@
 # Mr Fart (`games/mrfart/`)
 
-Top-down physics reputation game, 384x216. Owned by the mrfart game thread (BUILD-PLAN §0, §10). Design: `plan/DESIGN-mrfart.md`.
+Top-down physics game, 384x216. One folder, one `GameModule` (`index.ts`).
 
-Run: `npm run dev`, open `/?game=mrfart&seed=1`. Walk with WASD or arrows, run with K, clench with L (hold, then let go). F3 shows step and draw times.
+Run: `npm run dev`, open `/?game=mrfart&seed=1`. Walk with WASD or arrows, run with K, clench with L (hold), J or Space interacts, `;` uses the selected item, Q and E change item. F3 shows step and draw times. `?ending=<id>` jumps to that ending screen (see `content/endings/`).
 
 ## Layout
 - `physics/PhysicsApi.ts` the only physics surface; `physics/NullPhysics.ts` test stand-in; `physics/rapier/` the only place Rapier is imported.
-- `logic/` pure, Node-tested: `sim.ts` (one `stepSim`), `farts.ts` (the one door that fires a fart), `meters.ts`, `people.ts`, `map.ts`, `pools.ts`, `rules.ts`.
-- `content/` JSON: `rules.json` (all caps and tuning), `farts/ props/ people/ sprites/`, `map.json`, `strings.json`, `events.json`.
+- `logic/` pure, Node-tested: `sim.ts` (one `stepSim`), `farts.ts` (the one door that fires a fart), `meters.ts`, `people.ts`, `routes.ts`, `stream.ts` (bodies only near the player), `map.ts`, `pools.ts`, `rules.ts`; jobs: `jobs.ts` (generator), `pipeline.ts`, `verbs.ts`, `subjects.ts`, `trail.ts`; `items.ts`, `endings.ts`.
+- `content/` JSON: `rules.json` (all caps and tuning), one folder per kind of thing, `map.json`, `strings.json`, `events.json`.
 - `render/` drawing only. `index.ts` wires core to the sim.
 - Physics units are pixels; `impulseRadial(force)` is the velocity change in px/s for a mass-1 body at the centre, heavier bodies move less (`MASS_REF`).
-
-## Status
-| Milestone | What works | How to see it | Known gaps |
-|---|---|---|---|
-| M2 Jobs | Job board (press A at the sign near the start, 3 offers, renewed each in-game hour); 6 job types: walk_leash, escort_cross, carry_to, fetch, rescue_from_tree, deliver; subjects T0 (cat, old lady, puppy, toddler) and T1 (goat, mailman; piano and melon cart wait for M3 push jobs); verbs grab / carry / place / press / escort, each step ends in `mrfart:step_done`; leash = 3-link Rapier rope chain that survives the strongest fart; carried subjects slow you down; lost for 60 s = job fails at no cost; rewards rep +2+tier, coins 10x(1+tier)xcount; tier = tasks/50 | `?game=mrfart&seed=1`, press J at the start; dev cheats `tp_subject`, `tp_zone` | T2-T4 subjects, 14 more job types, items, endings (M3) |
-| M1 Society | Stress (witness events, low reputation, calms when alone), clench (hold L: meter and stress keep rising, release = loud fart up to 2x force), witnesses with line of sight and notice rolls, per-person intolerance (x2 if pushed, halved each midnight), midnight settlement `rep -= intolerance/10`, reputation bar, clock, day counter, watcher eyes, people startle then flee (also flee below reputation 20), reputation 0 ends the run (ending screen is a stub until M3) | `?game=mrfart&seed=1`; dev cheats `sof.cheat('fart_loud' / 'fart_full' / 'rep_low' / 'rep_zero' / 'rep_full' / 'stress_max')` | Jobs, items, endings, save (M2 to M4) |
-| M0 Walk and fart | Rapier2D behind `PhysicsApi`; 2x2 block neighbourhood with static walls; Mr Fart (capsule); 10 props; 5 people on fixed loops; meter fills by distance (2x running); fart = radial impulse + green puffs + ring + pitch-bent chip sfx + camera shake; loud farts knock bins over and break crates into pieces | `?game=mrfart&seed=1`, run (K) until the meter fills | Placeholder rects for people and props; no witnesses or reputation yet (M1) |
+- Adding a job type, subject, item or ending is a JSON def plus its strings; content tests check counts and strings.
 
 ## Tests
-`npm run test` runs `tests/`: PhysicsApi contract on both implementations (null and Rapier), determinism (same seed 600 steps same hash, other seed differs), fart physics (loud knocks bins and breaks the crate, quiet does nothing, player not self-pushed), meter numbers, map building and line of sight, pool full policies, rules validation.
+`npm run test` runs `tests/`: physics contract on both implementations, determinism, meter and witness numbers, map and line of sight, pool full policies, rules validation, job pipeline and every job type played by a scripted player (`tests/bot.ts`), items, endings, streaming of 60 people, and a pacing run (`PACING=1` prints the table below with 12 jobs per band).
+
+## Pacing
+Scripted player walking the street graph at walking speed, taking the first board offer and returning to the board each time (a perfect player: a person is slower).
+
+| Band | Jobs sampled | Mean seconds per task | Tasks per hour |
+|---|---|---|---|
+| tier 0 (tasks 0-49) | 12 | 22 | 162 |
+| tier 1 (50-99) | 12 | 38 | 94 |
+| tier 2 (100-149) | 12 | 22 | 165 |
+| tier 3 (150-199) | 12 | 50 | 72 |
+| mixed (200+) | 12 | 30 | 120 |
+
+Reaching 1,000 tasks at those rates is about 8.5 hours for the scripted player.
 
 ## Core asks
 (none)
 
 ## Budget
-M0 on Chromium headless, 4x CPU throttle, 5 people + 10 props moving: step 0.8 ms avg / 2.4 ms worst, draw 2.9 ms avg, 60 fps. Full budget row comes with M4.
+See `docs/budgets.md`: one row per milestone, Chromium headless, 4x CPU throttle.

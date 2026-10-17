@@ -4,7 +4,7 @@ import { SCREEN_H, SCREEN_W } from '../../../src/core/api';
 import { PS_DWELL, PS_FLEE, PS_STARTLED } from '../logic/types';
 import type { Sim } from '../logic/sim';
 import { NOTE, RING } from '../logic/pools';
-import { drawBoard, drawSubjects, drawZone } from './jobs';
+import { drawBoard, drawShops, drawSubjects, drawZone } from './jobs';
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const TAU = Math.PI * 2;
@@ -39,6 +39,7 @@ export function drawWorld(g: Gfx2d, sim: Sim, view: View, alpha: number): void {
   }
 
   drawBoard(g, sim, cx, cy);
+  drawShops(g, sim, cx, cy);
   drawZone(g, sim, cx, cy);
   drawSubjects(g, sim, cx, cy, alpha);
 

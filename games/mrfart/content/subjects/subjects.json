@@ -1,10 +1,374 @@
 [
-  { "id": "cat", "tier": 0, "r": 4, "mass": 0.6, "damping": 4, "speed": 55, "carryMult": 0.95, "leash": 36, "followDist": 14, "tug": 30, "colour": 14, "tags": ["light", "climber", "leashable"] },
-  { "id": "old_lady", "tier": 0, "r": 5, "mass": 1.2, "damping": 5, "speed": 24, "carryMult": 0, "leash": 40, "followDist": 12, "tug": 0, "colour": 31, "tags": ["walker"] },
-  { "id": "puppy", "tier": 0, "r": 4, "mass": 0.8, "damping": 4, "speed": 60, "carryMult": 0.95, "leash": 40, "followDist": 12, "tug": 40, "colour": 15, "tags": ["light", "leashable"] },
-  { "id": "toddler", "tier": 0, "r": 4, "mass": 1, "damping": 5, "speed": 30, "carryMult": 0.85, "leash": 30, "followDist": 12, "tug": 20, "colour": 26, "tags": ["light", "walker", "leashable"] },
-  { "id": "goat", "tier": 1, "r": 6, "mass": 6, "damping": 4, "speed": 46, "carryMult": 0, "leash": 50, "followDist": 18, "tug": 70, "colour": 6, "tags": ["leashable", "walker"] },
-  { "id": "piano", "tier": 1, "r": 8, "mass": 30, "damping": 6, "speed": 0, "carryMult": 0, "leash": 0, "followDist": 0, "tug": 0, "colour": 2, "tags": ["heavy"] },
-  { "id": "melon_cart", "tier": 1, "r": 7, "mass": 8, "damping": 3, "speed": 0, "carryMult": 0, "leash": 0, "followDist": 0, "tug": 0, "colour": 22, "tags": ["heavy"] },
-  { "id": "mailman", "tier": 1, "r": 5, "mass": 1.5, "damping": 5, "speed": 32, "carryMult": 0, "leash": 40, "followDist": 14, "tug": 0, "colour": 29, "tags": ["walker"] }
+ {
+  "id": "cat",
+  "tier": 0,
+  "r": 4,
+  "mass": 0.6,
+  "damping": 4,
+  "speed": 55,
+  "carryMult": 0.95,
+  "leash": 36,
+  "followDist": 14,
+  "tug": 30,
+  "colour": 14,
+  "tags": [
+   "any",
+   "light",
+   "climber",
+   "leashable",
+   "mobile"
+  ]
+ },
+ {
+  "id": "old_lady",
+  "tier": 0,
+  "r": 5,
+  "mass": 1.2,
+  "damping": 5,
+  "speed": 24,
+  "carryMult": 0,
+  "leash": 40,
+  "followDist": 12,
+  "tug": 0,
+  "colour": 31,
+  "tags": [
+   "any",
+   "walker",
+   "mobile"
+  ]
+ },
+ {
+  "id": "puppy",
+  "tier": 0,
+  "r": 4,
+  "mass": 0.8,
+  "damping": 4,
+  "speed": 60,
+  "carryMult": 0.95,
+  "leash": 40,
+  "followDist": 12,
+  "tug": 40,
+  "colour": 15,
+  "tags": [
+   "any",
+   "light",
+   "leashable",
+   "mobile"
+  ]
+ },
+ {
+  "id": "toddler",
+  "tier": 0,
+  "r": 4,
+  "mass": 1,
+  "damping": 5,
+  "speed": 30,
+  "carryMult": 0.85,
+  "leash": 30,
+  "followDist": 12,
+  "tug": 20,
+  "colour": 26,
+  "tags": [
+   "any",
+   "light",
+   "walker",
+   "leashable",
+   "mobile"
+  ]
+ },
+ {
+  "id": "goat",
+  "tier": 1,
+  "r": 6,
+  "mass": 6,
+  "damping": 4,
+  "speed": 46,
+  "carryMult": 0,
+  "leash": 50,
+  "followDist": 18,
+  "tug": 70,
+  "colour": 6,
+  "tags": [
+   "any",
+   "leashable",
+   "walker",
+   "mobile"
+  ]
+ },
+ {
+  "id": "piano",
+  "tier": 1,
+  "r": 8,
+  "mass": 30,
+  "damping": 6,
+  "speed": 0,
+  "carryMult": 0,
+  "leash": 0,
+  "followDist": 0,
+  "tug": 0,
+  "colour": 2,
+  "tags": [
+   "any",
+   "heavy"
+  ]
+ },
+ {
+  "id": "melon_cart",
+  "tier": 1,
+  "r": 7,
+  "mass": 8,
+  "damping": 3,
+  "speed": 0,
+  "carryMult": 0,
+  "leash": 0,
+  "followDist": 0,
+  "tug": 0,
+  "colour": 22,
+  "tags": [
+   "any",
+   "heavy"
+  ]
+ },
+ {
+  "id": "mailman",
+  "tier": 1,
+  "r": 5,
+  "mass": 1.5,
+  "damping": 5,
+  "speed": 32,
+  "carryMult": 0,
+  "leash": 40,
+  "followDist": 14,
+  "tug": 0,
+  "colour": 29,
+  "tags": [
+   "any",
+   "walker",
+   "mobile"
+  ]
+ },
+ {
+  "id": "alligator",
+  "tier": 2,
+  "r": 8,
+  "mass": 10,
+  "damping": 4,
+  "speed": 40,
+  "carryMult": 0,
+  "leash": 56,
+  "followDist": 20,
+  "tug": 60,
+  "colour": 21,
+  "tags": [
+   "any",
+   "leashable",
+   "mobile"
+  ]
+ },
+ {
+  "id": "ostrich",
+  "tier": 2,
+  "r": 7,
+  "mass": 5,
+  "damping": 4,
+  "speed": 58,
+  "carryMult": 0,
+  "leash": 52,
+  "followDist": 18,
+  "tug": 80,
+  "colour": 15,
+  "tags": [
+   "any",
+   "leashable",
+   "walker",
+   "mobile"
+  ]
+ },
+ {
+  "id": "vending_machine",
+  "tier": 2,
+  "r": 8,
+  "mass": 40,
+  "damping": 6,
+  "speed": 0,
+  "carryMult": 0,
+  "leash": 0,
+  "followDist": 0,
+  "tug": 0,
+  "colour": 10,
+  "tags": [
+   "any",
+   "heavy"
+  ]
+ },
+ {
+  "id": "wedding_cake",
+  "tier": 2,
+  "r": 7,
+  "mass": 12,
+  "damping": 6,
+  "speed": 0,
+  "carryMult": 0.6,
+  "leash": 0,
+  "followDist": 0,
+  "tug": 0,
+  "colour": 19,
+  "tags": [
+   "any",
+   "heavy",
+   "light"
+  ]
+ },
+ {
+  "id": "jet_plane",
+  "tier": 3,
+  "r": 12,
+  "mass": 60,
+  "damping": 6,
+  "speed": 34,
+  "carryMult": 0,
+  "leash": 70,
+  "followDist": 26,
+  "tug": 20,
+  "colour": 7,
+  "tags": [
+   "any",
+   "heavy",
+   "leashable",
+   "mobile"
+  ]
+ },
+ {
+  "id": "whale",
+  "tier": 3,
+  "r": 12,
+  "mass": 80,
+  "damping": 6,
+  "speed": 26,
+  "carryMult": 0,
+  "leash": 70,
+  "followDist": 26,
+  "tug": 10,
+  "colour": 25,
+  "tags": [
+   "any",
+   "heavy",
+   "leashable",
+   "mobile"
+  ]
+ },
+ {
+  "id": "tank",
+  "tier": 3,
+  "r": 10,
+  "mass": 70,
+  "damping": 6,
+  "speed": 30,
+  "carryMult": 0,
+  "leash": 64,
+  "followDist": 22,
+  "tug": 10,
+  "colour": 20,
+  "tags": [
+   "any",
+   "heavy",
+   "leashable",
+   "mobile"
+  ]
+ },
+ {
+  "id": "mayors_ego",
+  "tier": 3,
+  "r": 6,
+  "mass": 0.4,
+  "damping": 2,
+  "speed": 36,
+  "carryMult": 0.9,
+  "leash": 44,
+  "followDist": 16,
+  "tug": 50,
+  "colour": 31,
+  "tags": [
+   "any",
+   "light",
+   "leashable",
+   "mobile"
+  ]
+ },
+ {
+  "id": "bearded_robe_god",
+  "tier": 4,
+  "r": 9,
+  "mass": 20,
+  "damping": 4,
+  "speed": 36,
+  "carryMult": 0,
+  "leash": 60,
+  "followDist": 24,
+  "tug": 40,
+  "colour": 7,
+  "tags": [
+   "any",
+   "leashable",
+   "walker",
+   "mobile"
+  ]
+ },
+ {
+  "id": "the_moon",
+  "tier": 4,
+  "r": 5,
+  "mass": 2,
+  "damping": 3,
+  "speed": 28,
+  "carryMult": 0.8,
+  "leash": 44,
+  "followDist": 14,
+  "tug": 30,
+  "colour": 19,
+  "tags": [
+   "any",
+   "light",
+   "leashable",
+   "mobile"
+  ]
+ },
+ {
+  "id": "black_hole",
+  "tier": 4,
+  "r": 3,
+  "mass": 1.5,
+  "damping": 3,
+  "speed": 24,
+  "carryMult": 0.9,
+  "leash": 40,
+  "followDist": 12,
+  "tug": 60,
+  "colour": 1,
+  "tags": [
+   "any",
+   "light",
+   "leashable",
+   "mobile"
+  ]
+ },
+ {
+  "id": "mr_farts_clone",
+  "tier": 4,
+  "r": 5,
+  "mass": 1,
+  "damping": 5,
+  "speed": 50,
+  "carryMult": 0,
+  "leash": 40,
+  "followDist": 12,
+  "tug": 50,
+  "colour": 29,
+  "tags": [
+   "any",
+   "walker",
+   "leashable",
+   "mobile"
+  ]
+ }
 ]

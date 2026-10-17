@@ -1,6 +1,6 @@
 // Stand-in PhysicsApi for tests and for the contract suite: bodies integrate velocity with damping, no collisions.
 import { MASS_REF, NO_BODY, STUN_STEPS, handleGen, handleSlot, makeHandle } from './PhysicsApi';
-import type { BodyDef, Handle, PhysicsApi, PhysicsStats, Pose } from './PhysicsApi';
+import type { BodyDef, Handle, PhysicsApi, PhysicsStats } from './PhysicsApi';
 
 interface Slot {
   live: boolean;

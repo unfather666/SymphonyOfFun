@@ -1,0 +1,84 @@
+[
+ {
+  "id": "nice_shoes",
+  "cursed": false,
+  "mode": "passive",
+  "price": 60,
+  "repPerTask": 1
+ },
+ {
+  "id": "butt_cork",
+  "cursed": false,
+  "mode": "timed",
+  "price": 40,
+  "durationMs": 60000,
+  "noFart": true
+ },
+ {
+  "id": "air_freshener",
+  "cursed": false,
+  "mode": "day",
+  "price": 30,
+  "witnessMul": 0.5
+ },
+ {
+  "id": "cologne",
+  "cursed": false,
+  "mode": "day",
+  "price": 35,
+  "noticeAdd": -0.3
+ },
+ {
+  "id": "comfy_pants",
+  "cursed": false,
+  "mode": "instant",
+  "price": 25,
+  "stressDelta": -20
+ },
+ {
+  "id": "megaphone_of_apology",
+  "cursed": false,
+  "mode": "instant",
+  "price": 50,
+  "clearIntol": true
+ },
+ {
+  "id": "chili_dog",
+  "cursed": true,
+  "mode": "passive",
+  "price": 0,
+  "meterGainMul": 1.5
+ },
+ {
+  "id": "tuba",
+  "cursed": true,
+  "mode": "passive",
+  "price": 0,
+  "loudOnly": true,
+  "key": 10
+ },
+ {
+  "id": "rocket_beans",
+  "cursed": true,
+  "mode": "passive",
+  "price": 0,
+  "forceMul": 3
+ },
+ {
+  "id": "kazoo",
+  "cursed": true,
+  "mode": "passive",
+  "price": 0,
+  "squeakyOnly": true,
+  "pitch": 12
+ },
+ {
+  "id": "haunted_whistle",
+  "cursed": true,
+  "mode": "passive",
+  "price": 0,
+  "key": 9,
+  "pitch": -3,
+  "intolMul": 2
+ }
+]

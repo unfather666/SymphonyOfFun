@@ -1,5 +1,7 @@
 // Dev cheats (core's `dev:cheat` hook, dev builds only): quick ways to reach states without waiting.
 import { doFart } from './farts';
+import { endRun } from './endings';
+import { giveItem, itemIndex } from './items';
 import { checkLost } from './reputation';
 import { zoneFor } from './verbs';
 import type { Sim } from './sim';
@@ -25,6 +27,12 @@ export function applyCheat(sim: Sim, id: string): boolean {
       if (z) sim.deps.physics.setPosition(sim.player.h, z.x, z.y);
       return true;
     }
-    default: return false;
+    case 'coins': sim.progress.coins += 100; return true;
+    case 'tasks_500': sim.progress.tasksDone = 500; return true;
+    case 'tasks_999': sim.progress.tasksDone = 999; return true;
+    default:
+      if (id.startsWith('ending_')) return endRun(sim, id.slice(7));
+      if (id.startsWith('item_')) return giveItem(sim, itemIndex(sim, id.slice(5)));
+      return false;
   }
 }
