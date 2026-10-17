@@ -3,6 +3,8 @@ import { TILE, T_EXIT_OPEN } from './tiles';
 import { spawnEnemy } from './world';
 import { CUE } from './cues';
 import { cue } from './world';
+import { updateLight } from './lightscript';
+import { solidAtPx } from './tiles';
 import type { World } from './types';
 
 const SPAWNS_PER_STEP = 8;
@@ -35,15 +37,37 @@ export function updateRooms(w: World): void {
     const wave = waves[st.wave]!;
     if (st.spawned < wave.length) {
       if (w.now < st.nextWaveAt) continue;
+      if (!st.begun) {
+        st.begun = true;
+        w.waveCount++;
+        updateLight(w);
+      }
       for (let k = 0; k < SPAWNS_PER_STEP && st.spawned < wave.length; k++) {
         const s = wave[st.spawned]!;
         // Full policy: the wave waits for pool space.
-        if (!spawnEnemy(w, s.def, s.x, s.y, s.elite === true, i)) break;
+        let x = s.x;
+        let y = s.y;
+        if (w.light.spotOn) {
+          // Spotlight: the wave arrives inside the lit circle (a few tries to avoid walls).
+          for (let t = 0; t < 6; t++) {
+            const a = w.rng.float() * Math.PI * 2;
+            const d = w.rng.float() * w.light.spotR * 0.7;
+            const sx = w.light.spotX + Math.cos(a) * d;
+            const sy = w.light.spotY + Math.sin(a) * d;
+            if (!solidAtPx(w.map, sx, sy)) {
+              x = sx;
+              y = sy;
+              break;
+            }
+          }
+        }
+        if (!spawnEnemy(w, s.def, x, y, s.elite === true, i)) break;
         st.spawned++;
       }
     } else if (w.roomAlive[i] === 0) {
       st.wave++;
       st.spawned = 0;
+      st.begun = false;
       st.nextWaveAt = w.now + w.rules.wave_gap_ms;
       if (st.wave >= waves.length) st.state = 2;
     }

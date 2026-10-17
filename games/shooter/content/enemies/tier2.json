@@ -1,0 +1,22 @@
+[
+ {
+  "id": "eye",
+  "tier": 2,
+  "hp": 40,
+  "speed": 0,
+  "size": 8,
+  "sprite": "eye",
+  "brain": "eye",
+  "touchDamage": 0,
+  "score": 40,
+  "madnessAura": 15,
+  "auraR": 140,
+  "backstab": true,
+  "turnDegS": 45,
+  "tags": [
+   "psi",
+   "stationary"
+  ],
+  "gaze": true
+ }
+]

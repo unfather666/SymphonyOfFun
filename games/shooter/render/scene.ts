@@ -5,9 +5,11 @@ import type { World } from '../logic/types';
 import { cameraAt, type Cam } from './camera';
 import { drawHud } from './hud';
 import type { HudRig } from '../progressControl';
-import { drawLighting } from './lighting';
+import { drawLighting, litAt } from './lighting';
+import { drawGhosts, drawMadnessPost, drawTunnel, maskJitter } from './madnessFx';
 
 const cam: Cam = { x: 0, y: 0 };
+const jitter = { x: 0, y: 0 };
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
@@ -65,7 +67,9 @@ export function drawScene(ctx: CoreContext, w: World, alpha: number, rig: HudRig
     const e = es[i]!;
     const x = lerp(e.px, e.x, alpha) - cam.x;
     const y = lerp(e.py, e.y, alpha) - cam.y;
+    if (e.def.hidden && !litAt(w, e.x, e.y)) continue;
     g.drawSprite(e.def.sprite, frame, x - 8, y - 8, e.vx < 0);
+    if (e.def.turnDegS) g.line(x, y, x + Math.cos(e.heading) * 14, y + Math.sin(e.heading) * 14, 10);
     if (w.now - e.hurtAt < w.rules.hit_flash_ms) g.frame(x - 7, y - 7, 14, 14, 7);
     else if (e.elite) g.frame(x - 7, y - 7, 14, 14, 18);
   }
@@ -85,16 +89,24 @@ export function drawScene(ctx: CoreContext, w: World, alpha: number, rig: HudRig
     g.rect(q.x - cam.x, q.y - cam.y, q.size, q.size, q.colour);
   }
 
-  const ambient = w.now < p.flareUntil ? Math.min(w.plan.ambient, w.rules.ambient_flare + (w.plan.ambient - w.rules.ambient_flare) * Math.max(0, 1 - (p.flareUntil - w.now) / 400)) : w.plan.ambient;
-  drawLighting(g, w, cam, { px: ppx, py: ppy, alpha }, ambient);
+  const reduced = ctx.settings.reducedFx;
+  drawGhosts(ctx, w, cam);
+  maskJitter(w, jitter);
+  if (reduced) jitter.x = jitter.y = 0;
+  drawLighting(g, ctx.display.ctx2d, w, cam, { px: ppx, py: ppy, alpha }, reduced, jitter);
 
   // Eyes glow through the dark.
   for (let i = 0; i < w.enemies.n; i++) {
     const e = es[i]!;
     const x = lerp(e.px, e.x, alpha) - cam.x;
     const y = lerp(e.py, e.y, alpha) - cam.y;
+    if (e.def.hidden && !litAt(w, e.x, e.y)) continue;
     g.rect(x - 3, y - 4, 2, 2, 18);
     g.rect(x + 1, y - 4, 2, 2, 18);
+  }
+  if (!reduced) {
+    drawMadnessPost(ctx, w);
+    drawTunnel(ctx, w, ppx - cam.x, ppy - cam.y);
   }
   drawHud(ctx, w, rig);
 }

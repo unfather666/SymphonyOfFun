@@ -1,0 +1,18 @@
+[
+ {
+  "id": "whisperer",
+  "tier": 1,
+  "hp": 25,
+  "speed": 44,
+  "size": 6,
+  "sprite": "whisperer",
+  "brain": "whisperer",
+  "touchDamage": 0,
+  "score": 25,
+  "madnessAura": 8,
+  "auraR": 48,
+  "tags": [
+   "psi"
+  ]
+ }
+]

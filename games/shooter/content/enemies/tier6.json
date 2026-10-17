@@ -1,0 +1,19 @@
+[
+ {
+  "id": "dreamer",
+  "tier": 6,
+  "hp": 35,
+  "speed": 56,
+  "size": 6,
+  "sprite": "dreamer",
+  "brain": "dreamer",
+  "touchDamage": 10,
+  "score": 60,
+  "hidden": true,
+  "ghostMs": 1400,
+  "tags": [
+   "psi",
+   "hidden"
+  ]
+ }
+]

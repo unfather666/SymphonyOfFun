@@ -29,7 +29,7 @@ export function damageEnemy(w: World, e: Enemy, dmg: number, killMask: number): 
 
 export function killEnemy(w: World, e: Enemy, killMask: number): void {
   const def = e.def;
-  awardKill(w, def.score, def.tier);
+  awardKill(w, def.score);
   w.kills++;
   cue(w, CUE.kill);
   spark(w, e.x, e.y, e.elite ? 14 : 8, e.elite ? 18 : 22, 1);

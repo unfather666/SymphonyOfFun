@@ -6,6 +6,9 @@ import { updateEnemies } from './enemies';
 import { updatePlayer } from './player';
 import { updateParticles, updatePickups } from './pickups';
 import { updateRooms } from './rooms';
+import { updateLight } from './lightscript';
+import { updateMadness } from './madness';
+import { updateFx } from './fx';
 import { TILE } from './tiles';
 import type { Command, World } from './types';
 
@@ -21,6 +24,8 @@ export function stepWorld(w: World, cmd: Command, now: number): void {
     updateParticles(w);
     return;
   }
+  w.madnessIn = 0;
+  updateLight(w);
   // Index enemies first so the player's instant shots (arcs) see them.
   gridClear(w.grid);
   const live = w.enemies.live;
@@ -37,6 +42,8 @@ export function stepWorld(w: World, cmd: Command, now: number): void {
   updateRooms(w);
   updatePickups(w);
   updateParticles(w);
+  updateMadness(w);
+  updateFx(w);
 }
 
 /** FNV-1a over the gameplay state (player, enemies, bullets, score). Excludes render-only things. */
