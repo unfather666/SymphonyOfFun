@@ -4,7 +4,15 @@
   "no": 1,
   "theme": "desert",
   "bpm": 100,
-  "maxSpeed": 30
+  "maxSpeed": 30,
+  "tutorial": [
+   2,
+   14,
+   26,
+   38,
+   50,
+   62
+  ]
  },
  {
   "id": "level_02",

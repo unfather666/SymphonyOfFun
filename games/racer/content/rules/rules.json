@@ -59,5 +59,6 @@
  "smokeBelowHealth": 60,
  "smokePerSec": 40,
  "respawnGraceMs": 1500,
- "slideSteerFrac": 0.3
+ "slideSteerFrac": 0.3,
+ "tutorialShowBeats": 8
 }

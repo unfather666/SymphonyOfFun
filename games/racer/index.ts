@@ -1,9 +1,14 @@
 // Tempo Road: wires content, the pure sim, core services and the Three.js view. No game rules live here.
 import type { CoreContext, GameInstance, GameModule, Song } from '../../src/core/api';
 import { loadContent, type RacerContent } from './content';
+import { readControls } from './controls';
 import { defineRacerSfx, playFx } from './fxplay';
 import { botInput } from './logic/bot';
+import { openLevelMenu } from './levelmenu';
 import { levelBars } from './logic/level';
+import { copyProgress, newProgress, record } from './logic/progress';
+import { tutorialAt } from './logic/tutorial';
+import { progressSection, SAVE_SLOT } from './save';
 import { assemble, chooseMeter } from './logic/songgen';
 import { createSim, forceCalamity, onBeat, songEnded, stepSim, warpTo, warpToKind, PHASE_FINISHED, PHASE_OVER, PHASE_RUN, type Sim } from './logic/sim';
 import { scoreOf } from './logic/score';
@@ -42,6 +47,12 @@ function create(ctx: CoreContext): GameInstance {
   let freeze = false;
   let forced = '';
   let endAtMs = -1;
+  const progress = newProgress();
+  let menuWanted = false;
+  let recorded = false;
+  let capIdx = -1;
+  let capTouch = false;
+  let capText = '';
 
   /** A fresh run of the current level: song, sim and effects reset. */
   function startRun(): void {
@@ -62,42 +73,59 @@ function create(ctx: CoreContext): GameInstance {
       piecesCap: reduced ? Math.min(REDUCED_PIECES, rules.piecesCap) : rules.piecesCap, smokeCap: reduced ? Math.min(REDUCED_SMOKE, rules.smokeCap) : rules.smokeCap,
     });
     endAtMs = -1;
+    recorded = false;
+    capIdx = -1;
+    capText = '';
     ctx.gfx.fade(0, 1);
     ctx.chip.sequencer.play(0);
     songStarted = true;
+  }
+
+  /** (Re)builds the Three scene for the current sim; the renderer is kept. */
+  function buildScene(): void {
+    const s = sim!;
+    try {
+      scene?.dispose();
+      scene = null;
+      renderer ??= createRenderer(ctx.display.glCanvas, ctx.display.width, ctx.display.height);
+      scene = createScene(renderer, { rules: content!.rules, theme: theme!, segLen: s.segLen, propDefs: content!.propDefs, carStates: content!.carStates, archIndex: s.totalBeats - 2, piecesCap: s.pieces.cap, smokeCap: s.smoke.cap });
+    } catch (e) {
+      glFailed = true;
+      ctx.log.error('racer:gl', `WebGL is not available: ${String(e)}`);
+    }
+  }
+
+  /** Switch to level `no` and start a run of it. */
+  function chooseLevel(no: number): void {
+    const c = content!;
+    level = c.levels.find((l) => l.no === no) ?? c.levels[0]!;
+    theme = c.themes.find((t) => t.id === level!.theme)!;
+    startRun();
+    buildScene();
+  }
+
+  /** Remember the result of a run that just ended. */
+  function finishRun(s: Sim): void {
+    recorded = true;
+    if (record(progress, level!.no, s.phase === PHASE_FINISHED, scoreOf(s), s.runMs)) {
+      const r = ctx.saves.save(SAVE_SLOT);
+      if (!r.ok) ctx.log.warn('racer:save', r.message);
+    }
   }
 
   return {
     init() {
       content = loadContent(ctx);
       const q = new URLSearchParams(location.search);
-      const levelNo = Math.max(1, Math.min(10, Number(q.get('level')) || 1));
-      level = content.levels.find((l) => l.no === levelNo) ?? content.levels[0]!;
-      theme = content.themes.find((t) => t.id === level!.theme)!;
+      ctx.saves.register(progressSection(progress));
+      if (ctx.saves.has(SAVE_SLOT)) {
+        const r = ctx.saves.load(SAVE_SLOT);
+        if (!r.ok) ctx.log.warn('racer:save', r.message);
+      }
       bot = import.meta.env.DEV && q.get('bot') === '1';
       freeze = import.meta.env.DEV && q.get('freeze') === '1';
       forced = import.meta.env.DEV ? (q.get('calamity') ?? '') : '';
       defineRacerSfx(ctx);
-      startRun();
-      const s = sim!;
-
-      const at = import.meta.env.DEV ? q.get('at') : null;
-      if (at) {
-        if (/^\d+$/.test(at)) warpTo(s, Number(at));
-        else if (!warpToKind(s, at, content.kinds)) ctx.log.warn('racer:at', `No segment of kind ${at} found.`);
-      }
-      if (forced && !content.calamities.some((c) => c.id === forced)) {
-        ctx.log.warn('racer:calamity', `No calamity called ${forced}.`);
-        forced = '';
-      }
-
-      try {
-        renderer = createRenderer(ctx.display.glCanvas, ctx.display.width, ctx.display.height);
-        scene = createScene(renderer, { rules: content.rules, theme, segLen: s.segLen, propDefs: content.propDefs, carStates: content.carStates, archIndex: s.totalBeats - 2, piecesCap: s.pieces.cap, smokeCap: s.smoke.cap });
-      } catch (e) {
-        glFailed = true;
-        ctx.log.error('racer:gl', `WebGL is not available: ${String(e)}`);
-      }
 
       unsubBeat = ctx.events.on('chip:beat', (p) => {
         if (sim && typeof p.step === 'number' && typeof p.step16 === 'number' && p.step16 % 4 === 0) onBeat(sim, p.step, ctx.clock.nowMs());
@@ -113,28 +141,41 @@ function create(ctx: CoreContext): GameInstance {
           }),
         };
       }
+      if (q.has('level')) {
+        chooseLevel(Math.max(1, Math.min(10, Number(q.get('level')) || 1)));
+        const at = import.meta.env.DEV ? q.get('at') : null;
+        if (at) {
+          if (/^\d+$/.test(at)) warpTo(sim!, Number(at));
+          else if (!warpToKind(sim!, at, content.kinds)) ctx.log.warn('racer:at', `No segment of kind ${at} found.`);
+        }
+        if (forced && !content.calamities.some((c) => c.id === forced)) {
+          ctx.log.warn('racer:calamity', `No calamity called ${forced}.`);
+          forced = '';
+        }
+      } else menuWanted = true;
     },
 
     update() {
       const s = sim;
+      if (menuWanted) {
+        menuWanted = false;
+        openLevelMenu(ctx, content!.levels, progress, chooseLevel);
+        return;
+      }
       if (!s || freeze) return;
       const now = ctx.clock.nowMs();
       if (s.phase === PHASE_FINISHED || s.phase === PHASE_OVER) {
+        if (!recorded) finishRun(s);
         if (endAtMs < 0) endAtMs = now;
         if (now - endAtMs > END_LOCK_MS) {
           if (ctx.input.pressed('a') || ctx.input.pressed('start')) startRun();
-          else if (ctx.input.pressed('b')) ctx.exit();
+          else if (ctx.input.pressed('b')) menuWanted = true;
         }
         stepSim(s, input, now);
         playFx(ctx, s);
         return;
       }
-      input.steer = ctx.input.axis('move').x;
-      input.accel = ctx.input.held('a');
-      input.accelPressed = ctx.input.pressed('a');
-      input.brake = ctx.input.held('b');
-      input.jumpPressed = ctx.input.pressed('y');
-      input.usePressed = ctx.input.pressed('x');
+      readControls(ctx, input);
       if (bot) botInput(s, input, now);
       if (forced && now > 1500) {
         forceCalamity(s, forced);
@@ -151,14 +192,26 @@ function create(ctx: CoreContext): GameInstance {
 
     draw(alpha: number) {
       const s = sim;
-      if (!s) return;
+      if (!s) {
+        ctx.gfx.rect(0, 0, 384, 216, '#0b0b14');
+        ctx.gfx.drawText(ctx.strings('title'), 192, 70, { colour: '#ffd23f', align: 'center', scale: 3 });
+        return;
+      }
       if (glFailed || !scene) {
         ctx.gfx.drawText('WEBGL NOT AVAILABLE', 192, 100, { colour: '#e8403a', align: 'center' });
         return;
       }
+      const now = ctx.clock.nowMs();
       const sh = ctx.gfx.shakeOffset();
-      scene.draw(s, alpha, ctx.clock.nowMs(), sh.x, sh.y);
-      drawHud(ctx.gfx, ctx.strings, s, ctx.clock.nowMs());
+      scene.draw(s, alpha, now, sh.x, sh.y);
+      const touch = ctx.input.device() === 'touch';
+      const ci = tutorialAt(level!.tutorial, s.beat.index, s.rules.tutorialShowBeats);
+      if (ci !== capIdx || touch !== capTouch) {
+        capIdx = ci;
+        capTouch = touch;
+        capText = ci < 0 ? '' : ctx.strings(`tut_${level!.no}_${ci}${touch ? '_touch' : ''}`);
+      }
+      drawHud(ctx.gfx, ctx.strings, s, now, { best: progress.bestScore[level!.no - 1] ?? 0, caption: capText, touch });
     },
 
     pause() {},

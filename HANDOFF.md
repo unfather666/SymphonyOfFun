@@ -16,9 +16,9 @@ One section per area. Update your own section in each milestone commit (BUILD-PL
 - Core ask: sequencer detune (see `games/shooter/README.md`).
 
 ## Racer
-- State (M3 done, 2026-10-17): sim phases, hazards/pickups/pools/calamities on top of the road and car, autopilot (`logic/bot.ts`) clears every level in tests; Three view in `games/racer/render/three/`. Layout and decisions in `games/racer/README.md`. Regenerate the generator hash fixture with `UPDATE_FIXTURES=1 npx vitest run games/racer/tests/trackgen.test.ts` only when a generator change is intended.
+- State (M4 done, 2026-10-17): level list, saves, touch controls, 96 patterns and tutorial captions on top of sim phases, hazards/pickups/pools/calamities on top of the road and car, autopilot (`logic/bot.ts`) clears every level in tests; Three view in `games/racer/render/three/`. Layout and decisions in `games/racer/README.md`. Regenerate the generator hash fixture with `UPDATE_FIXTURES=1 npx vitest run games/racer/tests/trackgen.test.ts` only when a generator change is intended.
 - Check: `npm run check`. Browser smoke + budget numbers: `agent-tests/racer-smoke.mjs` (needs `playwright-core` outside the repo; header has the command).
-- Music: patterns are authored as data in `games/racer/content/patterns/*.json` (all in C; major and minor patterns share one chord progression each so genres mix). The generator script is not in the repo; add patterns by hand in the same format (see `songgen.ts` PatternDef) or ask for the script. Next: M4 (full pattern library, saves, touch, polish).
+- Music: patterns are authored as data in `games/racer/content/patterns/*.json` (all in C; major and minor patterns share one chord progression each so genres mix). `games/racer/tools/genpatterns.py` writes all of them (usage in its header); or add patterns by hand in the same format (see `songgen.ts` PatternDef). Next: polish passes only.
 
 ## Mr Fart (M3 done 2026-10-17)
 - State: M0 (#2), M1 (#5), M2 (#9) merged. M3 (`mrfart-m3`): all 20 job types, 20 subjects, modifiers, items, endings, 6x4 map, 60 people with streaming bodies, pacing table in `games/mrfart/README.md`.

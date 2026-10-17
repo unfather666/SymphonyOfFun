@@ -26,6 +26,20 @@ describe('library', () => {
   });
 });
 
+describe('library size', () => {
+  test('holds 12 genres of 4 roles in 2 variants', () => {
+    expect(patterns.length).toBe(96);
+    expect(new Set(patterns.map((p) => p.id)).size).toBe(96);
+    expect(new Set(patterns.map((p) => p.genre)).size).toBe(12);
+  });
+  test('waltz patterns cover every role in both modes and every level bpm', () => {
+    const w = patterns.filter((p) => p.meter === 3);
+    expect(w.length).toBe(8);
+    for (const role of ROLES) for (const mode of ['major', 'minor'] as const) expect(w.some((p) => p.role === role && (p.mode === mode || p.mode === 'any')), `${role} ${mode}`).toBe(true);
+    for (const l of levels) for (const role of ROLES) expect(patterns.some((p) => eligible(p, role, l.bpm, 3, 'any')), `L${l.no} ${role}`).toBe(true);
+  });
+});
+
 describe('assemble', () => {
   test('never picks a pattern outside its bpm range, meter or section mode (1000 seeds, all levels)', () => {
     const bad: string[] = [];
@@ -92,5 +106,25 @@ describe('assemble', () => {
     const waltz: PatternDef[] = ROLES.map((role) => ({ id: `w_${role}`, role, genre: 'waltz', mode: 'any', bpmMin: 60, bpmMax: 200, meter: 3, steps: new Array(48).fill(0) }));
     expect(chooseMeter(1, 1, 10, [...patterns, ...waltz])).toBe(3);
     expect(chooseMeter(0, 1, 10, [...patterns, ...waltz])).toBe(4);
+  });
+});
+
+describe('meter 3', () => {
+  test('level 10 sometimes gets a 3/4 song that is 5:00 within one bar and uses waltz patterns only', () => {
+    const l = levels.find((x) => x.no === 10)!;
+    let threes = 0;
+    for (let seed = 1; seed <= 200; seed++) {
+      if (chooseMeter(l.meter3Chance ?? 0, seed, 10, patterns) !== 3) continue;
+      threes++;
+      const s = build(10, seed, 3);
+      expect(Math.abs(songMs(s) - 300000)).toBeLessThanOrEqual((3 * 60000) / l.bpm);
+      for (const pk of s.picks) for (const id of Object.values(pk.ids)) expect(byId.get(id!)!.meter, id).toBe(3);
+      for (const sec of s.sections) for (const pat of Object.values(sec.patterns)) expect(pat.length).toBe(48);
+    }
+    expect(threes).toBeGreaterThan(30);
+    expect(threes).toBeLessThan(110);
+  });
+  test('levels without a meter chance always stay in 4', () => {
+    for (const l of levels) if (!l.meter3Chance) for (let seed = 1; seed <= 20; seed++) expect(chooseMeter(l.meter3Chance ?? 0, seed, l.no, patterns)).toBe(4);
   });
 });
