@@ -1,0 +1,13 @@
+[
+  { "id": "straight", "turnDeg": 0, "dPitchDeg": 0, "halfWidth": 1, "weight": 6, "maxRun": 99 },
+  { "id": "curve_l", "turnDeg": -9, "dPitchDeg": 0, "halfWidth": 1, "weight": 2, "maxRun": 5 },
+  { "id": "curve_r", "turnDeg": 9, "dPitchDeg": 0, "halfWidth": 1, "weight": 2, "maxRun": 5 },
+  { "id": "hill_up", "turnDeg": 0, "dPitchDeg": 3, "halfWidth": 1, "weight": 1.2, "maxRun": 4 },
+  { "id": "hill_down", "turnDeg": 0, "dPitchDeg": -3, "halfWidth": 1, "weight": 1.2, "maxRun": 4 },
+  { "id": "ramp", "turnDeg": 0, "dPitchDeg": 0, "pitchToDeg": 10, "halfWidth": 1, "weight": 0.6, "maxRun": 1, "ramp": true },
+  { "id": "narrow", "turnDeg": 0, "dPitchDeg": 0, "halfWidth": 0.7, "weight": 0.8, "maxRun": 4, "drop": true },
+  { "id": "split", "turnDeg": 0, "dPitchDeg": 0, "halfWidth": 1, "weight": 0.8, "maxRun": 3, "split": true },
+  { "id": "wide", "turnDeg": 0, "dPitchDeg": 0, "halfWidth": 1.5, "weight": 0.8, "maxRun": 4 },
+  { "id": "gap", "turnDeg": 0, "dPitchDeg": 0, "halfWidth": 1, "weight": 0, "maxRun": 1, "gap": true },
+  { "id": "tunnel", "turnDeg": 0, "dPitchDeg": 0, "halfWidth": 1, "weight": 0.6, "maxRun": 4, "tunnel": true }
+]

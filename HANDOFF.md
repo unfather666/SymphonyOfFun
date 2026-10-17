@@ -15,7 +15,12 @@ One section per area. Update your own section in each milestone commit (BUILD-PL
 - Decisions: see `games/shooter/README.md` "Decisions" and PR descriptions. Core ask: sequencer detune (README).
 
 ## Racer
-(owned by the racer thread)
+- State (M0 done, 2026-10-17): car, pooled road, HUD, beat clock hooked to core `chip:beat`; Three view in `games/racer/render/three/`. Layout and decisions in `games/racer/README.md`.
+- Check: `npm run check`. Browser smoke + budget numbers: `agent-tests/racer-smoke.mjs` (needs `playwright-core` outside the repo; header has the command).
+- Next: M1 (all 11 segment kinds, generator hash fixture, curves/hills/ramps/gaps), M2 music assembler, M3 hazards/death/pieces/power-ups, M4 10 levels/polish.
 
-## Mr Fart
-(owned by the mrfart thread)
+## Mr Fart (M0 done 2026-10-17)
+- State: M0 shipped (`mrfart-m0`): physics behind `PhysicsApi` (Rapier + null stand-in, contract tests on both), sim in `logic/`, placeholder render, 33 game tests.
+- Next: M1 Society (stress, clench, witnesses, intolerance, midnight settlement, reputation bar, people reactions). Branch `mrfart-m1` from main, one PR per milestone.
+- Check: `npm run check`. Visual smoke: see README; `?game=mrfart&seed=1`.
+- Decisions: fart `force` in rules is a velocity change (px/s) at forceScale 4; pieces are cheap pool particles, not Rapier bodies; people/props get bodies only near the player from M3 (ledger).

@@ -1,0 +1,73 @@
+[
+ {
+  "id": "level_01",
+  "no": 1,
+  "theme": "desert",
+  "bpm": 100,
+  "maxSpeed": 30
+ },
+ {
+  "id": "level_02",
+  "no": 2,
+  "theme": "suburbs",
+  "bpm": 108,
+  "maxSpeed": 32
+ },
+ {
+  "id": "level_03",
+  "no": 3,
+  "theme": "farmland",
+  "bpm": 116,
+  "maxSpeed": 34
+ },
+ {
+  "id": "level_04",
+  "no": 4,
+  "theme": "harbour",
+  "bpm": 124,
+  "maxSpeed": 36
+ },
+ {
+  "id": "level_05",
+  "no": 5,
+  "theme": "neon_city",
+  "bpm": 132,
+  "maxSpeed": 38
+ },
+ {
+  "id": "level_06",
+  "no": 6,
+  "theme": "snow_pass",
+  "bpm": 140,
+  "maxSpeed": 40
+ },
+ {
+  "id": "level_07",
+  "no": 7,
+  "theme": "canyon",
+  "bpm": 148,
+  "maxSpeed": 42
+ },
+ {
+  "id": "level_08",
+  "no": 8,
+  "theme": "haunted_woods",
+  "bpm": 156,
+  "maxSpeed": 44
+ },
+ {
+  "id": "level_09",
+  "no": 9,
+  "theme": "moon_base",
+  "bpm": 164,
+  "maxSpeed": 46
+ },
+ {
+  "id": "level_10",
+  "no": 10,
+  "theme": "rainbow_road",
+  "bpm": 172,
+  "maxSpeed": 48,
+  "meter3Chance": 0.35
+ }
+]

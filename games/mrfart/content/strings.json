@@ -1,5 +1,11 @@
 {
   "title": "MR FART",
-  "coming_soon": "COMING SOON",
-  "back_hint": "ESC THEN QUIT TO RETURN"
+  "meter": "FART",
+  "loading": "LOADING PHYSICS",
+  "hint_move": "MOVE  ARROWS OR WASD",
+  "hint_run": "RUN  K",
+  "hint_clench": "CLENCH  L",
+  "kind_quiet": "QUIET",
+  "kind_squeaky": "SQUEAKY",
+  "kind_loud": "LOUD"
 }

@@ -1,0 +1,7 @@
+[
+  { "id": "mrs_pibb", "shirt": 31, "hair": 6, "skin": 15, "name": "Mrs Pibb", "role": "granny", "speed": 22, "loop": [[15, 12, 4000], [30, 12, 3000]] },
+  { "id": "gus_mailman", "shirt": 29, "hair": 12, "skin": 14, "name": "Gus", "role": "mailman", "speed": 34, "loop": [[6, 12, 1500], [6, 3, 1500], [14, 3, 1500]] },
+  { "id": "tilly_kid", "shirt": 18, "hair": 13, "skin": 15, "name": "Tilly", "role": "kid", "speed": 38, "loop": [[24, 5, 800], [20, 20, 800], [28, 20, 800]] },
+  { "id": "bob_baker", "shirt": 7, "hair": 12, "skin": 15, "name": "Bob", "role": "baker", "speed": 26, "loop": [[3, 12, 5000], [14, 12, 2000]] },
+  { "id": "ana_jogger", "shirt": 22, "hair": 11, "skin": 14, "name": "Ana", "role": "jogger", "speed": 48, "loop": [[2, 24, 200], [31, 24, 200]] }
+]
