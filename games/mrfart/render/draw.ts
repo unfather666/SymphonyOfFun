@@ -1,7 +1,7 @@
 // Drawing only: reads the sim, never changes it. Placeholder rects until the M4 pixel art lands.
 import type { Gfx2d, TileMap } from '../../../src/core/api';
 import { SCREEN_H, SCREEN_W } from '../../../src/core/api';
-import { PS_DWELL } from '../logic/types';
+import { PS_DWELL, PS_FLEE, PS_STARTLED } from '../logic/types';
 import type { Sim } from '../logic/sim';
 import { NOTE, RING } from '../logic/pools';
 
@@ -45,6 +45,8 @@ export function drawWorld(g: Gfx2d, sim: Sim, view: View, alpha: number): void {
     g.rect(x - 4, y - 12, 8, 7, p.def.skin);
     g.rect(x - 4, y - 13, 8, 3, p.def.hair);
     if (p.state === PS_DWELL) g.rect(x - 1, y + 4, 2, 1, 2);
+    if (p.state === PS_STARTLED) g.drawText('!', x - 2, y - 23, { colour: 18, shadow: 2 });
+    else if (p.state === PS_FLEE) g.drawText('!!', x - 5, y - 23, { colour: 10, shadow: 2 });
   }
 
   const pl = sim.player;

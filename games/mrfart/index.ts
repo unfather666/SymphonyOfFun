@@ -3,6 +3,7 @@ import type { CoreContext, GameInstance, GameModule, SfxRecipe, SpriteDef } from
 import { FART_SCHEMA, PERSON_SCHEMA, PROP_SCHEMA } from './content/schemas';
 import mapJson from './content/map.json';
 import rulesJson from './content/rules.json';
+import { applyCheat } from './logic/cheats';
 import { buildMap } from './logic/map';
 import type { MapDef } from './logic/map';
 import { parseRules } from './logic/rules';
@@ -49,12 +50,15 @@ function create(ctx: CoreContext): GameInstance {
       const stream = (n: string) => ctx.random.stream(`mrfart:${n}`);
       sim = createSim({
         physics, rules, map: buildMap(mapJson as unknown as MapDef), farts, props, people,
-        rng: { fart: stream('fart'), fx: stream('fx'), people: stream('people') },
+        rng: { fart: stream('fart'), fx: stream('fx'), people: stream('people'), notice: stream('notice') },
         emit: (name, payload) => ctx.events.emit(name, payload),
         reducedFx: ctx.settings.reducedFx,
       });
       view = { tiles: makeTileMap(sim.deps.map), camX: 0, camY: 0 };
       unsubs.push(
+        ctx.events.on('dev:cheat', (p) => {
+          if (sim) applyCheat(sim, String(p.id));
+        }),
         ctx.events.on('mrfart:fart', (p) => {
           const def = farts[p.kind as number]!;
           ctx.chip.sfx(`fart_${def.id}`, { volume: def.volume });
@@ -79,7 +83,7 @@ function create(ctx: CoreContext): GameInstance {
       }
       cameraFor(sim, alpha, view);
       drawWorld(ctx.gfx, sim, view, alpha);
-      drawHud(ctx.gfx, sim, (k) => ctx.strings(k));
+      drawHud(ctx.gfx, sim, (k, p) => ctx.strings(k, p));
     },
     pause() {},
     shutdown() {
