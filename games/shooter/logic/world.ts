@@ -153,3 +153,9 @@ export function dropPickup(w: World, x: number, y: number, kind: number, arg: nu
 }
 
 export { CUE };
+
+/** The one door for changing the player's shot (rig edits, preset cycling). */
+export function setShot(w: World, spec: ShotSpec): void {
+  w.shot = spec;
+  w.player.shotIdx = 0;
+}

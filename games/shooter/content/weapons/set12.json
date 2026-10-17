@@ -1,0 +1,37 @@
+[
+ {
+  "id": "hymn_wave",
+  "set": 12,
+  "kind": "core",
+  "projectile": "wave",
+  "damage": 5,
+  "rateMs": 600,
+  "speed": 110,
+  "lifeMs": 900,
+  "size": 3,
+  "count": 1,
+  "spread": 0,
+  "tags": [
+   "set12"
+  ]
+ },
+ {
+  "id": "hymn_choir",
+  "set": 12,
+  "kind": "mod",
+  "countAdd": 2,
+  "spreadAdd": 0.5,
+  "tags": [
+   "set12"
+  ]
+ },
+ {
+  "id": "hymn_psi",
+  "set": 12,
+  "kind": "mod",
+  "element": "psi",
+  "tags": [
+   "set12"
+  ]
+ }
+]

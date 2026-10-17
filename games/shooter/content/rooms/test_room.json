@@ -69,7 +69,8 @@
    {
     "def": "deep_one",
     "tx": 24,
-    "ty": 15
+    "ty": 15,
+    "elite": true
    }
   ]
  ]

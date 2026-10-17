@@ -1,0 +1,39 @@
+[
+ {
+  "id": "harpoon_head",
+  "set": 1,
+  "kind": "core",
+  "projectile": "bolt",
+  "damage": 22,
+  "rateMs": 650,
+  "speed": 300,
+  "lifeMs": 900,
+  "size": 4,
+  "pierce": 2,
+  "knockback": 2,
+  "count": 1,
+  "spread": 0,
+  "tags": [
+   "set1"
+  ]
+ },
+ {
+  "id": "harpoon_chain",
+  "set": 1,
+  "kind": "mod",
+  "pierceAdd": 1,
+  "speedMul": 1.1,
+  "tags": [
+   "set1"
+  ]
+ },
+ {
+  "id": "harpoon_winch",
+  "set": 1,
+  "kind": "aux",
+  "onHit": "pull",
+  "tags": [
+   "set1"
+  ]
+ }
+]

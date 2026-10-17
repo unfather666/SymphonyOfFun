@@ -1,0 +1,36 @@
+[
+ {
+  "id": "siphon_beam",
+  "set": 15,
+  "kind": "core",
+  "projectile": "beam",
+  "damage": 4,
+  "rateMs": 100,
+  "speed": 700,
+  "lifeMs": 150,
+  "size": 2,
+  "count": 1,
+  "spread": 0,
+  "tags": [
+   "set15"
+  ]
+ },
+ {
+  "id": "siphon_leech",
+  "set": 15,
+  "kind": "aux",
+  "onKill": "heal",
+  "tags": [
+   "set15"
+  ]
+ },
+ {
+  "id": "siphon_ammo",
+  "set": 15,
+  "kind": "aux",
+  "onKill": "ammo",
+  "tags": [
+   "set15"
+  ]
+ }
+]

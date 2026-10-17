@@ -53,3 +53,8 @@ export const IDLE_BRAIN: BrainDef = { id: 'idle_test', tags: [], start: 'i', sta
 export function run(w: World, n: number, cmd: Command = makeCommand()): void {
   for (let i = 0; i < n; i++) stepWorld(w, cmd, (w.stepNo + 1) * (1000 / 60));
 }
+
+import type { ItemDef } from '../logic/rig';
+export const ITEMS = readDefs('weapons') as unknown as ItemDef[];
+export const itemsById = new Map(ITEMS.map((i) => [i.id, i]));
+export const pick = (ids: string[]): ItemDef[] => ids.map((id) => itemsById.get(id)!);

@@ -10,6 +10,7 @@ import type { Bullet, Enemy, Shot, World } from './types';
 
 const CUE_OF_KIND = [CUE.shotBolt, CUE.shotBeam, CUE.shotArc, CUE.shotShell, CUE.shotWave, CUE.shotBolt];
 const MAX_ENEMY_HALF = 28;
+const visited = new Int32Array(16);
 
 function acquire(w: World, owner: number, kind: number, x: number, y: number, ang: number, speed: number, dmg: number, lifeMs: number, size: number): Bullet | null {
   const b = w.bullets.acquire();
@@ -69,7 +70,7 @@ function fireArc(w: World, ox: number, oy: number, ang: number, shot: Shot, hitM
   let x = ox;
   let y = oy;
   let jumps = shot.pierce + 1;
-  let last: Enemy | null = null;
+  let nVisited = 0;
   const r = w.rules;
   let reach = range;
   while (jumps-- > 0) {
@@ -78,12 +79,15 @@ function fireArc(w: World, ox: number, oy: number, ang: number, shot: Shot, hitM
     let bd = reach * reach;
     for (let i = 0; i < n; i++) {
       const e = w.enemies.slots[w.scratch[i]!]!;
-      if (!e.alive || e === last) continue;
+      if (!e.alive) continue;
+      let again = false;
+      for (let v = 0; v < nVisited; v++) if (visited[v] === e.slot) again = true;
+      if (again) continue;
       const ex = e.x - x;
       const ey = e.y - y;
       const d2 = ex * ex + ey * ey;
       if (d2 >= bd) continue;
-      if (last === null && (ex * dx + ey * dy) / Math.sqrt(d2 || 1) < 0.8) continue;
+      if (nVisited === 0 && (ex * dx + ey * dy) / Math.sqrt(d2 || 1) < 0.8) continue;
       if (!lineClear(w.map, x, y, e.x, e.y)) continue;
       bd = d2;
       best = e;
@@ -99,7 +103,7 @@ function fireArc(w: World, ox: number, oy: number, ang: number, shot: Shot, hitM
     if (!best) break;
     x = best.x;
     y = best.y;
-    last = best;
+    if (nVisited < visited.length) visited[nVisited++] = best.slot;
     reach = r.chain_range * 1.5;
     const target = best;
     applyHitEffects(w, target, hitMask, dx, dy, shot.damage, killMask);

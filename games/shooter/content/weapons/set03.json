@@ -1,0 +1,39 @@
+[
+ {
+  "id": "flak_shell",
+  "set": 3,
+  "kind": "core",
+  "projectile": "shell",
+  "damage": 18,
+  "rateMs": 600,
+  "speed": 200,
+  "lifeMs": 700,
+  "size": 4,
+  "count": 1,
+  "spread": 0,
+  "tags": [
+   "set3"
+  ]
+ },
+ {
+  "id": "flak_pellets",
+  "set": 3,
+  "kind": "mod",
+  "countAdd": 4,
+  "spreadAdd": 0.6,
+  "damageMul": 0.7,
+  "tags": [
+   "set3"
+  ]
+ },
+ {
+  "id": "flak_choke",
+  "set": 3,
+  "kind": "mod",
+  "spreadAdd": -0.3,
+  "speedMul": 1.15,
+  "tags": [
+   "set3"
+  ]
+ }
+]

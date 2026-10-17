@@ -1,0 +1,39 @@
+[
+ {
+  "id": "yellow_sign",
+  "set": 17,
+  "kind": "core",
+  "projectile": "wave",
+  "damage": 14,
+  "rateMs": 700,
+  "speed": 100,
+  "lifeMs": 1000,
+  "size": 4,
+  "element": "psi",
+  "selfMadness": 4,
+  "count": 1,
+  "spread": 0,
+  "tags": [
+   "set17"
+  ]
+ },
+ {
+  "id": "yellow_crown",
+  "set": 17,
+  "kind": "mod",
+  "sizeMul": 1.6,
+  "countAdd": 2,
+  "tags": [
+   "set17"
+  ]
+ },
+ {
+  "id": "yellow_mark",
+  "set": 17,
+  "kind": "aux",
+  "onKill": "heal",
+  "tags": [
+   "set17"
+  ]
+ }
+]
