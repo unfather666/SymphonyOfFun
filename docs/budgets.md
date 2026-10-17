@@ -17,3 +17,4 @@ Measured with the F3 readout, Chromium DevTools CPU throttle 4x unless noted. Ap
 | 2026-10-17 | shooter M3 | generated level 1, then level 10 boss arena | 0.07 / 1.00 and 0.10 / 0.40 | not measured | 60 | Headless Chromium, NO throttle (games/shooter/agent-tests/levels-smoke.mjs); 4x row at M4 |
 | 2026-10-17 | mrfart M2 | street block, 5 people, 10 props, job active with leash | 1.2 / 3.8 | 3.6 | 60 | Headless Chromium, CDP 4x CPU throttle |
 | 2026-10-17 | mrfart M3 | full 6x4 map, 60 people (bodies near player only), player running | 1.5 / 4.0 | 3.2 | 60 | Headless Chromium, CDP 4x CPU throttle |
+| 2026-10-17 | mrfart M4 | full scene: 128 bodies, 256 pieces, blast at start | 2.2-3.7 / 7-10 | 4.4-5.3 | 49-58 | Headless Chromium, CDP 4x CPU throttle, `sof.cheat('load_test')`; one 46 ms spike in 4 samples (GC). Normal play on the same map: 1.2 / 2.4 step, 3.3 draw, 60 fps |

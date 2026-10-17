@@ -22,7 +22,9 @@ export function spawnPersonBody(sim: Sim, p: Person): void {
   });
 }
 
-const ARRIVE = 3;
+/** Pass-through points count as reached a little early; stops at doors are spread by person so a crowd does not queue on one pixel. */
+const ARRIVE_PASS = 8;
+const arriveAt = (idx: number) => 3 + (idx % 6) * 3;
 const distSq = (ax: number, ay: number, bx: number, by: number) => (ax - bx) * (ax - bx) + (ay - by) * (ay - by);
 
 /** Decide where each person heads this step and tell physics (or move the ledger position when there is no body). */
@@ -54,7 +56,7 @@ export function stepPeople(sim: Sim): void {
       const tx = p.route[p.wp * 3]!, ty = p.route[p.wp * 3 + 1]!;
       const dx = tx - p.x, dy = ty - p.y;
       const d = Math.hypot(dx, dy);
-      if (d < ARRIVE) {
+      if (d < (p.route[p.wp * 3 + 2]! === 0 ? ARRIVE_PASS : arriveAt(p.idx))) {
         p.state = PS_DWELL;
         p.until = sim.now + p.route[p.wp * 3 + 2]!;
       } else {

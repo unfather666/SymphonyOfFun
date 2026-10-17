@@ -290,3 +290,38 @@ describe('60 people', () => {
   });
 });
 
+
+describe('budget scene cheat', () => {
+  test('load_test fills the body cap and the piece pool, and the sim keeps stepping', async () => {
+    const { applyCheat } = await import('../logic/cheats');
+    const m = await makeSim({ people: [] });
+    expect(applyCheat(m.sim, 'load_test')).toBe(true);
+    expect(m.sim.deps.physics.stats().bodies).toBe(rules.caps.bodies);
+    expect(m.sim.pieces.count).toBe(rules.caps.pieces);
+    m.step(IDLE, 120);
+    const p = { x: 0, y: 0, angle: 0, vx: 0, vy: 0 };
+    expect(m.sim.deps.physics.pose(m.sim.player.h, p)).toBe(true);
+    expect(Number.isFinite(p.x) && Number.isFinite(p.y)).toBe(true);
+  });
+});
+
+describe('reduced effects', () => {
+  test('pools shrink to the reduced caps: 128 pieces, 96 bodies', async () => {
+    expect(rules.caps.piecesReduced).toBe(128);
+    expect(rules.caps.bodiesReduced).toBe(96);
+    const { createSim } = await import('../logic/sim');
+    const { createRapierPhysics } = await import('../physics/rapier/RapierPhysics');
+    const { buildMap } = await import('../logic/map');
+    const { createRng } = await import('../logic/rng');
+    const { mapDef, fartDefs: farts, personDefs, itemDefs: items, endingDefs: endings, catalog: cat } = await import('./harness');
+    const propsJson = (await import('../content/props/props.json')).default as unknown as import('../logic/types').PropDef[];
+    const physics = await createRapierPhysics({ maxBodies: rules.caps.bodiesReduced });
+    const sim = createSim({
+      physics, rules, map: buildMap(mapDef), farts, props: propsJson, people: personDefs, items, endings, catalog: cat, reducedFx: true,
+      rng: { fart: createRng(1), fx: createRng(2), people: createRng(3), notice: createRng(4), jobs: createRng(5), items: createRng(6) }, emit: () => {},
+    });
+    expect(sim.pieces.max).toBe(128);
+    for (let i = 0; i < 300; i++) physics.addBody({ kind: 'prop', shape: 'box', x: 50 + i, y: 50, hw: 2, hh: 2, mass: 1 });
+    expect(physics.stats().bodies).toBeLessThanOrEqual(96);
+  });
+});
