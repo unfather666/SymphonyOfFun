@@ -9,7 +9,7 @@ One section per area. Update your own section in each milestone commit (BUILD-PL
 - Not yet done: `desktop.yml` has never run (S2, when Un asks); 4x-throttle budget row for the launcher (S2).
 
 ## Shooter
-- State: M0 to M3 merged. M4 on branch `shooter-m4`: touch level select, stress cheat, budget at 4x throttle, browser passes.
+- State: M0 to M4 merged; playable from the launcher. Madness warp runs through the core sequencer rate.
 - Next: nothing planned; remaining ideas are balance tuning.
 - Check: `npm run check`; browser: `npm run dev` then `PW=$(npm root -g)/playwright node games/shooter/agent-tests/smoke.mjs` (also `levels-smoke.mjs`, `playthrough.mjs`, `budget.mjs`).
 - Dev cheats (dev console): `sof.cheat('points')`, `'god'`, `'give_all'`, `'slots6'`, `'madness3'`, `'madness'`, `'clear'`, `'stress'`.
