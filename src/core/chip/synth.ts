@@ -103,13 +103,13 @@ export function createSynth(): Synth {
     return srcs;
   }
 
-  function drum(code: number, at: number, vol: number): AudioScheduledSourceNode[] {
+  function drum(code: number, at: number, vol: number, p: number): AudioScheduledSourceNode[] {
     switch (code) {
-      case 1: return voice('triangle', music, at, 0.12, vol, 160, 40);
-      case 2: return [...voice('noise', music, at, 0.16, vol * 0.7, 1800, 900), ...voice('triangle', music, at, 0.06, vol * 0.5, 220, 140)];
-      case 3: return voice('noise', music, at, 0.035, vol * 0.4, 8000, 8000);
-      case 4: return voice('noise', music, at, 0.14, vol * 0.35, 7000, 6000);
-      case 5: return voice('triangle', music, at, 0.15, vol, 220, 90);
+      case 1: return voice('triangle', music, at, 0.12, vol, 160 * p, 40 * p);
+      case 2: return [...voice('noise', music, at, 0.16, vol * 0.7, 1800 * p, 900 * p), ...voice('triangle', music, at, 0.06, vol * 0.5, 220 * p, 140 * p)];
+      case 3: return voice('noise', music, at, 0.035, vol * 0.4, 8000 * p, 8000 * p);
+      case 4: return voice('noise', music, at, 0.14, vol * 0.35, 7000 * p, 6000 * p);
+      case 5: return voice('triangle', music, at, 0.15, vol, 220 * p, 90 * p);
       default: return [];
     }
   }
@@ -117,12 +117,12 @@ export function createSynth(): Synth {
   return {
     available: true,
     now: () => ac.currentTime,
-    note(role, value, at, dur) {
+    note(role, value, at, dur, pitch = 1) {
       const vol = ROLE_GAIN[role];
       const srcs =
         role === 'drums'
-          ? drum(value, at, vol)
-          : voice(role === 'bass' ? 'triangle' : role === 'lead' ? 'pulseA' : 'pulseB', music, at, dur, vol, midiToHz(value), midiToHz(value));
+          ? drum(value, at, vol, pitch)
+          : voice(role === 'bass' ? 'triangle' : role === 'lead' ? 'pulseA' : 'pulseB', music, at, dur, vol, midiToHz(value) * pitch, midiToHz(value) * pitch);
       for (const s of srcs) pending.push(s);
       if (pending.length > 256) pending = pending.slice(-128);
     },

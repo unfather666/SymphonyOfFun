@@ -44,9 +44,9 @@ function rig(sinkNow = -1) {
   const bus = createEventBus();
   const beats: EventPayload[] = [];
   bus.on('chip:beat', (p) => beats.push(p));
-  const notes: Array<[string, number, number]> = [];
+  const notes: Array<[string, number, number, number, number]> = [];
   let t = sinkNow;
-  const sink: NoteSink = { now: () => t, note: (r, v, at) => notes.push([r, v, at]), cancel: () => {} };
+  const sink: NoteSink = { now: () => t, note: (r, v, at, dur, pitch = 1) => notes.push([r, v, at, dur, pitch]), cancel: () => {} };
   const seq = createSequencer(clock, bus, sink);
   const run = (steps: number) => {
     for (let i = 0; i < steps; i++) {
@@ -102,6 +102,67 @@ describe('sequencer (game clock is master)', () => {
     expect(notes[0]?.[0]).toBe('lead');
     expect(notes[0]?.[1]).toBe(60);
     expect(notes.every(([, , at]) => at >= 10)).toBe(true);
+  });
+});
+
+describe('sequencer rate', () => {
+  test('half rate halves the beat speed on the game clock', () => {
+    const { seq, beats, run } = rig();
+    seq.load(song);
+    seq.play();
+    run(60); // 1 s at rate 1: steps 0..10 (100 ms each)
+    expect(beats.length).toBe(11);
+    seq.setRate(0.5);
+    run(60); // 1 s at half rate = 500 song ms = 5 more steps
+    expect(beats.length).toBe(16);
+    expect(beats[15]).toMatchObject({ step: 15 });
+    expect(seq.rate()).toBe(0.5);
+  });
+  test('position is continuous across a rate change', () => {
+    const { seq, beats, run } = rig();
+    seq.load(song);
+    seq.play();
+    run(30);
+    seq.setRate(2);
+    run(1);
+    const steps = beats.map((b) => b.step);
+    expect(steps).toEqual(steps.map((_, i) => i));
+  });
+  test('clamps, ignores NaN, resets on load', () => {
+    const warns: string[] = [];
+    const clock = createClock();
+    const seq = createSequencer(clock, createEventBus(), { now: () => -1, note: () => {}, cancel: () => {} }, (k) => warns.push(k));
+    seq.load(song);
+    seq.setRate(10);
+    expect(seq.rate()).toBe(4);
+    seq.setRate(0.01);
+    expect(seq.rate()).toBe(0.25);
+    seq.setRate(Number.NaN);
+    expect(seq.rate()).toBe(0.25);
+    expect(warns).toEqual(['seq-rate']);
+    seq.load(song);
+    expect(seq.rate()).toBe(1);
+  });
+  test('audio follows the rate: later times, longer notes, pitch like a tape', () => {
+    const { seq, notes, run } = rig(10);
+    seq.load(song);
+    seq.setRate(0.5);
+    seq.play();
+    run(1);
+    const [, , at0, dur0, pitch0] = notes[0]!;
+    expect(dur0).toBeCloseTo((2 * 100 * 0.9) / 0.5 / 1000, 9);
+    expect(pitch0).toBe(0.5);
+    run(30);
+    const lead62 = notes.find(([r, v]) => r === 'lead' && v === 62)!;
+    expect(lead62[2] - at0).toBeCloseTo(0.6, 6); // step 3 at 100 ms per step, half rate
+  });
+  test('pitch: false keeps pitch', () => {
+    const { seq, notes, run } = rig(10);
+    seq.load(song);
+    seq.play();
+    seq.setRate(0.5, { pitch: false });
+    run(1);
+    expect(notes.every(([, , , , p]) => p === 1)).toBe(true);
   });
 });
 

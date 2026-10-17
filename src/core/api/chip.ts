@@ -70,6 +70,13 @@ export interface Sequencer {
   position(): Readonly<{ bar: number; beat: number; step16: number; step: number }>;
   /** Total bars in the loaded song (one pass). */
   lengthBars(): number;
+  /**
+   * Playback rate, clamped to 0.25..4 (1 = as written). Tempo and chip:beat timing scale with it.
+   * pitch (default true) shifts note pitch with the rate like a tape; false keeps pitch.
+   * Resets to 1 when a new song is loaded; kept across play and seekBar.
+   */
+  setRate(rate: number, opts?: { pitch?: boolean }): void;
+  rate(): number;
 }
 
 export interface Chip {
