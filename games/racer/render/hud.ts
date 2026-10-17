@@ -1,6 +1,6 @@
 // HUD on core's 2D canvas. Reads the sim; strings come from strings.json.
 import type { Gfx2d } from '../../../src/core/api';
-import type { Sim } from '../logic/sim';
+import { PHASE_FINISHED, type Sim } from '../logic/sim';
 
 type Str = (key: string, params?: Record<string, string | number>) => string;
 
@@ -41,4 +41,5 @@ export function drawHud(gfx: Gfx2d, str: Str, sim: Sim, nowMs: number): void {
     if (lit && pulse > 0) gfx.frame(x0 + i * 12 - Math.round(pulse * 3), 203 - Math.round(pulse * 3), 10 + Math.round(pulse * 6), 6 + Math.round(pulse * 6), '#ffd23f');
   }
   if (car.syncStacks > 0 && nowMs < car.syncUntilMs) gfx.drawText(str('hud_sync', { n: car.syncStacks }), 192, 192, { colour: '#ffd23f', align: 'center', shadow: PANEL });
+  if (sim.phase === PHASE_FINISHED) gfx.drawText(str('finish'), 192, 90, { colour: '#ffd23f', align: 'center', shadow: PANEL, scale: 4 });
 }

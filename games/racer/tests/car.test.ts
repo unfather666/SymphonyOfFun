@@ -1,6 +1,6 @@
 // Proves the car sim math is exact: coast, brake, accel cap, steering, jump arc, gap and edge falls (racer M0/M1, 2026-10-17).
 import { describe, expect, test } from 'vitest';
-import { stepSim } from '../logic/sim';
+import { PHASE_DYING, PHASE_RUN, stepSim } from '../logic/sim';
 import { generateNext } from '../logic/track';
 import { idle, makeSim, placeAt, rules } from './helpers';
 import { STEP_S } from '../logic/types';
@@ -172,3 +172,33 @@ describe('landing room', () => {
     expect(hopBeats(l, rules, 1, 24)).toBeLessThan(hopBeats(l, rules, 1, 12));
   });
 });
+
+describe('respawn', () => {
+  test('a fall puts the car back at the start of its 8-bar section, asks the music to seek there, and rebuilds the same road', () => {
+    const f = findSeg((s) => s.gap && s.index >= 70);
+    const sim = makeSim(f.seed, 1, 120);
+    placeAt(sim, f.index - 1);
+    const before = hashRoad(sim);
+    run(sim, 60, (i) => (i.accel = true));
+    expect(sim.deaths).toBe(1);
+    expect(sim.phase).toBe(PHASE_DYING);
+    const section = Math.floor(f.index / sim.track.sectionBeats);
+    let waited = 0;
+    while (sim.phase === PHASE_DYING && waited++ < 400) run(sim, 1);
+    expect(sim.phase).toBe(PHASE_RUN);
+    expect(sim.car.s).toBe(section * sim.track.sectionBeats * sim.segLen);
+    expect(sim.seekBar).toBe(section * rules.sectionBars);
+    expect(sim.car.speed).toBeCloseTo(sim.cruise, 9);
+    placeAt(sim, f.index - 1);
+    expect(hashRoad(sim)).toBe(before);
+  });
+});
+
+function hashRoad(sim: ReturnType<typeof makeSim>): number {
+  let h = 0;
+  for (let i = sim.track.next - 20; i < sim.track.next; i++) {
+    const s = sim.track.ring[i & sim.track.mask]!;
+    if (s.index === i) h = (Math.imul(h ^ s.kind, 16777619) ^ Math.round(s.x1 * 100)) | 0;
+  }
+  return h;
+}

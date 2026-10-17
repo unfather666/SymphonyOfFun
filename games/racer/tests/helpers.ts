@@ -7,6 +7,7 @@ import rulesJson from '../content/rules/rules.json';
 import kindsJson from '../content/segments/segments.json';
 import themesJson from '../content/themes/themes.json';
 import { createSim, type Sim } from '../logic/sim';
+import type { PatternDef } from '../logic/songgen';
 import { ensure } from '../logic/track';
 import type { DriveInput, KindDef, LevelDef, Rules, ThemeDef } from '../logic/types';
 
@@ -16,6 +17,9 @@ export const themes = themesJson as unknown as ThemeDef[];
 export const levels = levelsJson as unknown as LevelDef[];
 export const props = propsJson as unknown as Array<{ id: string; parts: number[][] }>;
 export const car = carJson as unknown as { id: string; states: number[][][] };
+
+const patternFiles = import.meta.glob('../content/patterns/*.json', { eager: true }) as Record<string, { default: PatternDef[] }>;
+export const patterns: PatternDef[] = Object.keys(patternFiles).sort().flatMap((f) => patternFiles[f]!.default);
 
 export const themeOf = (level: LevelDef): ThemeDef => themes.find((t) => t.id === level.theme)!;
 
