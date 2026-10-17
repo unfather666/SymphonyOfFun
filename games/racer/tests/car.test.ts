@@ -2,8 +2,11 @@
 import { describe, expect, test } from 'vitest';
 import { PHASE_DYING, PHASE_RUN, stepSim } from '../logic/sim';
 import { generateNext } from '../logic/track';
-import { idle, makeSim, placeAt, rules } from './helpers';
+import { idle, makeSim as makeFull, placeAt, rules } from './helpers';
 import { STEP_S } from '../logic/types';
+
+/** Car maths are tested on a bare road: no hazards or pickups in the way. */
+const makeSim = (seed: number, levelNo = 1, bpm?: number) => makeFull(seed, levelNo, bpm, 4, true);
 
 const run = (sim: ReturnType<typeof makeSim>, n: number, set: (i: ReturnType<typeof idle>, step: number) => void = () => {}) => {
   const inp = idle();

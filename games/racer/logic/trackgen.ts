@@ -1,5 +1,6 @@
 // Track generator: one Segment per beat, data only. Deterministic from (seed, index) plus the running state.
 import { DEG, MAX_PROPS, type KindDef, type Rules, type Segment, type ThemeDef } from './types';
+import { genHazard, type HazardCtx } from './hazards';
 import { randFloat, seedRand, type Rand } from './rng';
 
 export interface GenState {
@@ -13,6 +14,9 @@ export interface GenState {
   pendingGap: boolean;
   /** Beats left in which no ramp may start: the landing room after a gap. */
   rampBlock: number;
+  /** Segments since the last hazard (0 on its own segment) and whether a section-start major is waiting for a clear segment. */
+  sinceHazard: number;
+  majorDue: boolean;
 }
 
 export interface GenCtx {
@@ -28,10 +32,12 @@ export interface GenCtx {
   gap: number;
   /** Beats after a gap during which ramps are not allowed (see hopBeats). */
   rampCooldown: number;
+  /** Hazards and pickups; absent in generator-only tests. */
+  hz?: HazardCtx;
 }
 
 export function newGenState(): GenState {
-  return { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, lastKind: 0, run: 0, pendingGap: false, rampBlock: 0 };
+  return { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, lastKind: 0, run: 0, pendingGap: false, rampBlock: 0, sinceHazard: 9, majorDue: false };
 }
 
 export function copyGen(dst: GenState, src: GenState): void {
@@ -44,6 +50,8 @@ export function copyGen(dst: GenState, src: GenState): void {
   dst.run = src.run;
   dst.pendingGap = src.pendingGap;
   dst.rampBlock = src.rampBlock;
+  dst.sinceHazard = src.sinceHazard;
+  dst.majorDue = src.majorDue;
 }
 
 export function newSegment(): Segment {
@@ -51,6 +59,7 @@ export function newSegment(): Segment {
     index: -1, kind: 0, x0: 0, y0: 0, z0: 0, yaw0: 0, pitch0: 0, x1: 0, y1: 0, z1: 0, yaw1: 0, pitch1: 0,
     halfWidth: 1, gap: false, ramp: false, tunnel: false, split: false, drop: false,
     propType: [-1, -1, -1, -1], propX: [0, 0, 0, 0], propT: [0, 0, 0, 0],
+    hz: -1, hzLane: 0, hzT: 0.5, hzPhase: 0, hzState: 0, pk: -1, pkLane: 0, pkT: 0.5, pkState: 0,
   };
 }
 
@@ -158,4 +167,5 @@ export function genSegment(seg: Segment, st: GenState, index: number, ctx: GenCt
   st.pendingGap = seg.ramp && randFloat(r) < ctx.theme.gapChance;
   if (seg.gap) st.rampBlock = ctx.rampCooldown;
   else if (st.rampBlock > 0) st.rampBlock--;
+  genHazard(seg, st, index, ctx);
 }

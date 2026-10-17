@@ -1,27 +1,25 @@
-# Tempo Road (`games/racer/`)
+# Racer (`games/racer/`)
 
-3D low-poly chiptune racer. Owned by the racer game thread (BUILD-PLAN §0, §10). Design: `plan/DESIGN-racer.md`.
+Owned by the racer game thread (BUILD-PLAN §0, §10).
 
-Run: `npm run dev`, then open `/?game=racer&seed=1` (add `&level=1..10`). Keys: J accelerate (tap on the beat for a speed bonus), K brake, arrows/WASD steer, `;` jump on ramps, L use a power-up, Enter pause.
+Run: `npm run dev`, then open `/?game=racer&seed=1` (add `&level=1..10`). Keys: J accelerate (tap on the beat for a speed bonus), K brake, arrows/WASD steer, `;` jump on ramps, L use the held power-up, Enter pause. On the end screen: J or Enter runs it again, K returns to the launcher.
+
+Dev-only params: `&bot=1` autopilot, `&at=<beat or kind id>&freeze=1` jump to a segment and hold the frame, `&calamity=<id>` end the run with that calamity after 1.5 s. `globalThis.sofRacer.info()` is the readout used by `agent-tests/racer-smoke.mjs`.
 
 ## Layout
-- `logic/` pure, Node-tested: `songgen` (assembler), `rng` (hash-seeded streams), `trackgen` + `track` (segment ring, section snapshots, poses), `car`, `sim` (one step function, phases, beat sync, respawn), `level` (bars, segment length, intensity).
-- `content/` JSON defs: `rules`, `segments` (11 kinds), `themes` (10), `levels` (10), `patterns` (music), `props`, `vehicles`, `strings.json`.
-- `render/three/` the only place that imports `three`: `renderer`, `scene` (chase camera, pooled segment meshes), `segmentMesh` (road, props, dressing), `geo` (flat-shaded box/quad builder). `render/hud.ts` draws the HUD on the core 2D canvas.
-- `schemas.ts` field specs for the core loader. `index.ts` wires everything.
+- `logic/` pure, Node-tested. `sim` (create, one step, hash), `phases` (RUN, DYING, FINISHED, OVER as enter/update/exit), `simtypes` (state shape), `car`, `interact` (hits, pickups, dodge settling), `hazards` (placement and moving state), `breakage`, `powerups`, `calamity`, `score`, `fx` (effect-code queue), `pieces` (pooled struct-of-arrays), `trackgen` + `track` (segment ring, section snapshots), `songgen` (assembler), `level`, `rng`, `bot`.
+- `content/` JSON defs: `rules`, `segments`, `themes`, `levels`, `props`, `vehicles`, `hazards`, `powerups`, `calamities`, `patterns`, `strings.json`. `content.ts` loads them through the core loader; `schemas.ts` holds the field specs.
+- `render/three/` is the only place that imports `three`: `renderer`, `scene`, `camera` (chase and death cameras), `segmentMesh`, `worldObjects` (hazards and pickups, one rebuilt geometry), `pieces` (instanced debris and smoke), `geo`. `render/hud.ts` draws on the core 2D canvas.
+- `index.ts` wires; `fxplay.ts` turns the sim's effect codes into core sound and screen effects.
 
 ## Decisions
-- Flat colours baked into vertex colours (no lights): cheaper than the design's directional light and the same look. Fog and 384x216 backing canvas (core scales it with nearest filter) replace the separate render target.
-- Segment length = cruise speed × beat period (`cruiseFrac` 0.8 × max speed): at cruise the car crosses one segment per beat, so beat lines on the road land on the beat. At 120 bpm that is 12 m.
-- `lane` is in road half-widths: ±1 is the road edge, ±1.3 the end of the shoulder. Drop-off segments (`narrow`) and `gap` are deadly past that / when not airborne.
-- Beat edge for the HUD, FOV pulse and sync window = `chip:beat` time + `audioLatencyMs` (40, the sequencer's audio trail).
-
-## Status
-| Milestone | What works | How to see it | Known gaps |
-|---|---|---|---|
-| M0 car on a beat | Pooled endless road, car accelerates/steers/brakes, demo song, beat marker, FOV pulse, sync bonus, HUD, 22 draw calls | `?game=racer&seed=1` | Straights only, no hazards, demo song |
-| M2 music assembler | Every level plays its own 5:00 song at the level bpm: 8-bar sections, one pattern per role picked by tempo and meter from 24 patterns (6 genres), major/minor harmony families so genres can mix, section keys, intensity curve (drums+bass → +pad → everything, break without drums), seek to section start on respawn, FINISH when the song ends | `?game=racer&seed=1&level=1..10` | 24 of 96 patterns; no 3/4 sections until waltz patterns exist (M4) |
-| M1 road to the beat | All 11 segment kinds drive and draw: curves, hills, ramps, gaps (jump with `;`), narrow bridges (fall off the edge), split barrier, wide road, tunnels; landing room after every gap; fall = death, respawn at section start; generator hash fixture; autopilot completes all 10 levels in tests | `?game=racer&seed=1&level=7`; dev params `&bot=1` (autopilot), `&at=<beat or kind id>&freeze=1` (jump to a segment and hold the frame) | No hazards yet; song is still the launcher demo song; death is a plain 2.5 s pause (calamities come in M3) |
+- Flat colours baked into vertex colours (no lights); fog and a 384x216 backing canvas.
+- Segment length = cruise speed × beat period, so at cruise the car crosses one segment per beat.
+- `lane` is in road half-widths: ±1 is the road edge, ±1.3 the end of the shoulder. Hazards sit on one of three lane centres (±2/3, 0).
+- Beat edge for the HUD, FOV pulse and sync window = `chip:beat` time + `audioLatencyMs`.
+- Hazards and pickups use their own random stream (salt 2) so the road generator hash fixture does not change when they are tuned.
+- Pools: debris `piecesCap` (reduced effects: 128), smoke `smokeCap` (64). Full policy: skip the new piece and count it (`pool.skipped`). Effects queue holds 32 codes; full policy: drop the new code.
+- Moving hazards (sweepers, periodic windows) are functions of the game clock, so the sim state stays small and deterministic.
 
 ## Core asks
 (none)
