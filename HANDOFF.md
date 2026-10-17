@@ -12,7 +12,9 @@ One section per area. Update your own section in each milestone commit (BUILD-PL
 (owned by the shooter thread)
 
 ## Racer
-(owned by the racer thread)
+- State (M0 done, 2026-10-17): car, pooled road, HUD, beat clock hooked to core `chip:beat`; Three view in `games/racer/render/three/`. Layout and decisions in `games/racer/README.md`.
+- Check: `npm run check`. Browser smoke + budget numbers: `agent-tests/racer-smoke.mjs` (needs `playwright-core` outside the repo; header has the command).
+- Next: M1 (all 11 segment kinds, generator hash fixture, curves/hills/ramps/gaps), M2 music assembler, M3 hazards/death/pieces/power-ups, M4 10 levels/polish.
 
 ## Mr Fart
 (owned by the mrfart thread)
