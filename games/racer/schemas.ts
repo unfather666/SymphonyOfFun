@@ -64,6 +64,7 @@ export const rulesSchema: Schema = {
   smokePerSec: n(0, 200),
   respawnGraceMs: n(0, 5000),
   slideSteerFrac: n(0, 1),
+  tutorialShowBeats: n(1, 32, true),
 };
 
 export const kindSchema: Schema = {
@@ -98,6 +99,7 @@ export const levelSchema: Schema = {
   bpm: n(60, 220),
   maxSpeed: n(10, 80),
   meter3Chance: { ...n(0, 1), optional: true },
+  tutorial: { type: 'number[]', optional: true },
 };
 
 export const propSchema: Schema = { parts: { type: 'any' } };

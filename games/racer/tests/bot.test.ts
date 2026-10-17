@@ -5,9 +5,10 @@ import { onBeat, PHASE_FINISHED, stepSim } from '../logic/sim';
 import { idle, levels, makeSim } from './helpers';
 
 describe('autopilot', () => {
-  for (const level of levels) {
-    test(`level ${level.no} (${level.theme}) finishes with at most one death`, () => {
-      const sim = makeSim(11, level.no);
+  const runs = [...levels.map((l) => ({ level: l, meter: 4 })), { level: levels[levels.length - 1]!, meter: 3 }];
+  for (const { level, meter } of runs) {
+    test(`level ${level.no} (${level.theme}) in ${meter}/4 finishes with at most one death`, () => {
+      const sim = makeSim(11, level.no, level.bpm, meter);
       const inp = idle();
       const stepsPerBeat = Math.round(3600 / level.bpm);
       let now = 0;

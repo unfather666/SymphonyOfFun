@@ -1,7 +1,7 @@
 // HUD on core's 2D canvas. Reads the sim; strings come from strings.json.
 import type { Gfx2d } from '../../../src/core/api';
 import { scoreOf } from '../logic/score';
-import { PHASE_DYING, PHASE_FINISHED, PHASE_OVER, STAGE_CAPTION, type Sim } from '../logic/sim';
+import { PHASE_DYING, PHASE_FINISHED, PHASE_OVER, PHASE_RUN, STAGE_CAPTION, type Sim } from '../logic/sim';
 
 type Str = (key: string, params?: Record<string, string | number>) => string;
 
@@ -20,15 +20,24 @@ function band(gfx: Gfx2d, y: number, h: number): void {
 }
 
 function drawEnd(gfx: Gfx2d, str: Str, sim: Sim, title: string, best: number): void {
-  band(gfx, 70, 76);
-  gfx.drawText(title, 192, 78, { colour: GOLD, align: 'center', shadow: PANEL, scale: 3 });
-  gfx.drawText(str('final_score', { n: scoreOf(sim) }), 192, 108, { colour: WHITE, align: 'center', scale: 2 });
-  if (best > 0) gfx.drawText(str('best_score', { n: best }), 192, 126, { colour: DIM, align: 'center' });
-  gfx.drawText(str('again_hint'), 192, 134, { colour: WHITE, align: 'center' });
+  band(gfx, 64, 88);
+  gfx.drawText(title, 192, 72, { colour: GOLD, align: 'center', shadow: PANEL, scale: 3 });
+  gfx.drawText(str('final_score', { n: scoreOf(sim) }), 192, 104, { colour: WHITE, align: 'center', scale: 2 });
+  if (best > 0) gfx.drawText(str('best_score', { n: best }), 192, 124, { colour: DIM, align: 'center' });
+  gfx.drawText(str('again_hint'), 192, 138, { colour: WHITE, align: 'center' });
 }
 
-/** `best` is the saved best score for this level (0 when none), shown on the end screens. */
-export function drawHud(gfx: Gfx2d, str: Str, sim: Sim, nowMs: number, best = 0): void {
+export interface HudExtras {
+  /** Saved best score for this level (0 when none), shown on the end screens. */
+  best: number;
+  /** Tutorial caption text, or ''. */
+  caption: string;
+  /** Show the tap-zone labels. */
+  touch: boolean;
+}
+
+export function drawHud(gfx: Gfx2d, str: Str, sim: Sim, nowMs: number, x: HudExtras): void {
+  const best = x.best;
   const car = sim.car;
   const r = sim.rules;
   // Hull bar and lives, top left.
@@ -62,6 +71,14 @@ export function drawHud(gfx: Gfx2d, str: Str, sim: Sim, nowMs: number, best = 0)
   }
   if (car.syncStacks > 0 && nowMs < car.syncUntilMs) gfx.drawText(str('hud_sync', { n: car.syncStacks }), 192, 192, { colour: GOLD, align: 'center', shadow: PANEL });
 
+  if (x.caption && sim.phase === PHASE_RUN) {
+    band(gfx, 40, 14);
+    gfx.drawText(x.caption, 192, 44, { colour: WHITE, align: 'center' });
+  }
+  if (x.touch && sim.phase === PHASE_RUN) {
+    gfx.drawText(str('touch_use'), 340, 60, { colour: DIM, align: 'center' });
+    gfx.drawText(str('touch_jump'), 340, 120, { colour: DIM, align: 'center' });
+  }
   if (sim.phase === PHASE_DYING && sim.dyingStage >= STAGE_CAPTION) {
     const def = sim.calamities[sim.calamity];
     band(gfx, 160, 22);

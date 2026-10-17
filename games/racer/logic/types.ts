@@ -61,6 +61,8 @@ export interface Rules {
   smokePerSec: number;
   respawnGraceMs: number;
   slideSteerFrac: number;
+  /** How many beats a tutorial caption stays up. */
+  tutorialShowBeats: number;
 }
 
 export interface KindDef {
@@ -99,6 +101,8 @@ export interface LevelDef {
   bpm: number;
   maxSpeed: number;
   meter3Chance?: number;
+  /** Beat indices where tutorial captions start; caption i is the string tut_<no>_<i>. */
+  tutorial?: number[];
 }
 
 export const MAX_PROPS = 4;
