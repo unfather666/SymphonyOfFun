@@ -5,7 +5,8 @@ import { checkSong, lengthAt, msPer16, noteAt, ROLES, songLengthSteps, stepsPerB
 export interface NoteSink {
   /** Audio-clock seconds now, or -1 when there is no audio. */
   now(): number;
-  note(role: SongRole, value: number, atSec: number, durSec: number): void;
+  /** pitch: frequency multiplier (1 = as written). */
+  note(role: SongRole, value: number, atSec: number, durSec: number, pitch?: number): void;
   /** Cancel notes scheduled after now (seek/stop). */
   cancel(): void;
 }
@@ -14,6 +15,8 @@ export const LOOKAHEAD_MS = 120;
 const RESYNC_SEC = 0.05;
 /** Audio trails the game clock by this much so the first notes after play/seek are not already late. */
 const LATENCY_SEC = 0.04;
+export const MIN_RATE = 0.25;
+export const MAX_RATE = 4;
 
 export interface CoreSequencer extends Sequencer {
   /** Called by core once per step, before game.update: publishes chip:beat for steps reached. */
@@ -27,7 +30,11 @@ export interface CoreSequencer extends Sequencer {
 export function createSequencer(clock: Clock, events: EventBus, sink: NoteSink, warn: (k: string, m: string) => void = () => {}): CoreSequencer {
   let song: Song | null = null;
   let playing = false;
-  let startMs = 0; // game ms of absolute step 0
+  // Song ms = baseSongMs + (game ms - baseGameMs) * rate; rebased on play/seek/setRate.
+  let baseGameMs = 0;
+  let baseSongMs = 0;
+  let rate = 1;
+  let pitchFollows = true;
   let last = -1; // last published absolute step
   let scheduled = -1; // last scheduled absolute step
   let anchorSec = 0;
@@ -43,9 +50,11 @@ export function createSequencer(clock: Clock, events: EventBus, sink: NoteSink, 
     return abs % len;
   }
 
+  const songNow = () => baseSongMs + (clock.nowMs() - baseGameMs) * rate;
+
   function anchor() {
     anchorSec = sink.now() + LATENCY_SEC;
-    anchorMs = clock.nowMs() - startMs;
+    anchorMs = songNow();
     sink.cancel();
     scheduled = Math.max(last, Math.floor(anchorMs / m16) - 1);
   }
@@ -54,18 +63,19 @@ export function createSequencer(clock: Clock, events: EventBus, sink: NoteSink, 
     if (!song) return;
     const now = sink.now();
     if (now < 0) return;
-    const expected = anchorSec + (songMs - anchorMs) / 1000;
+    const expected = anchorSec + (songMs - anchorMs) / rate / 1000;
     if (Math.abs(expected - (now + LATENCY_SEC)) > RESYNC_SEC) anchor();
-    const upTo = Math.floor((songMs + LOOKAHEAD_MS) / m16);
+    const upTo = Math.floor((songMs + LOOKAHEAD_MS * rate) / m16);
+    const pitch = pitchFollows ? rate : 1;
     for (let s = scheduled + 1; s <= upTo; s++) {
       const w = wrap(s);
       if (w < 0) break;
-      const at = anchorSec + (s * m16 - anchorMs) / 1000;
+      const at = anchorSec + (s * m16 - anchorMs) / rate / 1000;
       if (at < now - 0.005) continue;
       for (let r = 0; r < ROLES.length; r++) {
         const role = ROLES[r]!;
         const v = noteAt(song, role, w);
-        if (v > 0) sink.note(role, v, at, (lengthAt(song, role, w) * m16 * 0.9) / 1000);
+        if (v > 0) sink.note(role, v, at, (lengthAt(song, role, w) * m16 * 0.9) / rate / 1000, pitch);
       }
       scheduled = s;
     }
@@ -83,11 +93,14 @@ export function createSequencer(clock: Clock, events: EventBus, sink: NoteSink, 
       len = songLengthSteps(s);
       spb = stepsPerBar(s);
       m16 = msPer16(s.bpm);
+      rate = 1;
+      pitchFollows = true;
     },
     play(fromBar = 0) {
       if (!song) return;
       playing = true;
-      startMs = clock.nowMs() - fromBar * spb * m16;
+      baseGameMs = clock.nowMs();
+      baseSongMs = fromBar * spb * m16;
       last = fromBar * spb - 1;
       anchor();
     },
@@ -99,13 +112,27 @@ export function createSequencer(clock: Clock, events: EventBus, sink: NoteSink, 
       if (!song || !playing) return;
       seq.play(bar);
     },
+    setRate(r, opts) {
+      if (!Number.isFinite(r)) {
+        warn('seq-rate', `Sequencer rate ${r} is not a number; ignored.`);
+        return;
+      }
+      const next = Math.max(MIN_RATE, Math.min(MAX_RATE, r));
+      // Rebase so the song position is continuous across the change.
+      baseSongMs = songNow();
+      baseGameMs = clock.nowMs();
+      rate = next;
+      pitchFollows = opts?.pitch ?? true;
+      if (playing) anchor();
+    },
+    rate: () => rate,
     playing: () => playing,
     bpm: () => (song ? song.bpm : 0),
     position: () => pos,
     lengthBars: () => (song ? len / spb : 0),
     tick() {
       if (!playing || !song) return;
-      const songMs = clock.nowMs() - startMs;
+      const songMs = songNow();
       const target = Math.floor(songMs / m16);
       for (let s = last + 1; s <= target; s++) {
         const w = wrap(s);

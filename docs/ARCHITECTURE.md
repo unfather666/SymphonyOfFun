@@ -28,6 +28,7 @@ Per frame: `gfx.beginFrame()` (shake) → `game.draw(alpha)` → `gfx.endFrame()
 
 ## Notes for game threads
 - Songs: `Pattern` = one entry per 16th step, `0` rest, `-1` hold, else MIDI note; drums use 1 kick, 2 snare, 3 hat, 4 open hat, 5 tom. `chip:beat` fires every 16th step with `{bar, beat, step16, step}`.
+- Music speed: `ctx.chip.sequencer.setRate(0.5)` slows tempo and beats (pitch drops like a tape; `{ pitch: false }` keeps it). Resets to 1 on `load`.
 - Your own sfx: `ctx.chip.defineSfx('fart_squeaky', { layers: [...] })` in `init()`.
 - Your own events: declare names in `games/<id>/content/events.json` as `<id>:<verb>`; the scan test checks every `emit` against it.
 - Content: `ctx.content.load('enemy', import.meta.glob('./content/enemies/*.json', { eager: true }), schema)`.
