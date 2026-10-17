@@ -3,6 +3,7 @@ import { DT, TAU } from './consts';
 import { hurtPlayer, damageEnemy } from './combat';
 import { lineClear, moveBox, tileAt, T_WATER, BLOCKED_X, BLOCKED_Y } from './tiles';
 import { STATES } from './states';
+import { drain } from './madness';
 import type { Enemy, World } from './types';
 
 function switchState(w: World, e: Enemy, to: number): void {
@@ -48,6 +49,21 @@ function move(w: World, e: Enemy): void {
   if (Math.abs(e.ky) < 1) e.ky = 0;
 }
 
+/** Auras raise madness when the player is close; a sweeping eye needs the player in its cone with a clear line. */
+function aura(w: World, e: Enemy): void {
+  const p = w.player;
+  const d = e.def;
+  const range = d.auraR ?? w.rules.eye_range;
+  const dx = p.x - e.x;
+  const dy = p.y - e.y;
+  if (dx * dx + dy * dy > range * range) return;
+  if (d.gaze) {
+    const diff = Math.atan2(Math.sin(Math.atan2(dy, dx) - e.heading), Math.cos(Math.atan2(dy, dx) - e.heading));
+    if (Math.abs(diff) > (w.rules.eye_cone_deg * Math.PI) / 360 || !e.los) return;
+  }
+  drain(w, d.madnessAura!);
+}
+
 export function updateEnemies(w: World): void {
   const live = w.enemies.live;
   const p = w.player;
@@ -63,6 +79,7 @@ export function updateEnemies(w: World): void {
       damageEnemy(w, e, r.burn_dps * 0.25, 0);
       if (!e.alive) continue;
     }
+    if (e.def.turnDegS) e.heading += (e.phase > Math.PI ? -1 : 1) * e.def.turnDegS * DT * (Math.PI / 180);
     think(w, e);
     if (!e.alive) continue;
     if (e.hp <= 0) {
@@ -70,6 +87,7 @@ export function updateEnemies(w: World): void {
       continue;
     }
     move(w, e);
+    if (e.def.madnessAura) aura(w, e);
     const rr = e.def.size + touch;
     if (e.def.touchDamage > 0 && (e.x - p.x) ** 2 + (e.y - p.y) ** 2 < rr * rr) hurtPlayer(w, e.def.touchDamage);
   }

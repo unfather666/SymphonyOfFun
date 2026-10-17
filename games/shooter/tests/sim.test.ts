@@ -106,7 +106,7 @@ describe('rooms and exit', () => {
     const w = makeWorld();
     run(w, 2);
     expect(w.rooms[0]!.state).toBe(1);
-    expect(w.enemies.n).toBe(4);
+    expect(w.enemies.n).toBe(5);
     for (let g = 0; g < 4 && !w.exitOpen; g++) {
       w.enemies.clear();
       run(w, 60);

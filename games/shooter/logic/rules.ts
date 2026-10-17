@@ -81,6 +81,11 @@ export const RULE_LIMITS = {
   spawn_ring_min: [16, 400, 80],
   pickup_life_ms: [1000, 120000, 20000],
   drop_pickup_r: [4, 40, 10],
+  ghost_gap_ms: [200, 20000, 1800],
+  ghost_speed: [5, 120, 22],
+  whisper_gap_ms: [1000, 60000, 5000],
+  pulse_ms: [300, 3000, 900],
+  pulse_amount: [0, 0.4, 0.12],
 } as const satisfies Record<string, readonly [number, number, number]>;
 
 export type RuleKey = keyof typeof RULE_LIMITS;

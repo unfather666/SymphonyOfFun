@@ -134,6 +134,8 @@ export function createProgressControl(ctx: CoreContext, content: Content, getWor
   ctx.events.on('dev:cheat', (p) => {
     if (p.id === 'give_all') for (let i = 0; i < content.items.length; i++) giveItem(progress, content.items[i]!.id);
     else if (p.id === 'slots6') cheatSlots = SLOTS;
+    else if (p.id === 'madness') getWorld().madness = 97;
+    else if (p.id === 'madness3') getWorld().madness = 65;
     ctl.apply(getWorld());
   });
   return ctl;

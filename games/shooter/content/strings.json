@@ -105,5 +105,7 @@
   "kind_core": "CORE",
   "kind_mod": "MOD",
   "kind_aux": "AUX",
-  "load_problem": "Save problem: {msg}"
+  "load_problem": "Save problem: {msg}",
+  "hud_warn": "!",
+  "hud_inverted": "AXIS INVERTED"
 }

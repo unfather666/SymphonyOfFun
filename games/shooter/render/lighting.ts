@@ -13,17 +13,38 @@ export interface LightFrame {
   alpha: number;
 }
 
-export function drawLighting(g: Gfx2d, w: World, cam: Cam, f: LightFrame, ambient: number): void {
+/** Is a world point lit by the lantern, a flare or the spotlight? (Hidden enemies only show when lit.) */
+export function litAt(w: World, x: number, y: number): boolean {
+  const r = w.rules;
+  const p = w.player;
+  const d2 = (x - p.x) ** 2 + (y - p.y) ** 2;
+  if (w.light.spotOn && (x - w.light.spotX) ** 2 + (y - w.light.spotY) ** 2 < w.light.spotR ** 2) return true;
+  if (w.now < p.flareUntil && d2 < 150 * 150) return true;
+  if (d2 < r.lantern_glow_r ** 2) return true;
+  if (w.light.spotOn || d2 > r.lantern_r ** 2) return false;
+  const diff = Math.atan2(Math.sin(Math.atan2(y - p.y, x - p.x) - Math.atan2(p.aimY, p.aimX)), Math.cos(Math.atan2(y - p.y, x - p.x) - Math.atan2(p.aimY, p.aimX)));
+  return Math.abs(diff) < (r.lantern_spread_deg * Math.PI) / 180;
+}
+
+export function drawLighting(g: Gfx2d, g2d: CanvasRenderingContext2D, w: World, cam: Cam, f: LightFrame, reduced: boolean, jitter: { x: number; y: number }): void {
+  const ambient = w.light.strobeOn && !reduced ? Math.max(w.light.ambient, w.rules.ambient_blackout) : w.light.ambient;
   const r = w.rules;
   const m = g.mask;
   m.begin(ambient);
+  const breathe = 1 + 0.15 * w.light.pulse;
   let used = 0;
   const sx = f.px - cam.x;
   const sy = f.py - cam.y;
   const ang = Math.atan2(w.player.aimY, w.player.aimX);
-  m.cone(sx, sy, ang, (r.lantern_spread_deg * Math.PI) / 180, r.lantern_r, 1);
-  m.light(sx, sy, r.lantern_glow_r, 1);
-  used += 2;
+  if (w.light.spotOn) {
+    m.light(w.light.spotX - cam.x, w.light.spotY - cam.y, w.light.spotR, 1);
+    m.light(sx, sy, r.lantern_glow_r * 0.5, 0.8);
+    used += 2;
+  } else {
+    m.cone(sx, sy, ang, (r.lantern_spread_deg * Math.PI) / 180, r.lantern_r * breathe, 1);
+    m.light(sx, sy, r.lantern_glow_r * breathe, 1);
+    used += 2;
+  }
   if (w.now < w.player.flareUntil) {
     const left = (w.player.flareUntil - w.now) / r.flare_ms;
     m.light(sx, sy, 150, Math.min(1, left * 3));
@@ -57,5 +78,7 @@ export function drawLighting(g: Gfx2d, w: World, cam: Cam, f: LightFrame, ambien
     m.light(b.x - cam.x, b.y - cam.y, b.owner === 0 ? 16 : 12, 0.6);
     used++;
   }
+  if (jitter.x || jitter.y) g2d.save(), g2d.translate(jitter.x, jitter.y);
   m.end();
+  if (jitter.x || jitter.y) g2d.restore();
 }

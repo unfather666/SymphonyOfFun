@@ -1,8 +1,83 @@
 [
-  { "id": "cultist", "start": "wander", "states": {
-      "wander": { "kind": "wander", "ms": 1300, "next": "shoot" },
-      "shoot": { "kind": "shoot", "ms": 300, "next": "wander" } } },
-  { "id": "deep_one", "start": "chase", "states": {
-      "chase": { "kind": "chase", "ms": 2500, "next": "burst" },
-      "burst": { "kind": "burst", "ms": 400, "speedMul": 2.6, "next": "chase" } } }
+ {
+  "id": "cultist",
+  "start": "wander",
+  "states": {
+   "wander": {
+    "kind": "wander",
+    "ms": 1300,
+    "next": "shoot"
+   },
+   "shoot": {
+    "kind": "shoot",
+    "ms": 300,
+    "next": "wander"
+   }
+  }
+ },
+ {
+  "id": "deep_one",
+  "start": "chase",
+  "states": {
+   "chase": {
+    "kind": "chase",
+    "ms": 2500,
+    "next": "burst"
+   },
+   "burst": {
+    "kind": "burst",
+    "ms": 400,
+    "speedMul": 2.6,
+    "next": "chase"
+   }
+  }
+ },
+ {
+  "id": "whisperer",
+  "start": "strafe",
+  "states": {
+   "strafe": {
+    "kind": "strafe",
+    "ms": 1800,
+    "dist": 40,
+    "nearR": 28,
+    "nearTo": "flee",
+    "next": "strafe"
+   },
+   "flee": {
+    "kind": "flee",
+    "ms": 700,
+    "next": "strafe"
+   }
+  }
+ },
+ {
+  "id": "eye",
+  "start": "idle",
+  "states": {
+   "idle": {
+    "kind": "idle",
+    "ms": 3600000,
+    "next": "idle"
+   }
+  }
+ },
+ {
+  "id": "dreamer",
+  "start": "chase",
+  "states": {
+   "chase": {
+    "kind": "chase",
+    "ms": 2200,
+    "zig": 0.6,
+    "next": "strafe"
+   },
+   "strafe": {
+    "kind": "strafe",
+    "ms": 1200,
+    "dist": 50,
+    "next": "chase"
+   }
+  }
+ }
 ]

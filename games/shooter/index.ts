@@ -9,6 +9,8 @@ import { createWorld, resetWorld } from './logic/world';
 import type { Command, World } from './logic/types';
 import { cameraAt, type Cam } from './render/camera';
 import { drawScene } from './render/scene';
+import { createMusic, type Music } from './musicControl';
+import { tierOf } from './logic/madness';
 import { createProgressControl, type ProgressControl } from './progressControl';
 
 const SFX_OF_CUE: Record<number, string> = {
@@ -38,6 +40,7 @@ function create(ctx: CoreContext): GameInstance {
   let endedAt = 0;
   let prog: ProgressControl;
   let banked = false;
+  let music: Music;
 
   function readCommand(): void {
     const inp = ctx.input;
@@ -75,6 +78,7 @@ function create(ctx: CoreContext): GameInstance {
       if (id) ctx.chip.sfx(id);
       if (c === CUE.hurt) ctx.gfx.shake(world.rules.hurt_shake_px, 120);
       else if (c === CUE.kill) ctx.gfx.shake(world.rules.kill_shake_px, 60);
+      else if (c === CUE.invertWarn) ctx.gfx.flash(31, 300);
       else if (c === CUE.dead) {
         ctx.gfx.flash(10, 300);
         ctx.gfx.fade(0.6, 900);
@@ -91,6 +95,7 @@ function create(ctx: CoreContext): GameInstance {
       world = createWorld({
         rules: content.rules,
         rng: ctx.random.stream('shooter_sim'),
+        madRng: ctx.random.stream('shooter_madness'),
         fxRng: ctx.random.stream('shooter_fx'),
         plan,
         defs: content.enemies,
@@ -101,6 +106,8 @@ function create(ctx: CoreContext): GameInstance {
       prog = createProgressControl(ctx, content, () => world);
       world.dropItems = prog.drops();
       prog.apply(world);
+      music = createMusic(ctx);
+      music.start(content.songs.get(`tier${plan.tier}`));
       if (content.problems.length) ctx.ui.notice(ctx.strings('content_problem'), 3000);
     },
     update() {
@@ -123,12 +130,15 @@ function create(ctx: CoreContext): GameInstance {
       }
       if (world.status !== 'play' && endedAt === 0) endedAt = now;
       drainCues();
+      music.setWarped(tierOf(world.madness, world.rules) >= 2);
     },
     draw(alpha) {
       drawScene(ctx, world, alpha, prog.hud);
     },
     pause() {},
-    shutdown() {},
+    shutdown() {
+      music.dispose();
+    },
   };
 
   function restart(now: number): void {

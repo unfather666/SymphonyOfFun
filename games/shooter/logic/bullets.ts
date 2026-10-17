@@ -6,6 +6,7 @@ import { ELEMENT_HIT, ELEMENTS, KIND, PROJECTILES } from './effects';
 import { gridQuery } from './grid';
 import { lineClear, T_FLOOR, T_GLASS, tileAt, TILE, isSolid } from './tiles';
 import { cue, spark } from './world';
+import { gain } from './madness';
 import type { Bullet, Enemy, Shot, World } from './types';
 
 const CUE_OF_KIND = [CUE.shotBolt, CUE.shotBeam, CUE.shotArc, CUE.shotShell, CUE.shotWave, CUE.shotBolt];
@@ -56,6 +57,7 @@ export function fireShot(w: World, shot: Shot, hitMask: number, killMask: number
       if (kind === KIND.wave) b.grow = shot.size * 4;
     }
   cue(w, CUE_OF_KIND[kind]!);
+  if (shot.selfMadness > 0) gain(w, shot.selfMadness);
   const m = w.particles.acquire();
   if (m) {
     m.x = ox; m.y = oy; m.vx = m.vy = 0; m.dieAt = w.now + 34; m.colour = 19; m.size = 3; m.glow = 1;
@@ -203,7 +205,9 @@ function advance(w: World, b: Bullet): boolean {
       spark(w, b.x, b.y, 2, 19, 0);
       cue(w, CUE.hit);
       applyHitEffects(w, e, b.hitMask, b.vx / len, b.vy / len, b.dmg, b.killMask);
-      damageEnemy(w, e, b.dmg, b.killMask);
+      // A hit from behind (travelling the way a backstab target faces) kills outright.
+      const behind = e.def.backstab === true && (b.vx * Math.cos(e.heading) + b.vy * Math.sin(e.heading)) / len > 0.5;
+      damageEnemy(w, e, behind ? e.hp : b.dmg, b.killMask);
       if (b.pierce-- <= 0) {
         endBullet(w, b);
         return true;

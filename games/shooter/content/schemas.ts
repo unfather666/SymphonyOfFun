@@ -19,6 +19,11 @@ export const ENEMY_SCHEMA: Schema = {
   auraR: { type: 'number', min: 8, max: 300, optional: true },
   splitInto: { type: 'id', optional: true },
   splitCount: { type: 'number', min: 1, max: 8, int: true, optional: true },
+  backstab: { type: 'boolean', optional: true },
+  gaze: { type: 'boolean', optional: true },
+  turnDegS: { type: 'number', min: 1, max: 360, optional: true },
+  hidden: { type: 'boolean', optional: true },
+  ghostMs: { type: 'number', min: 200, max: 20000, optional: true },
 };
 
 export const BRAIN_SCHEMA: Schema = {
@@ -38,6 +43,14 @@ export const ROOM_SCHEMA: Schema = {
   waves: { type: 'any' },
   ambient: { type: 'number', min: 0, max: 1 },
   tier: { type: 'number', min: 0, max: 9, int: true },
+  script: { type: 'any', optional: true },
+};
+
+export const SONG_SCHEMA: Schema = {
+  bpm: { type: 'number', min: 30, max: 300 },
+  meter: { type: 'number', min: 2, max: 8, int: true, optional: true },
+  sections: { type: 'any' },
+  loop: { type: 'boolean', optional: true },
 };
 
 export const SFX_SCHEMA: Schema = {

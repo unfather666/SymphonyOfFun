@@ -2,10 +2,11 @@
 import { CUE, OUT_CAP } from './cues';
 import { createGrid } from './grid';
 import { createPool } from './pool';
+import { newLightState } from './lightscript';
 import type { Rng } from './rng';
 import type { Rules } from './rules';
 import { TILE, T_EXIT_SHUT, type TileMap } from './tiles';
-import type { Bullet, CBrain, Enemy, EnemyDef, LevelPlan, Particle, Pickup, Player, RoomState, ShotSpec, World } from './types';
+import type { Bullet, CBrain, Enemy, EnemyDef, Ghost, LevelPlan, Particle, Pickup, Player, RoomState, ShotSpec, World } from './types';
 
 function makeEnemy(dummyDef: EnemyDef, dummyBrain: CBrain): Enemy {
   return {
@@ -19,11 +20,13 @@ const makeBullet = (): Bullet => ({
   bounce: 0, homing: 0, kb: 0, hitMask: 0, killMask: 0, owner: 0, kind: 0, elem: 0, h0: -1, h1: -1, h2: -1, h3: -1,
 });
 const makeParticle = (): Particle => ({ alive: false, idx: -1, slot: 0, born: 0, x: 0, y: 0, vx: 0, vy: 0, dieAt: 0, colour: 0, size: 1, glow: 0 });
+const makeGhost = (): Ghost => ({ alive: false, idx: -1, slot: 0, born: 0, x: 0, y: 0, vx: 0, vy: 0, dieAt: 0, kind: 0, arg: 0 });
 const makePickup = (): Pickup => ({ alive: false, idx: -1, slot: 0, born: 0, x: 0, y: 0, kind: 0, arg: 0, dieAt: 0 });
 
 export interface WorldInit {
   rules: Rules;
   rng: Rng;
+  madRng: Rng;
   fxRng: Rng;
   plan: LevelPlan;
   defs: readonly EnemyDef[];
@@ -47,7 +50,7 @@ function roomMapOf(plan: LevelPlan): Int8Array {
   return rm;
 }
 
-const newRooms = (plan: LevelPlan): RoomState[] => plan.rooms.map((r) => ({ wave: 0, spawned: 0, state: r.waves.length === 0 ? 2 : 0, nextWaveAt: 0 }));
+const newRooms = (plan: LevelPlan): RoomState[] => plan.rooms.map((r) => ({ wave: 0, spawned: 0, begun: false, state: r.waves.length === 0 ? 2 : 0, nextWaveAt: 0 }));
 
 export function createWorld(init: WorldInit): World {
   const { rules, plan } = init;
@@ -55,17 +58,21 @@ export function createWorld(init: WorldInit): World {
   const dummyBrain: CBrain = { start: 0, states: [] };
   const map: TileMap = { w: plan.w, h: plan.h, data: plan.tiles.slice() };
   const w: World = {
-    rules, rng: init.rng, fxRng: init.fxRng, now: init.now, stepNo: 0, startedAt: init.now, status: 'play', plan, map,
+    rules, rng: init.rng, madRng: init.madRng, fxRng: init.fxRng, now: init.now, stepNo: 0, startedAt: init.now, status: 'play', plan, map,
     player: newPlayer(rules, plan, init.now),
     enemies: createPool(rules.cap_enemies, () => makeEnemy(first, dummyBrain), 'skip'),
     bullets: createPool(rules.cap_bullets, makeBullet, 'replaceOldest'),
     particles: createPool(rules.cap_particles, makeParticle, 'skip'),
     pickups: createPool(rules.cap_pickups, makePickup, 'replaceOldest'),
+    ghosts: createPool(rules.cap_ghosts, makeGhost, 'skip'),
+    defList: init.defs,
+    defIndex: new Map(init.defs.map((d, i) => [d.id, i])),
     grid: createGrid(plan.w * TILE, plan.h * TILE, rules.grid_cell, rules.cap_enemies),
     defs: new Map(init.defs.map((d) => [d.id, d])),
     brains: init.brains,
     shot: init.shot,
-    rooms: newRooms(plan), room: -1, exitOpen: false, score: 0, kills: 0, spawnCount: 0,
+    rooms: newRooms(plan), room: -1, exitOpen: false, score: 0, kills: 0, spawnCount: 0, waveCount: 0, combo: 0, comboUntil: 0, madness: 0, madnessIn: 0,
+    light: newLightState(plan.ambient), inv: { phase: 0, at: 0 }, fxNextAt: 0, whisperAt: init.now + 3000,
     out: new Int32Array(OUT_CAP), outN: 0, scratch: new Int32Array(64),
     roomMap: roomMapOf(plan), roomAlive: new Int32Array(plan.rooms.length),
     flow: new Int16Array(plan.w * plan.h).fill(-1), flowQ: new Int32Array(plan.w * plan.h), flowAt: -1,
@@ -86,6 +93,7 @@ export function resetWorld(w: World, now: number): void {
   w.bullets.clear();
   w.particles.clear();
   w.pickups.clear();
+  w.ghosts.clear();
   w.map.data.set(w.plan.tiles);
   w.player = newPlayer(w.rules, w.plan, now);
   w.rooms = newRooms(w.plan);
@@ -95,6 +103,15 @@ export function resetWorld(w: World, now: number): void {
   w.score = 0;
   w.kills = 0;
   w.spawnCount = 0;
+  w.waveCount = 0;
+  w.combo = 0;
+  w.comboUntil = 0;
+  w.madness = 0;
+  w.madnessIn = 0;
+  w.light = newLightState(w.plan.ambient);
+  w.inv = { phase: 0, at: 0 };
+  w.fxNextAt = 0;
+  w.whisperAt = now + 3000;
   w.startedAt = now;
   w.now = now;
   w.outN = 0;
