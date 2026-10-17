@@ -1,0 +1,7 @@
+[
+  { "id": "trash_bin", "w": 10, "h": 12, "mass": 2, "damping": 3, "knockDv": 60, "breakDv": 0, "colour": 4, "sprite": "prop_bin" },
+  { "id": "shopping_cart", "w": 14, "h": 10, "mass": 3, "damping": 1.5, "knockDv": 50, "breakDv": 0, "colour": 5, "sprite": "prop_cart" },
+  { "id": "crate", "w": 12, "h": 12, "mass": 2.5, "damping": 4, "knockDv": 80, "breakDv": 90, "colour": 13, "sprite": "prop_crate" },
+  { "id": "flower_pot", "w": 8, "h": 8, "mass": 1, "damping": 4, "knockDv": 40, "breakDv": 70, "colour": 11, "sprite": "prop_pot" },
+  { "id": "bench", "w": 20, "h": 8, "mass": 12, "damping": 6, "knockDv": 9999, "breakDv": 0, "colour": 12, "sprite": "prop_bench" }
+]

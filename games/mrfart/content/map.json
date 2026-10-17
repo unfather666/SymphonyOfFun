@@ -1,0 +1,14 @@
+{
+  "cell": { "w": 16, "h": 12, "streetX": 13, "streetY": 9 },
+  "layout": ["HS", "PC"],
+  "cells": {
+    "H": { "kind": "house", "roof": 4, "building": [2, 2, 9, 6], "door": 4,
+      "props": [{ "def": "trash_bin", "at": [12, 7] }, { "def": "flower_pot", "at": [1, 8] }] },
+    "S": { "kind": "shop", "roof": 5, "building": [2, 2, 10, 6], "door": 5,
+      "props": [{ "def": "shopping_cart", "at": [4, 8] }, { "def": "crate", "at": [12, 7] }, { "def": "trash_bin", "at": [1, 7] }] },
+    "P": { "kind": "park", "roof": 11, "trees": [[3, 3], [10, 2], [8, 6], [2, 7]],
+      "props": [{ "def": "bench", "at": [6, 4] }, { "def": "bench", "at": [10, 7] }, { "def": "crate", "at": [4, 5] }] },
+    "C": { "kind": "church", "roof": 6, "building": [3, 1, 8, 7], "door": 4,
+      "props": [{ "def": "trash_bin", "at": [12, 8] }, { "def": "shopping_cart", "at": [1, 4] }] }
+  }
+}

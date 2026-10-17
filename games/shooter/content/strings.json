@@ -1,5 +1,14 @@
 {
   "title": "DEEP SIGNAL",
-  "coming_soon": "COMING SOON",
-  "back_hint": "ESC THEN QUIT TO RETURN"
+  "hud_hp": "HP",
+  "hud_score": "SCORE {n}",
+  "hud_flares": "FLARES {n}",
+  "hud_madness": "MADNESS",
+  "hud_level": "LEVEL {n}",
+  "dead_title": "SIGNAL LOST",
+  "dead_hint": "RESTARTING THE ROOM",
+  "clear_title": "ROOM CLEAR",
+  "clear_score": "SCORE {n}  BONUS {b}",
+  "clear_hint": "PRESS J TO GO AGAIN",
+  "content_problem": "Some content was dropped; see the console."
 }

@@ -1,0 +1,14 @@
+[
+  { "id": "shot_bolt", "layers": [ { "voice": "pulseB", "freq": 720, "freqEnd": 280, "durMs": 45, "volume": 0.22, "duty": 0.25 }, { "voice": "noise", "freq": 4000, "durMs": 25, "volume": 0.15 } ] },
+  { "id": "shot_beam", "layers": [ { "voice": "pulseA", "freq": 1300, "freqEnd": 600, "durMs": 100, "volume": 0.2, "duty": 0.125 }, { "voice": "fm", "freq": 500, "freqEnd": 900, "durMs": 100, "volume": 0.12, "fmRatio": 2, "fmDepth": 200 } ] },
+  { "id": "shot_arc", "layers": [ { "voice": "noise", "freq": 5000, "durMs": 90, "volume": 0.3 }, { "voice": "fm", "freq": 300, "freqEnd": 1300, "durMs": 80, "volume": 0.18, "fmRatio": 3, "fmDepth": 400 } ] },
+  { "id": "shot_shell", "layers": [ { "voice": "noise", "freq": 900, "freqEnd": 200, "durMs": 140, "volume": 0.4 }, { "voice": "triangle", "freq": 160, "freqEnd": 55, "durMs": 140, "volume": 0.4 } ] },
+  { "id": "shot_wave", "layers": [ { "voice": "fm", "freq": 420, "freqEnd": 190, "durMs": 180, "volume": 0.25, "fmRatio": 1.5, "fmDepth": 250 }, { "voice": "triangle", "freq": 210, "durMs": 160, "volume": 0.2 } ] },
+  { "id": "ds_hit", "layers": [ { "voice": "noise", "freq": 2600, "durMs": 40, "volume": 0.25 } ] },
+  { "id": "ds_kill", "layers": [ { "voice": "noise", "freq": 1500, "freqEnd": 300, "durMs": 160, "volume": 0.4 }, { "voice": "triangle", "freq": 200, "freqEnd": 60, "durMs": 170, "volume": 0.35 } ] },
+  { "id": "ds_pickup", "layers": [ { "voice": "pulseA", "freq": 660, "durMs": 40, "volume": 0.25, "duty": 0.5 }, { "voice": "pulseA", "freq": 990, "delayMs": 40, "durMs": 40, "volume": 0.25, "duty": 0.5 }, { "voice": "pulseA", "freq": 1320, "delayMs": 80, "durMs": 70, "volume": 0.25, "duty": 0.5 } ] },
+  { "id": "ds_hurt", "layers": [ { "voice": "pulseB", "freq": 240, "freqEnd": 90, "durMs": 180, "volume": 0.4, "duty": 0.5 }, { "voice": "noise", "freq": 1000, "durMs": 120, "volume": 0.3 } ] },
+  { "id": "whisper", "layers": [ { "voice": "noise", "freq": 1800, "freqEnd": 900, "durMs": 600, "volume": 0.18 }, { "voice": "pulseB", "freq": 90, "freqEnd": 80, "durMs": 600, "volume": 0.1, "duty": 0.125 } ] },
+  { "id": "heartbeat", "layers": [ { "voice": "triangle", "freq": 70, "freqEnd": 45, "durMs": 110, "volume": 0.5 }, { "voice": "triangle", "freq": 65, "freqEnd": 40, "delayMs": 170, "durMs": 130, "volume": 0.4 } ] },
+  { "id": "boss_roar", "layers": [ { "voice": "fm", "freq": 120, "freqEnd": 40, "durMs": 900, "volume": 0.5, "fmRatio": 0.5, "fmDepth": 600 }, { "voice": "noise", "freq": 500, "freqEnd": 100, "durMs": 900, "volume": 0.3 } ] }
+]

@@ -1,5 +1,17 @@
 {
   "title": "MR FART",
-  "coming_soon": "COMING SOON",
-  "back_hint": "ESC THEN QUIT TO RETURN"
+  "rep": "REP",
+  "day": "DAY {n}",
+  "game_over": "RUN OUT OF TOWN",
+  "game_over_hint": "ESC THEN QUIT",
+  "stress": "STRESS",
+  "hint_clench": "CLENCH  L  HOLD THEN LET GO",
+  "meter": "FART",
+  "loading": "LOADING PHYSICS",
+  "hint_move": "MOVE  ARROWS OR WASD",
+  "hint_run": "RUN  K",
+  "hint_clench": "CLENCH  L",
+  "kind_quiet": "QUIET",
+  "kind_squeaky": "SQUEAKY",
+  "kind_loud": "LOUD"
 }
