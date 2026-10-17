@@ -126,6 +126,23 @@ export async function createRapierPhysics(opts: RapierOptions = {}): Promise<Phy
       const i = find(h);
       if (i >= 0) destroy(i);
     },
+    setPosition(h, x, y) {
+      const i = find(h);
+      if (i < 0) return;
+      v2.x = x / PX_PER_M;
+      v2.y = y / PX_PER_M;
+      bodies[i]!.setTranslation(v2, true);
+      v2.x = 0;
+      v2.y = 0;
+      bodies[i]!.setLinvel(v2, true);
+      px[i] = x;
+      py[i] = y;
+      pvx[i] = 0;
+      pvy[i] = 0;
+      const s = steer[i]!;
+      s.cx = 0;
+      s.cy = 0;
+    },
     setTargetVelocity(h, vx, vy, gain = 0.25) {
       const i = find(h);
       if (i < 0) return;

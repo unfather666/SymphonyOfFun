@@ -1,0 +1,6 @@
+[
+  { "id": "across_street", "kind": "across", "cell": "none" },
+  { "id": "park", "kind": "cell", "cell": "park" },
+  { "id": "church", "kind": "cell", "cell": "church" },
+  { "id": "up_the_tree", "kind": "tree", "cell": "park" }
+]

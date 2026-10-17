@@ -1,0 +1,10 @@
+[
+  { "id": "cat", "tier": 0, "r": 4, "mass": 0.6, "damping": 4, "speed": 55, "carryMult": 0.95, "leash": 36, "followDist": 14, "tug": 30, "colour": 14, "tags": ["light", "climber", "leashable"] },
+  { "id": "old_lady", "tier": 0, "r": 5, "mass": 1.2, "damping": 5, "speed": 24, "carryMult": 0, "leash": 40, "followDist": 12, "tug": 0, "colour": 31, "tags": ["walker"] },
+  { "id": "puppy", "tier": 0, "r": 4, "mass": 0.8, "damping": 4, "speed": 60, "carryMult": 0.95, "leash": 40, "followDist": 12, "tug": 40, "colour": 15, "tags": ["light", "leashable"] },
+  { "id": "toddler", "tier": 0, "r": 4, "mass": 1, "damping": 5, "speed": 30, "carryMult": 0.85, "leash": 30, "followDist": 12, "tug": 20, "colour": 26, "tags": ["light", "walker", "leashable"] },
+  { "id": "goat", "tier": 1, "r": 6, "mass": 6, "damping": 4, "speed": 46, "carryMult": 0, "leash": 50, "followDist": 18, "tug": 70, "colour": 6, "tags": ["leashable", "walker"] },
+  { "id": "piano", "tier": 1, "r": 8, "mass": 30, "damping": 6, "speed": 0, "carryMult": 0, "leash": 0, "followDist": 0, "tug": 0, "colour": 2, "tags": ["heavy"] },
+  { "id": "melon_cart", "tier": 1, "r": 7, "mass": 8, "damping": 3, "speed": 0, "carryMult": 0, "leash": 0, "followDist": 0, "tug": 0, "colour": 22, "tags": ["heavy"] },
+  { "id": "mailman", "tier": 1, "r": 5, "mass": 1.5, "damping": 5, "speed": 32, "carryMult": 0, "leash": 40, "followDist": 14, "tug": 0, "colour": 29, "tags": ["walker"] }
+]

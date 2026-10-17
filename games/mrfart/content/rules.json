@@ -50,7 +50,8 @@
     "puffsReduced": 96,
     "joints": 64,
     "pieceLifeMs": 3000,
-    "piecesPerBreak": 4
+    "piecesPerBreak": 4,
+    "subjects": 8
   },
   "stress": {
     "max": 100,
@@ -76,5 +77,25 @@
     "start": 70,
     "max": 100,
     "fleeBelow": 20
+  },
+  "jobs": {
+    "offers": 3,
+    "tierEvery": 50,
+    "maxTier": 4,
+    "mixAfter": 200,
+    "lostDist": 320,
+    "lostMs": 60000,
+    "repBase": 2,
+    "coinBase": 10,
+    "reach": 22,
+    "zoneR": 26,
+    "boardR": 30,
+    "countChance2": 0.3,
+    "countChance3": 0.15,
+    "originCells": 6,
+    "spread": 14,
+    "maxSubjects": 8,
+    "despawnMs": 1500,
+    "dropDist": 14
   }
 }

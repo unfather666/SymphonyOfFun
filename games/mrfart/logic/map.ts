@@ -52,6 +52,8 @@ export interface MapData {
   /** Merged solid rectangles in tiles: [tx, ty, tw, th]. */
   rects: Array<[number, number, number, number]>;
   props: PropSpawn[];
+  /** Tree centres in px, with the cell they stand in. */
+  trees: Array<{ x: number; y: number; cell: number }>;
   cells: CellInfo[];
   cellW: number;
   cellH: number;
@@ -72,6 +74,7 @@ export function buildMap(def: MapDef): MapData {
   };
   const props: PropSpawn[] = [];
   const cells: CellInfo[] = [];
+  const trees: MapData['trees'] = [];
   for (let row = 0; row < rows; row++) {
     const line = def.layout[row]!;
     if (line.length !== cols) throw new Error(`map.json: layout row ${row} has ${line.length} cells, expected ${cols}.`);
@@ -97,7 +100,10 @@ export function buildMap(def: MapDef): MapData {
         doorX = (dx + 0.5) * TILE;
         doorY = (dy + 1.5) * TILE;
       }
-      for (const [tx, ty] of ct.trees ?? []) set(ox + tx, oy + ty, T.TREE);
+      for (const [tx, ty] of ct.trees ?? []) {
+        set(ox + tx, oy + ty, T.TREE);
+        trees.push({ x: (ox + tx + 0.5) * TILE, y: (oy + ty + 0.5) * TILE, cell: cells.length });
+      }
       for (const p of ct.props ?? []) props.push({ def: p.def, x: (ox + p.at[0] + 0.5) * TILE, y: (oy + p.at[1] + 0.5) * TILE });
       cells.push({ col, row, kind: ct.kind, key, tx: ox, ty: oy, tw: streetX, th: streetY, doorX, doorY });
     }
@@ -106,7 +112,7 @@ export function buildMap(def: MapDef): MapData {
   for (let y = 0; y < h; y++) { set(0, y, T.FENCE); set(w - 1, y, T.FENCE); }
   const solid = new Uint8Array(w * h);
   for (let i = 0; i < tiles.length; i++) solid[i] = SOLID_FROM_TILE.has(tiles[i]!) ? 1 : 0;
-  return { cols, rows, w, h, pxW: w * TILE, pxH: h * TILE, tiles, solid, rects: mergeSolid(solid, w, h), props, cells, cellW: cw, cellH: ch, streetX, streetY };
+  return { cols, rows, w, h, pxW: w * TILE, pxH: h * TILE, tiles, solid, rects: mergeSolid(solid, w, h), props, trees, cells, cellW: cw, cellH: ch, streetX, streetY };
 }
 
 /** Greedy merge of solid tiles into rectangles: row runs, extended downward while the same run repeats. */

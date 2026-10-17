@@ -1,0 +1,153 @@
+[
+ {
+  "id": "walk_leash",
+  "textKey": "job_walk_leash",
+  "spawn": "origin",
+  "maxCount": 3,
+  "subjectTags": [
+   "leashable"
+  ],
+  "places": [
+   "across_street",
+   "park",
+   "church"
+  ],
+  "steps": [
+   {
+    "verb": "press",
+    "zone": "subject"
+   },
+   {
+    "verb": "escort",
+    "zone": "place",
+    "leash": true
+   }
+  ]
+ },
+ {
+  "id": "escort_cross",
+  "textKey": "job_escort_cross",
+  "spawn": "origin",
+  "maxCount": 1,
+  "subjectTags": [
+   "walker"
+  ],
+  "places": [
+   "across_street"
+  ],
+  "steps": [
+   {
+    "verb": "press",
+    "zone": "subject"
+   },
+   {
+    "verb": "escort",
+    "zone": "place"
+   }
+  ]
+ },
+ {
+  "id": "carry_to",
+  "textKey": "job_carry_to",
+  "spawn": "origin",
+  "maxCount": 1,
+  "subjectTags": [
+   "light"
+  ],
+  "places": [
+   "park",
+   "church",
+   "across_street"
+  ],
+  "steps": [
+   {
+    "verb": "grab",
+    "zone": "subject"
+   },
+   {
+    "verb": "carry",
+    "zone": "place"
+   },
+   {
+    "verb": "place",
+    "zone": "place"
+   }
+  ]
+ },
+ {
+  "id": "fetch",
+  "textKey": "job_fetch",
+  "spawn": "place",
+  "maxCount": 1,
+  "subjectTags": [
+   "light"
+  ],
+  "places": [
+   "park",
+   "church"
+  ],
+  "steps": [
+   {
+    "verb": "grab",
+    "zone": "subject"
+   },
+   {
+    "verb": "carry",
+    "zone": "origin"
+   },
+   {
+    "verb": "place",
+    "zone": "origin"
+   }
+  ]
+ },
+ {
+  "id": "rescue_from_tree",
+  "textKey": "job_rescue_from_tree",
+  "spawn": "tree",
+  "maxCount": 1,
+  "subjectTags": [
+   "climber"
+  ],
+  "places": [
+   "up_the_tree"
+  ],
+  "steps": [
+   {
+    "verb": "press",
+    "zone": "tree"
+   },
+   {
+    "verb": "escort",
+    "zone": "origin"
+   }
+  ]
+ },
+ {
+  "id": "deliver",
+  "textKey": "job_deliver",
+  "spawn": "origin",
+  "maxCount": 1,
+  "subjectTags": [
+   "light"
+  ],
+  "places": [
+   "church",
+   "park"
+  ],
+  "steps": [
+   {
+    "verb": "grab",
+    "zone": "subject"
+   },
+   {
+    "verb": "carry",
+    "zone": "place"
+   },
+   {
+    "verb": "press",
+    "zone": "place"
+   }
+  ]
+ }
+]
