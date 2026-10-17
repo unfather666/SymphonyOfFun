@@ -17,7 +17,7 @@ export function newLightState(base: number): LightState {
 }
 
 /** Start a trick. Full policy (4 at once): the oldest slot is replaced. */
-function start(w: World, e: ScriptEntry): void {
+export function triggerLight(w: World, e: ScriptEntry): void {
   const ls = w.light;
   let slot = ls.fx[0]!;
   for (const f of ls.fx) {
@@ -31,8 +31,10 @@ function start(w: World, e: ScriptEntry): void {
   slot.kind = KIND_OF[e.kind];
   slot.startAt = w.now;
   slot.until = w.now + e.ms;
-  slot.x = e.x ?? 0;
-  slot.y = e.y ?? 0;
+  // No position given: the room the player is in (or the player's own spot).
+  const rm = w.room >= 0 ? w.plan.rooms[w.room] : undefined;
+  slot.x = e.x ?? (rm ? (rm.x + rm.w / 2) * 16 : w.player.x);
+  slot.y = e.y ?? (rm ? (rm.y + rm.h / 2) * 16 : w.player.y);
   slot.r = e.r ?? 48;
   slot.hz = e.hz ?? 4;
   if (slot.kind === FX_BLACKOUT) cue(w, CUE.blackout);
@@ -47,7 +49,7 @@ export function updateLight(w: World): void {
     const e = script[ls.idx]!;
     const due = e.atWave !== undefined ? w.waveCount >= e.atWave : w.now - w.startedAt >= (e.atMs ?? 0);
     if (!due) break;
-    start(w, e);
+    triggerLight(w, e);
     ls.idx++;
   }
   const r = w.rules;

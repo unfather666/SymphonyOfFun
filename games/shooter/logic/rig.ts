@@ -120,13 +120,15 @@ export interface Progress {
   presets: Array<Array<string | null>>;
   active: number;
   totalPoints: number;
+  /** Level numbers cleared at least once, ascending. */
+  levelsCleared: number[];
 }
 
 export function newProgress(startItems: readonly string[]): Progress {
   const presets: Array<Array<string | null>> = [];
   for (let p = 0; p < PRESETS; p++) presets.push(new Array<string | null>(SLOTS).fill(null));
   presets[0]![0] = startItems[0] ?? null;
-  return { ownedItems: [...startItems], presets, active: 0, totalPoints: 0 };
+  return { ownedItems: [...startItems], presets, active: 0, totalPoints: 0, levelsCleared: [] };
 }
 
 /** Why a placement is refused, or null when it is fine. null item clears the slot. */

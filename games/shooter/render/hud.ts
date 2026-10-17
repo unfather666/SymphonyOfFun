@@ -22,6 +22,20 @@ function drawSlots(ctx: CoreContext, rig: HudRig): void {
   g.drawText(String(rig.active + 1), x0 - 8, 203, { colour: 6 });
 }
 
+function drawBossBar(ctx: CoreContext, w: World): void {
+  const g = ctx.gfx;
+  const es = w.enemies.live;
+  for (let i = 0; i < w.enemies.n; i++) {
+    const e = es[i]!;
+    if (!e.def.boss) continue;
+    g.rect(112, 18, 160, 6, 2);
+    g.rect(113, 19, Math.max(0, Math.round((158 * e.hp) / e.maxHp)), 4, e.bossPhase >= 2 ? 31 : e.bossPhase === 1 ? 14 : 10);
+    g.frame(112, 18, 160, 6, 7);
+    g.drawText(ctx.strings('hud_boss'), 192, 26, { align: 'center', colour: 10 });
+    return;
+  }
+}
+
 export function drawHud(ctx: CoreContext, w: World, rig: HudRig): void {
   const g = ctx.gfx;
   const p = w.player;
@@ -37,6 +51,8 @@ export function drawHud(ctx: CoreContext, w: World, rig: HudRig): void {
   if (w.inv.phase === 1 && (w.stepNo >> 2) % 2 === 0) g.drawText(ctx.strings('hud_warn'), 192, 30, { align: 'center', colour: 10, scale: 2 });
   else if (w.inv.phase === 2) g.drawText(ctx.strings('hud_inverted'), 192, 30, { align: 'center', colour: 31 });
   g.drawText(ctx.strings('hud_score', { n: w.score }), 380, 5, { align: 'right', colour: 7, shadow: 1 });
+  if (w.plan.level > 0) g.drawText(ctx.strings('hud_level', { n: w.plan.level }), 192, 5, { align: 'center', colour: 6, shadow: 1 });
+  drawBossBar(ctx, w);
   g.drawText(ctx.strings('hud_flares', { n: p.flares }), 4, 206, { colour: 18, shadow: 1 });
   drawSlots(ctx, rig);
   if (w.status === 'dead') {

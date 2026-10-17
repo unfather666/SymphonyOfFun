@@ -1,0 +1,20 @@
+[
+ {
+  "id": "mi_go",
+  "tier": 4,
+  "hp": 22,
+  "speed": 50,
+  "size": 7,
+  "sprite": "mi_go",
+  "brain": "mi_go",
+  "touchDamage": 6,
+  "score": 70,
+  "tags": [
+   "flyer"
+  ],
+  "flies": true,
+  "shotSpeed": 55,
+  "shotDamage": 14,
+  "shotCount": 1
+ }
+]

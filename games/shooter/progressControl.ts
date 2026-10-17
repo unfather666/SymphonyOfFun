@@ -3,7 +3,7 @@ import type { CoreContext } from '../../src/core/api';
 import type { Content } from './content/load';
 import { DEFAULT_SHOT } from './logic/shots';
 import { PRESETS, SLOTS, activeItems, cyclePreset, giveItem, newProgress, placeItem, resolveRig, type ItemDef, type Progress } from './logic/rig';
-import { PROGRESS_VERSION, sanitizeProgress } from './logic/saveData';
+import { PROGRESS_VERSION, migrateProgress, sanitizeProgress } from './logic/saveData';
 import { dropPool, slotsFor } from './logic/unlocks';
 import { setShot } from './logic/world';
 import type { World } from './logic/types';
@@ -22,6 +22,8 @@ export interface ProgressControl {
   unlockedSlots(): number;
   /** Highest level cleared so far (0 = none). */
   highestCleared(): number;
+  /** Record a cleared level and bank its points, then save. */
+  bank(level: number, points: number): void;
   openRig(): void;
   cycle(dir: number): void;
   /** Re-resolve the active preset into the world's shot and refresh the HUD info. */
@@ -38,6 +40,7 @@ export function createProgressControl(ctx: CoreContext, content: Content, getWor
   const start = content.unlocks.startItems.filter((id) => known.has(id));
   let progress = newProgress(start);
   let cheatSlots = 0;
+  let god = false;
   const hud: HudRig = { slots: new Array<ItemDef | null>(SLOTS).fill(null), unlocked: 1, active: 0 };
 
   ctx.saves.register<Progress>({
@@ -47,7 +50,7 @@ export function createProgressControl(ctx: CoreContext, content: Content, getWor
     deserialize: (d) => {
       progress = sanitizeProgress(d, known, start);
     },
-    migrate: (d) => d as Progress,
+    migrate: migrateProgress,
   });
   const loaded = ctx.saves.load(SLOT);
   if (!loaded.ok && ctx.saves.has(SLOT)) ctx.log.warn('save-load', ctx.strings('load_problem', { msg: loaded.message }));
@@ -58,7 +61,15 @@ export function createProgressControl(ctx: CoreContext, content: Content, getWor
     },
     hud,
     unlockedSlots: () => Math.max(cheatSlots, slotsFor(ctl.highestCleared(), content.unlocks)),
-    highestCleared: () => 0,
+    highestCleared: () => progress.levelsCleared.reduce((m, n) => Math.max(m, n), 0),
+    bank(level, points) {
+      progress.totalPoints += points;
+      if (level >= 1 && !progress.levelsCleared.includes(level)) {
+        progress.levelsCleared.push(level);
+        progress.levelsCleared.sort((a, b) => a - b);
+      }
+      ctl.save();
+    },
     save() {
       const r = ctx.saves.save(SLOT);
       if (!r.ok) ctx.log.warn('save-write', r.message);
@@ -66,6 +77,7 @@ export function createProgressControl(ctx: CoreContext, content: Content, getWor
     apply(w) {
       const n = ctl.unlockedSlots();
       setShot(w, resolveRig(activeItems(progress, n, byId), DEFAULT_SHOT(w.rules).shots[0]!));
+      if (god) w.player.maxHp = w.player.hp = 9999;
       hud.unlocked = n;
       hud.active = progress.active;
       const list = progress.presets[progress.active]!;
@@ -134,6 +146,8 @@ export function createProgressControl(ctx: CoreContext, content: Content, getWor
   ctx.events.on('dev:cheat', (p) => {
     if (p.id === 'give_all') for (let i = 0; i < content.items.length; i++) giveItem(progress, content.items[i]!.id);
     else if (p.id === 'slots6') cheatSlots = SLOTS;
+    else if (p.id === 'points') progress.totalPoints = 1_000_000;
+    else if (p.id === 'god') god = true;
     else if (p.id === 'madness') getWorld().madness = 97;
     else if (p.id === 'madness3') getWorld().madness = 65;
     ctl.apply(getWorld());

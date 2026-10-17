@@ -4,7 +4,7 @@ import { spawnEnemy } from './world';
 import { CUE } from './cues';
 import { cue } from './world';
 import { updateLight } from './lightscript';
-import { solidAtPx } from './tiles';
+import { boxOpen } from './tiles';
 import type { World } from './types';
 
 const SPAWNS_PER_STEP = 8;
@@ -47,14 +47,16 @@ export function updateRooms(w: World): void {
         // Full policy: the wave waits for pool space.
         let x = s.x;
         let y = s.y;
-        if (w.light.spotOn) {
+        const room = plan.rooms[i]!;
+        const inRoom = w.light.spotX >= room.x * TILE && w.light.spotX < (room.x + room.w) * TILE && w.light.spotY >= room.y * TILE && w.light.spotY < (room.y + room.h) * TILE;
+        if (w.light.spotOn && inRoom) {
           // Spotlight: the wave arrives inside the lit circle (a few tries to avoid walls).
           for (let t = 0; t < 6; t++) {
             const a = w.rng.float() * Math.PI * 2;
             const d = w.rng.float() * w.light.spotR * 0.7;
             const sx = w.light.spotX + Math.cos(a) * d;
             const sy = w.light.spotY + Math.sin(a) * d;
-            if (!solidAtPx(w.map, sx, sy)) {
+            if (boxOpen(w.map, sx, sy, w.defs.get(s.def)?.size ?? 8)) {
               x = sx;
               y = sy;
               break;

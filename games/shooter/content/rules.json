@@ -82,5 +82,7 @@
   "ghost_speed": 22,
   "whisper_gap_ms": 5000,
   "pulse_ms": 900,
-  "pulse_amount": 0.12
+  "pulse_amount": 0.12,
+  "level_hp_step": 0.015,
+  "level_points_mult": 120
 }

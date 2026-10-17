@@ -18,5 +18,19 @@
    "stationary"
   ],
   "gaze": true
+ },
+ {
+  "id": "spawnling",
+  "tier": 2,
+  "hp": 4,
+  "speed": 70,
+  "size": 4,
+  "sprite": "spawnling",
+  "brain": "swarm",
+  "touchDamage": 4,
+  "score": 6,
+  "tags": [
+   "swarm"
+  ]
  }
 ]

@@ -19,6 +19,8 @@ const results = [];
 const check = (name, ok, detail = '') => results.push(`${ok ? 'PASS' : 'FAIL'} ${name}${detail ? ' - ' + detail : ''}`);
 const s0 = await page.evaluate(() => window.sof.state());
 check('shooter is open and ready', s0.game === 'shooter' && s0.ready, JSON.stringify(s0));
+await page.keyboard.press('j'); // level select: start level 1
+await wait(1500);
 await page.keyboard.down('d');
 await page.keyboard.down('j');
 await wait(1500);

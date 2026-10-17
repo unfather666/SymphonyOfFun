@@ -24,11 +24,30 @@ export const ENEMY_SCHEMA: Schema = {
   turnDegS: { type: 'number', min: 1, max: 360, optional: true },
   hidden: { type: 'boolean', optional: true },
   ghostMs: { type: 'number', min: 200, max: 20000, optional: true },
+  boss: { type: 'boolean', optional: true },
+  drawSize: { type: 'number', min: 8, max: 48, int: true, optional: true },
 };
 
 export const BRAIN_SCHEMA: Schema = {
   start: { type: 'id' },
   states: { type: 'object' },
+  phases: { type: 'any', optional: true },
+};
+
+export const TIER_SCHEMA: Schema = {
+  tier: { type: 'number', min: 0, max: 9, int: true },
+  ambient: { type: 'number', min: 0, max: 1 },
+  tint: { type: 'string' },
+  waves: { type: 'number', min: 1, max: 12, int: true },
+  waveSize: { type: 'number', min: 1, max: 30, int: true },
+  enemies: { type: 'any' },
+  tricks: { type: 'any' },
+  scriptEntries: { type: 'number', min: 0, max: 12, int: true },
+  pillars: { type: 'number', min: 0, max: 0.6 },
+  water: { type: 'number', min: 0, max: 1 },
+  boss: { type: 'id', optional: true },
+  finalBoss: { type: 'id', optional: true },
+  bossMinions: { type: 'any', optional: true },
 };
 
 export const SPRITE_SCHEMA: Schema = {

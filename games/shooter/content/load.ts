@@ -9,7 +9,8 @@ import type { ItemDef } from '../logic/rig';
 import type { Unlocks } from '../logic/unlocks';
 import unlocksRaw from './unlocks.json';
 import type { Song } from '../../../src/core/api';
-import { BRAIN_SCHEMA, ENEMY_SCHEMA, ITEM_SCHEMA, ROOM_SCHEMA, SFX_SCHEMA, SONG_SCHEMA, SPRITE_SCHEMA } from './schemas';
+import { compileTiers, type TierTable } from '../logic/tiers';
+import { BRAIN_SCHEMA, ENEMY_SCHEMA, ITEM_SCHEMA, ROOM_SCHEMA, SFX_SCHEMA, SONG_SCHEMA, SPRITE_SCHEMA, TIER_SCHEMA } from './schemas';
 
 export interface Content {
   rules: Rules;
@@ -19,6 +20,8 @@ export interface Content {
   items: ItemDef[];
   songs: Map<string, Song>;
   unlocks: Unlocks;
+  /** The ten per-tier level tables (empty when none loaded: the game falls back to the test room). */
+  tiers: TierTable[];
   problems: string[];
 }
 
@@ -52,7 +55,10 @@ export function loadContent(ctx: CoreContext): Content {
   const songReg = ctx.content.load('song', import.meta.glob('./songs/*.json', { eager: true }), SONG_SCHEMA);
   const songs = new Map(songReg.all().map((s) => [s.id, s as unknown as Song]));
 
+  const tierReg = ctx.content.load('tier', import.meta.glob('./levels.json', { eager: true }), TIER_SCHEMA);
+  const compiledTiers = compileTiers(tierReg.all() as unknown as TierTable[], new Set(enemies.all().map((e) => e.id)));
+  problems.push(...compiledTiers.errors, ...tierReg.errors);
   problems.push(...songReg.errors, ...itemReg.errors, ...enemies.errors, ...brainReg.errors, ...sprites.errors, ...sfx.errors, ...roomReg.errors);
   for (const p of problems) ctx.log.warn(`content:${p.slice(0, 60)}`, p);
-  return { rules: rules.rules, enemies: enemies.all() as unknown as EnemyDef[], brains: compiled.brains, rooms, items, songs, unlocks: unlocksRaw as Unlocks, problems };
+  return { rules: rules.rules, enemies: enemies.all() as unknown as EnemyDef[], brains: compiled.brains, rooms, items, songs, unlocks: unlocksRaw as Unlocks, tiers: compiledTiers.tiers, problems };
 }
