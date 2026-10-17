@@ -3,10 +3,10 @@
 One section per area. Update your own section in each milestone commit (BUILD-PLAN §10).
 
 ## Core (S0) — done 2026-10-17
-- State: scaffold, core, launcher, three stub games, CI (`check.yml`), manual `web.yml` / `desktop.yml`, CODEOWNERS, arch scans, folder guard. `src/core/api/**` is now frozen (changes by a separate small PR the coordinator reviews).
+- State: scaffold, core, launcher, three stub games, CI (`check.yml`), manual `web.yml`, `desktop.yml` (Windows exe / macOS dmg / Linux AppImage to a GitHub Release: Run workflow = private draft, tick publish or push a `v*` tag = public), CODEOWNERS, arch scans, folder guard. `src/core/api/**` is now frozen (changes by a separate small PR the coordinator reviews).
 - Check: `npm run check`. Browser smoke: `agent-tests/launcher-smoke.mjs` (needs `playwright-core` outside the repo; see its header).
 - Decisions taken in S0 are listed in the S0 PR description and in `docs/ARCHITECTURE.md`.
-- Not yet done: `desktop.yml` has never run (S2, when Un asks); 4x-throttle budget row for the launcher (S2).
+- Not yet done: bundle Rust crate notices at release (LICENSES-LOG); 4x-throttle budget row for the launcher (S2).
 
 ## Shooter
 - State: M0 to M3 merged. M4 on branch `shooter-m4`: touch level select, stress cheat, budget at 4x throttle, browser passes.
