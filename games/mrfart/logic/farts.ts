@@ -3,6 +3,7 @@ import { MASS_REF, NO_BODY } from '../physics/PhysicsApi';
 import { PUFF, NOTE, RING, spawnPiece, spawnPuff } from './pools';
 import { TAG_PROP, TAG_PERSON } from './types';
 import type { FartDef, Prop } from './types';
+import { witnessFart } from './witness';
 import type { Sim } from './sim';
 
 /** Index of the kind whose min is the highest not above the meter. `defs` is sorted by min. */
@@ -68,5 +69,6 @@ export function doFart(sim: Sim, kind: number, forceMul = 1, radiusMul = 1): voi
   m.lastFartAt = sim.now;
   const f = sim.lastFart;
   f.count++; f.kind = kind; f.x = ox; f.y = oy; f.force = force; f.radius = radius; f.at = sim.now;
+  witnessFart(sim, kind, ox, oy, radiusMul);
   sim.deps.emit('mrfart:fart', { kind, x: Math.round(ox), y: Math.round(oy), force: Math.round(force), shake: def.shake });
 }

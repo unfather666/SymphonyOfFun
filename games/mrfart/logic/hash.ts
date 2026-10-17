@@ -6,8 +6,8 @@ export function stateHash(sim: Sim): number {
   const mix = (v: number) => {
     h = Math.imul(h ^ (Math.round(v * 1000) | 0), 0x01000193) >>> 0;
   };
-  mix(sim.player.x); mix(sim.player.y); mix(sim.meters.fart); mix(sim.meters.nextRollAt);
-  for (const p of sim.people) { mix(p.x); mix(p.y); }
+  mix(sim.player.x); mix(sim.player.y); mix(sim.meters.fart); mix(sim.meters.nextRollAt); mix(sim.meters.stress); mix(sim.meters.reputation); mix(sim.meters.intolToday);
+  for (const p of sim.people) { mix(p.x); mix(p.y); mix(p.intol); }
   for (const p of sim.props) { mix(p.x); mix(p.y); mix(p.angle); }
   mix(sim.lastFart.count);
   return h;

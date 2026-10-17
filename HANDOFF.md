@@ -16,8 +16,8 @@ One section per area. Update your own section in each milestone commit (BUILD-PL
 - Check: `npm run check`. Browser smoke + budget numbers: `agent-tests/racer-smoke.mjs` (needs `playwright-core` outside the repo; header has the command).
 - Next: M1 (all 11 segment kinds, generator hash fixture, curves/hills/ramps/gaps), M2 music assembler, M3 hazards/death/pieces/power-ups, M4 10 levels/polish.
 
-## Mr Fart (M0 done 2026-10-17)
-- State: M0 shipped (`mrfart-m0`): physics behind `PhysicsApi` (Rapier + null stand-in, contract tests on both), sim in `logic/`, placeholder render, 33 game tests.
-- Next: M1 Society (stress, clench, witnesses, intolerance, midnight settlement, reputation bar, people reactions). Branch `mrfart-m1` from main, one PR per milestone.
+## Mr Fart (M1 done 2026-10-17)
+- State: M0 merged (#2): physics behind `PhysicsApi`, sim in `logic/`, placeholder render. M1 (`mrfart-m1`): stress, clench, witnesses, intolerance, midnight settlement, reputation, people reactions; 55 game tests.
+- Next: M2 Jobs (6 job types, leash, subjects T0-T1, board UI, rewards, tier by tasksDone). Branch `mrfart-m2` from main, one PR per milestone.
 - Check: `npm run check`. Visual smoke: see README; `?game=mrfart&seed=1`.
 - Decisions: fart `force` in rules is a velocity change (px/s) at forceScale 4; pieces are cheap pool particles, not Rapier bodies; people/props get bodies only near the player from M3 (ledger).

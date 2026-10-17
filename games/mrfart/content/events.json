@@ -1,1 +1,1 @@
-{ "events": ["mrfart:fart", "mrfart:prop_knocked", "mrfart:prop_broken"] }
+{ "events": ["mrfart:fart", "mrfart:prop_knocked", "mrfart:prop_broken", "mrfart:witnessed", "mrfart:midnight", "mrfart:game_over", "mrfart:balloon"] }

@@ -48,6 +48,8 @@ export interface PersonDef {
   readonly loop?: ReadonlyArray<readonly [number, number, number]>;
 }
 
+export const STATUS_PLAYING = 0, STATUS_LOST = 1;
+
 export const FACE_DOWN = 0, FACE_UP = 1, FACE_LEFT = 2, FACE_RIGHT = 3;
 
 /** Tag = (type << 16) | index, stored on every body so queries can tell what they hit. */
@@ -63,7 +65,7 @@ export interface Player {
   running: boolean;
 }
 
-export const PS_WALK = 0, PS_DWELL = 1;
+export const PS_WALK = 0, PS_DWELL = 1, PS_STARTLED = 2, PS_FLEE = 3;
 
 export interface Person {
   idx: number;
@@ -79,6 +81,10 @@ export interface Person {
   route: number[];
   /** Game-clock ms of the last fart that pushed this person. */
   pushedAt: number;
+  /** This person's own intolerance (0..maxIntol), halved at midnight. */
+  intol: number;
+  /** After the startle, run away instead of resuming. */
+  flees: boolean;
 }
 
 export interface Prop {
@@ -93,6 +99,14 @@ export interface Prop {
 
 export interface Meters {
   fart: number;
+  stress: number;
+  reputation: number;
+  /** Intolerance accrued since the last midnight; settled against reputation at 00:00. */
+  intolToday: number;
+  /** Game-clock ms the clench started, -1 when not clenching. */
+  clenchSince: number;
+  /** Set once a clench has lasted balloonMs. */
+  ballooned: boolean;
   /** Game-clock ms of the next random fart roll. */
   nextRollAt: number;
   lastFartAt: number;
@@ -125,7 +139,7 @@ export interface SimDeps {
   farts: readonly FartDef[];
   props: readonly PropDef[];
   people: readonly PersonDef[];
-  rng: { fart: Rng; fx: Rng; people: Rng };
+  rng: { fart: Rng; fx: Rng; people: Rng; notice: Rng };
   emit: EmitFn;
   reducedFx?: boolean;
 }

@@ -2,11 +2,13 @@
 import { NO_BODY } from '../physics/PhysicsApi';
 import type { Pose } from '../physics/PhysicsApi';
 import { TILE, nodePos } from './map';
+import { dayIndexAt } from './clock';
 import { stepMeters, scheduleRoll } from './meters';
 import { createPerson, spawnPersonBody, stepPeople } from './people';
 import { createPieces, createPuffs, updatePieces, updatePuffs } from './pools';
 import type { Pieces, Puffs } from './pools';
-import { TAG_PLAYER, TAG_PROP, tagOf } from './types';
+import { settleDay, stepWatchers } from './reputation';
+import { STATUS_PLAYING, TAG_PLAYER, TAG_PROP, tagOf } from './types';
 import type { FartInfo, Meters, Person, Player, Prop, SimDeps, SimInput } from './types';
 
 export interface Sim {
@@ -19,6 +21,12 @@ export interface Sim {
   pieces: Pieces;
   puffs: Puffs;
   meters: Meters;
+  /** In-game day number; the day changes at 00:00. */
+  day: number;
+  /** People close enough, with line of sight, to see Mr Fart. */
+  watchers: number;
+  /** 0 playing, 1 reputation ran out. */
+  status: number;
   lastFart: FartInfo;
   qbuf: Int32Array;
   toBreak: Int32Array;
@@ -62,7 +70,8 @@ export function createSim(deps: SimDeps): Sim {
     deps, now: 0, steps: 0, player, people, props,
     pieces: createPieces(reduced ? rules.caps.piecesReduced : rules.caps.pieces),
     puffs: createPuffs(reduced ? rules.caps.puffsReduced : rules.caps.puffs),
-    meters: { fart: 0, nextRollAt: 0, lastFartAt: -1e9 },
+    meters: { fart: 0, stress: 0, reputation: rules.reputation.start, intolToday: 0, clenchSince: -1, ballooned: false, nextRollAt: 0, lastFartAt: -1e9 },
+    day: dayIndexAt(0, rules.world.dayMs, rules.world.startHour), watchers: 0, status: STATUS_PLAYING,
     lastFart: { count: 0, kind: 0, x: 0, y: 0, force: 0, radius: 0, at: -1e9 },
     qbuf: new Int32Array(256), toBreak: new Int32Array(256), toBreakN: 0,
     pose: { x: 0, y: 0, angle: 0, vx: 0, vy: 0 },
@@ -130,7 +139,10 @@ export function stepSim(sim: Sim, nowMs: number, input: SimInput): void {
   stepPeople(sim);
   physics.step();
   readPoses(sim);
+  stepWatchers(sim);
   stepMeters(sim, input);
+  const d = dayIndexAt(sim.now, rules.world.dayMs, rules.world.startHour);
+  if (d > sim.day) settleDay(sim, d);
   updatePieces(sim.pieces, sim.now, 1 / 60, sim.deps.map);
   updatePuffs(sim.puffs, sim.now, 1 / 60);
 }
