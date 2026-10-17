@@ -9,7 +9,10 @@ One section per area. Update your own section in each milestone commit (BUILD-PL
 - Not yet done: `desktop.yml` has never run (S2, when Un asks); 4x-throttle budget row for the launcher (S2).
 
 ## Shooter
-(owned by the shooter thread)
+- State: M0 done (one lit room, player, cultist + deep one, waves, exit, restart). Branch `shooter-m0`.
+- Next: M1 rig (60 items JSON, `resolveRig`, slot UI, presets saved) - 5 projectile kinds already exist in `logic/bullets.ts` and `logic/effects.ts`.
+- Check: `npm run check`; browser: `npm run dev` then `PW=$(npm root -g)/playwright node games/shooter/agent-tests/smoke.mjs`.
+- Decisions: see `games/shooter/README.md` "Decisions" and PR descriptions. Core ask: sequencer detune (README).
 
 ## Racer
 - State (M0 done, 2026-10-17): car, pooled road, HUD, beat clock hooked to core `chip:beat`; Three view in `games/racer/render/three/`. Layout and decisions in `games/racer/README.md`.
