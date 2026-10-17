@@ -5,11 +5,13 @@ import { CUE } from './logic/cues';
 import { mulberry32, type Rng } from './logic/rng';
 import { clearBonus } from './logic/score';
 import { generate, tierOfLevel, isBossLevel } from './logic/levelgen';
-import { moveCursor, startCursor } from './logic/select';
+import { cellAt, inRigButton, moveCursor, startCursor } from './logic/select';
 import { levelPlayable } from './logic/unlocks';
 import { drawLevelSelect } from './render/levelSelect';
 import { makeCommand, stepWorld } from './logic/sim';
-import { createWorld, resetWorld } from './logic/world';
+import { createWorld, resetWorld, spawnEnemy } from './logic/world';
+import { spawnEnemyBullet } from './logic/bullets';
+import { boxOpen } from './logic/tiles';
 import type { Command, World } from './logic/types';
 import { cameraAt, type Cam } from './render/camera';
 import { drawScene } from './render/scene';
@@ -51,6 +53,9 @@ function create(ctx: CoreContext): GameInstance {
   let scene: 'select' | 'play' = 'select';
   let level = 0;
   let cursor = 1;
+  let stickHeld = false;
+  let tapStart = false;
+  let stress = false;
 
   function readCommand(): void {
     const inp = ctx.input;
@@ -126,6 +131,10 @@ function create(ctx: CoreContext): GameInstance {
       cursor = startCursor(prog.progress.levelsCleared, prog.progress.totalPoints, world.rules.level_points_mult);
       music.start(content.songs.get(`tier${plan.tier}`));
       if (content.problems.length) ctx.ui.notice(ctx.strings('content_problem'), 3000);
+      ctx.events.on('dev:cheat', (p) => {
+        if (p.id === 'stress') stress = !stress;
+        else if (p.id === 'clear' && scene === 'play' && world.status === 'play') world.status = 'cleared';
+      });
     },
     update() {
       const now = ctx.clock.nowMs();
@@ -143,6 +152,7 @@ function create(ctx: CoreContext): GameInstance {
         else if (ctx.input.pressed(world.status === 'cleared' ? 'a' : 'b')) toSelect();
       }
       stepWorld(world, cmd, now);
+      if (stress) stressTopUp();
       drainGained();
       if (world.status === 'cleared' && !banked) {
         banked = true;
@@ -162,17 +172,54 @@ function create(ctx: CoreContext): GameInstance {
     },
   };
 
+  /** Dev only (cheat 'stress'): keep 200 enemies and 512 bullets alive around an unkillable player to measure the step. */
+  function stressTopUp(): void {
+    const w = world;
+    w.player.hp = w.player.maxHp = 1e6;
+    if (w.stepNo % 180 === 0) ctx.log.warn(`stress${w.stepNo}`, `stress load: ${w.enemies.n} enemies, ${w.bullets.n} bullets`);
+    const r = w.plan.rooms[0]!;
+    const kinds = ['hound', 'spawnling', 'cultist'];
+    for (let tries = 0; w.enemies.n < w.rules.cap_enemies && tries < 64; tries++) {
+      const x = (r.x + 1 + fxRng.float() * (r.w - 2)) * 16;
+      const y = (r.y + 1 + fxRng.float() * (r.h - 2)) * 16;
+      if (boxOpen(w.map, x, y, 6)) spawnEnemy(w, kinds[w.spawnCount % 3]!, x, y, false, 0);
+    }
+    for (let i = 0; w.bullets.n < w.rules.cap_bullets && i < 24; i++) {
+      const x = (r.x + 1 + fxRng.float() * (r.w - 2)) * 16;
+      const y = (r.y + 1 + fxRng.float() * (r.h - 2)) * 16;
+      spawnEnemyBullet(w, x, y, fxRng.float() * 6.283, 40, 0);
+    }
+  }
+
   function genOpts() {
     return { eliteEvery: content.rules.elite_every, hpStep: content.rules.level_hp_step };
   }
 
   function selectInput(now: number): void {
     const inp = ctx.input;
-    const dx = (inp.pressed('right') ? 1 : 0) - (inp.pressed('left') ? 1 : 0);
-    const dy = (inp.pressed('down') ? 1 : 0) - (inp.pressed('up') ? 1 : 0);
+    let dx = (inp.pressed('right') ? 1 : 0) - (inp.pressed('left') ? 1 : 0);
+    let dy = (inp.pressed('down') ? 1 : 0) - (inp.pressed('up') ? 1 : 0);
+    // Touch stick: one step per push past the threshold, re-armed when it returns to centre.
+    const mv = inp.axis('move');
+    const sx = mv.x > 0.6 ? 1 : mv.x < -0.6 ? -1 : 0;
+    const sy = mv.y > 0.6 ? 1 : mv.y < -0.6 ? -1 : 0;
+    if (inp.device() === 'touch' && !stickHeld && (sx || sy)) {
+      dx += sx;
+      dy += sy;
+    }
+    stickHeld = sx !== 0 || sy !== 0;
+    const ptr = inp.pointer();
+    if (ptr.pressed) {
+      // Tap a level to select it, tap the selected level to start it, tap RIG to edit the rig.
+      const hit = cellAt(ptr.x, ptr.y);
+      if (inRigButton(ptr.x, ptr.y)) prog.openRig();
+      else if (hit === cursor) tapStart = true;
+      else if (hit > 0) cursor = hit;
+    }
     if (dx || dy) cursor = moveCursor(cursor, dx, dy);
     if (inp.pressed('y')) prog.openRig();
-    if (inp.pressed('a')) {
+    if (inp.pressed('a') || tapStart) {
+      tapStart = false;
       if (levelPlayable(cursor, prog.progress.totalPoints, world.rules.level_points_mult)) startLevel(cursor, now);
       else ctx.chip.sfx('ds_hurt');
     }

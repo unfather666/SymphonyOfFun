@@ -113,7 +113,7 @@ export function makeBot(m: Made): Bot {
               if (s.active && dist(s.x, s.y, sim.player.x, sim.player.y) > s.def!.followDist + 10) lag = true;
             }
             // A real player turns back for a straggler; so does the bot, along the streets.
-            const back = near && dist(near.x, near.y, sim.player.x, sim.player.y) > 120;
+            const back = near && (dist(near.x, near.y, sim.player.x, sim.player.y) > 120);
             if (back) bot.walk(near.x, near.y, walk);
             else if (lag || dist(sim.player.x, sim.player.y, zz.x, zz.y) < 1) m.step(IDLE);
             else bot.walk(zz.x, zz.y, speed);

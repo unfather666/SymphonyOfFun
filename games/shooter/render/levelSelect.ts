@@ -1,13 +1,8 @@
 // Level select screen: 100 cells, locked ones greyed with the points they need. Reads state only.
 import type { CoreContext } from '../../../src/core/api';
-import { SEL_COLS, levelStatus } from '../logic/select';
+import { CELL_H as CH, CELL_W as CW, GRID_X as X0, GRID_Y as Y0, RIG_BTN, SEL_COLS, levelStatus } from '../logic/select';
 import { levelPoints } from '../logic/unlocks';
 import type { Progress } from '../logic/rig';
-
-const CW = 30;
-const CH = 15;
-const X0 = (384 - SEL_COLS * CW) / 2;
-const Y0 = 24;
 
 export function drawLevelSelect(ctx: CoreContext, cursor: number, pr: Progress, mult: number): void {
   const g = ctx.gfx;
@@ -31,4 +26,7 @@ export function drawLevelSelect(ctx: CoreContext, cursor: number, pr: Progress, 
   g.drawText(line, 192, 180, { align: 'center', colour: pr.totalPoints >= need ? 7 : 10, shadow: 1 });
   g.drawText(ctx.strings('select_points', { n: pr.totalPoints }), 192, 192, { align: 'center', colour: 18 });
   g.drawText(ctx.strings('select_hint'), 192, 204, { align: 'center', colour: 4 });
+  g.rect(RIG_BTN.x, RIG_BTN.y, RIG_BTN.w, RIG_BTN.h, 2);
+  g.frame(RIG_BTN.x, RIG_BTN.y, RIG_BTN.w, RIG_BTN.h, 5);
+  g.drawText(ctx.strings('select_rig'), RIG_BTN.x + RIG_BTN.w / 2, RIG_BTN.y + 3, { align: 'center', colour: 7 });
 }

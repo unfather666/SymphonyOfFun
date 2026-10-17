@@ -113,6 +113,7 @@
   "select_boss": "LEVEL {n}  BOSS",
   "select_locked": "LOCKED  NEEDS {p} POINTS  (YOU HAVE {have})",
   "select_points": "POINTS {n}",
-  "select_hint": "MOVE  A START  Y RIG",
-  "hud_boss": "BOSS"
+  "select_hint": "MOVE  A START  Y RIG  TAP A LEVEL",
+  "hud_boss": "BOSS",
+  "select_rig": "RIG"
 }
