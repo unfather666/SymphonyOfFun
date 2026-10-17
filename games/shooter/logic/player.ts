@@ -11,19 +11,23 @@ export function updatePlayer(w: World, cmd: Command): void {
   const r = w.rules;
   p.px = p.x;
   p.py = p.y;
-  const mlen = Math.hypot(cmd.mx, cmd.my);
+  // Madness 4: the move axis flips while the inversion is running.
+  const flip = w.inv.phase === 2 ? -1 : 1;
+  const cmx = cmd.mx * flip;
+  const cmy = cmd.my * flip;
+  const mlen = Math.hypot(cmx, cmy);
   const alen = Math.hypot(cmd.ax, cmd.ay);
   if (alen > 0.2) {
     p.aimX = cmd.ax / alen;
     p.aimY = cmd.ay / alen;
   } else if (mlen > 0.1) {
-    p.aimX = cmd.mx / mlen;
-    p.aimY = cmd.my / mlen;
+    p.aimX = cmx / mlen;
+    p.aimY = cmy / mlen;
   }
 
   if (cmd.dash && w.now >= p.dashReadyAt && w.now >= p.dashUntil) {
-    const dx = mlen > 0.1 ? cmd.mx / mlen : p.aimX;
-    const dy = mlen > 0.1 ? cmd.my / mlen : p.aimY;
+    const dx = mlen > 0.1 ? cmx / mlen : p.aimX;
+    const dy = mlen > 0.1 ? cmy / mlen : p.aimY;
     p.dashX = dx;
     p.dashY = dy;
     p.dashUntil = w.now + r.dash_ms;
@@ -41,8 +45,8 @@ export function updatePlayer(w: World, cmd: Command): void {
   } else {
     let sp = r.player_speed;
     if (tileAt(w.map, Math.floor(p.x / 16), Math.floor(p.y / 16)) === T_WATER) sp *= r.water_slow;
-    vx = cmd.mx * sp;
-    vy = cmd.my * sp;
+    vx = cmx * sp;
+    vy = cmy * sp;
   }
   if (vx !== 0 || vy !== 0) p.walk++;
   moveBox(w.map, p, r.player_half, vx * DT, vy * DT);

@@ -1,0 +1,38 @@
+[
+ {
+  "id": "flare_core",
+  "set": 2,
+  "kind": "core",
+  "projectile": "shell",
+  "damage": 14,
+  "rateMs": 500,
+  "speed": 150,
+  "lifeMs": 800,
+  "size": 4,
+  "count": 1,
+  "spread": 0.1,
+  "tags": [
+   "set2"
+  ]
+ },
+ {
+  "id": "wide_lens",
+  "set": 2,
+  "kind": "mod",
+  "spreadAdd": 0.3,
+  "countAdd": 2,
+  "sizeMul": 1.2,
+  "tags": [
+   "set2"
+  ]
+ },
+ {
+  "id": "lamp_oil",
+  "set": 2,
+  "kind": "aux",
+  "onHit": "burn",
+  "tags": [
+   "set2"
+  ]
+ }
+]

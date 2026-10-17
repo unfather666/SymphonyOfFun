@@ -1,0 +1,37 @@
+[
+ {
+  "id": "anchor_shell",
+  "set": 13,
+  "kind": "core",
+  "projectile": "shell",
+  "damage": 24,
+  "rateMs": 800,
+  "speed": 160,
+  "lifeMs": 800,
+  "size": 5,
+  "knockback": 3,
+  "count": 1,
+  "spread": 0,
+  "tags": [
+   "set13"
+  ]
+ },
+ {
+  "id": "anchor_knock",
+  "set": 13,
+  "kind": "mod",
+  "knockbackAdd": 4,
+  "tags": [
+   "set13"
+  ]
+ },
+ {
+  "id": "anchor_stun",
+  "set": 13,
+  "kind": "aux",
+  "onHit": "freeze",
+  "tags": [
+   "set13"
+  ]
+ }
+]

@@ -1,6 +1,6 @@
 // Stand-in PhysicsApi for tests and for the contract suite: bodies integrate velocity with damping, no collisions.
 import { MASS_REF, NO_BODY, STUN_STEPS, handleGen, handleSlot, makeHandle } from './PhysicsApi';
-import type { BodyDef, Handle, PhysicsApi, PhysicsStats, Pose } from './PhysicsApi';
+import type { BodyDef, Handle, PhysicsApi, PhysicsStats } from './PhysicsApi';
 
 interface Slot {
   live: boolean;
@@ -66,6 +66,14 @@ export function createNullPhysics(opts: NullOptions = {}): PhysicsApi {
       s.live = false;
       free.push(handleSlot(h));
       live--;
+    },
+    setPosition(h, x, y) {
+      const s = find(h);
+      if (!s) return;
+      s.x = x;
+      s.y = y;
+      s.vx = 0;
+      s.vy = 0;
     },
     setTargetVelocity(h, vx, vy, gain = 0.25) {
       const s = find(h);

@@ -1,14 +1,21 @@
-// Scoring: kill value x combo multiplier, plus level clear bonus. Pure functions on the world; unlock tables live in unlocks.ts.
+// Scoring: kill value x (1 + combo steps x combo_step + madness tier x tier_mult), x t5_mult at madness 5; level clear bonus.
+import { tierOf } from './madness';
 import type { World } from './types';
 
-/** Combo state is kept on the world (comboCount, comboUntil); the madness tier adds to the multiplier. */
-export function awardKill(w: World, base: number, _tier: number): void {
-  void _tier;
-  w.score += Math.round(base * comboMultiplier(w));
+export function awardKill(w: World, base: number): void {
+  const r = w.rules;
+  if (w.now > w.comboUntil) w.combo = 0;
+  w.combo = Math.min(r.combo_max + 1, w.combo + 1);
+  w.comboUntil = w.now + r.combo_window_ms;
+  w.score += Math.round(base * killMultiplier(w));
 }
 
-export function comboMultiplier(w: World): number {
-  return 1;
+/** Multiplier for a kill made right now with the current combo count. */
+export function killMultiplier(w: World): number {
+  const r = w.rules;
+  const tier = tierOf(w.madness, r);
+  const m = 1 + Math.max(0, w.combo - 1) * r.combo_step + tier * r.tier_mult;
+  return tier >= 5 ? m * r.t5_mult : m;
 }
 
 export function clearBonus(w: World): number {

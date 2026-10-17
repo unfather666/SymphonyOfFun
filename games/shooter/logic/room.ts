@@ -1,6 +1,6 @@
 // Hand-written rooms: rows of characters to a LevelPlan. # wall . floor ~ water g glass L lamp S start E exit.
 import { TILE, T_FLOOR, T_GLASS, T_LAMP, T_WALL, T_WATER } from './tiles';
-import type { LevelPlan, SpawnEntry } from './types';
+import type { LevelPlan, ScriptEntry, SpawnEntry } from './types';
 
 export interface RoomDef {
   id: string;
@@ -8,6 +8,7 @@ export interface RoomDef {
   waves: ReadonlyArray<ReadonlyArray<{ def: string; tx: number; ty: number; elite?: boolean }>>;
   ambient: number;
   tier: number;
+  script?: ReadonlyArray<ScriptEntry>;
 }
 
 const GLYPH: Record<string, number> = { '#': T_WALL, '.': T_FLOOR, '~': T_WATER, g: T_GLASS, L: T_LAMP, S: T_FLOOR, E: T_FLOOR };
@@ -53,7 +54,7 @@ export function parseRoom(def: RoomDef): { plan: LevelPlan | null; errors: strin
   const plan: LevelPlan = {
     id: def.id, w, h, tiles, start, exit,
     rooms: [{ x: 1, y: 1, w: w - 2, h: h - 2, waves }],
-    ambient: def.ambient, tier: def.tier,
+    ambient: def.ambient, tier: def.tier, script: def.script ? [...def.script] : [], level: 0, tint: '#000000', hpMul: 1,
   };
   return { plan, errors };
 }

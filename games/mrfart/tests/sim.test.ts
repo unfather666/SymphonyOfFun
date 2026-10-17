@@ -10,7 +10,7 @@ import { rulesProblems } from '../logic/rules';
 import { IDLE, fartDefs, makeSim, mapDef, propDefs, rules } from './harness';
 import type { SimInput } from '../logic/types';
 
-const RUN_RIGHT: SimInput = { mx: 1, my: 0, run: true, clench: false };
+const RUN_RIGHT: SimInput = { mx: 1, my: 0, run: true, clench: false, interact: false };
 
 describe('determinism (BUILD-PLAN §8)', () => {
   async function runHash(seed: number) {
@@ -84,7 +84,7 @@ describe('meter numbers (design §4.2)', () => {
   test('walking 200 px on the null engine fills close to 4 and never fires below the cap', async () => {
     const m = await makeSim({ physics: 'null', people: [] });
     m.sim.meters.nextRollAt = 1e12;
-    m.step({ mx: 1, my: 0, run: false, clench: false }, 120);
+    m.step({ mx: 1, my: 0, run: false, clench: false, interact: false }, 120);
     const walked = m.sim.player.x - m.sim.player.px;
     expect(walked).toBeGreaterThan(0);
     expect(m.sim.meters.fart).toBeGreaterThan(0.5);
@@ -104,7 +104,7 @@ describe('meter numbers (design §4.2)', () => {
 describe('map', () => {
   const map = buildMap(mapDef);
   test('size, border and building tiles', () => {
-    expect([map.w, map.h]).toEqual([34, 26]);
+    expect([map.w, map.h]).toEqual([98, 50]);
     expect(solidAt(map, 0, 0)).toBe(true);
     expect(solidAt(map, 17 * TILE, 8 * TILE)).toBe(false); // street
     expect(solidAt(map, 4 * TILE, 4 * TILE)).toBe(true); // house roof

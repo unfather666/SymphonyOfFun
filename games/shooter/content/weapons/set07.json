@@ -1,0 +1,37 @@
+[
+ {
+  "id": "cryo_shell",
+  "set": 7,
+  "kind": "core",
+  "projectile": "shell",
+  "damage": 12,
+  "rateMs": 700,
+  "speed": 190,
+  "lifeMs": 800,
+  "size": 4,
+  "count": 1,
+  "spread": 0,
+  "tags": [
+   "set7"
+  ]
+ },
+ {
+  "id": "cryo_coolant",
+  "set": 7,
+  "kind": "mod",
+  "element": "ice",
+  "damageMul": 1.1,
+  "tags": [
+   "set7"
+  ]
+ },
+ {
+  "id": "cryo_frost",
+  "set": 7,
+  "kind": "aux",
+  "onHit": "freeze",
+  "tags": [
+   "set7"
+  ]
+ }
+]

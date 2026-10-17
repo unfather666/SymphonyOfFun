@@ -46,6 +46,8 @@ export interface PhysicsApi {
   addBody(def: BodyDef): Handle;
   /** Remove a body. A stale or zero handle warns once and does nothing. */
   remove(h: Handle): void;
+  /** Move a body to a spot and stop it (spawning, drops, tests). */
+  setPosition(h: Handle, x: number, y: number): void;
   /** Steer a person-like body toward a velocity (px/s). gain 0..1 is how fast it follows per step. */
   setTargetVelocity(h: Handle, vx: number, vy: number, gain?: number): void;
   /**

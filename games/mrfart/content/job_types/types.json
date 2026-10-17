@@ -1,0 +1,534 @@
+[
+  {
+    "id": "walk_leash",
+    "textKey": "job_walk_leash",
+    "spawn": "origin",
+    "maxCount": 3,
+    "subjectTags": [
+      "leashable"
+    ],
+    "places": [
+      "across_street",
+      "park",
+      "bus_stop",
+      "church",
+      "pawn_shop",
+      "grandmas"
+    ],
+    "steps": [
+      {
+        "verb": "press",
+        "zone": "subject"
+      },
+      {
+        "verb": "escort",
+        "zone": "place",
+        "leash": true
+      }
+    ]
+  },
+  {
+    "id": "escort_cross",
+    "textKey": "job_escort_cross",
+    "spawn": "origin",
+    "maxCount": 1,
+    "subjectTags": [
+      "walker"
+    ],
+    "places": [
+      "across_street"
+    ],
+    "steps": [
+      {
+        "verb": "press",
+        "zone": "subject"
+      },
+      {
+        "verb": "escort",
+        "zone": "place"
+      }
+    ]
+  },
+  {
+    "id": "carry_to",
+    "textKey": "job_carry_to",
+    "spawn": "origin",
+    "maxCount": 1,
+    "subjectTags": [
+      "light"
+    ],
+    "places": [
+      "park",
+      "church",
+      "bus_stop",
+      "grandmas",
+      "pawn_shop",
+      "into_the_bath"
+    ],
+    "steps": [
+      {
+        "verb": "grab",
+        "zone": "subject"
+      },
+      {
+        "verb": "carry",
+        "zone": "place"
+      },
+      {
+        "verb": "place",
+        "zone": "place"
+      }
+    ]
+  },
+  {
+    "id": "deliver",
+    "textKey": "job_deliver",
+    "spawn": "origin",
+    "maxCount": 1,
+    "subjectTags": [
+      "light"
+    ],
+    "places": [
+      "church",
+      "grandmas",
+      "pawn_shop",
+      "launch_pad",
+      "into_the_bath"
+    ],
+    "steps": [
+      {
+        "verb": "grab",
+        "zone": "subject"
+      },
+      {
+        "verb": "carry",
+        "zone": "place"
+      },
+      {
+        "verb": "press",
+        "zone": "place"
+      }
+    ]
+  },
+  {
+    "id": "fetch",
+    "textKey": "job_fetch",
+    "spawn": "place",
+    "maxCount": 1,
+    "subjectTags": [
+      "light"
+    ],
+    "places": [
+      "park",
+      "church",
+      "bus_stop",
+      "pawn_shop"
+    ],
+    "steps": [
+      {
+        "verb": "grab",
+        "zone": "subject"
+      },
+      {
+        "verb": "carry",
+        "zone": "origin"
+      },
+      {
+        "verb": "place",
+        "zone": "origin"
+      }
+    ]
+  },
+  {
+    "id": "rescue_from_tree",
+    "textKey": "job_rescue_from_tree",
+    "spawn": "tree",
+    "maxCount": 1,
+    "subjectTags": [
+      "climber"
+    ],
+    "places": [
+      "up_the_tree"
+    ],
+    "steps": [
+      {
+        "verb": "press",
+        "zone": "tree"
+      },
+      {
+        "verb": "escort",
+        "zone": "origin"
+      }
+    ]
+  },
+  {
+    "id": "push_to",
+    "textKey": "job_push_to",
+    "spawn": "origin",
+    "maxCount": 1,
+    "subjectTags": [
+      "heavy"
+    ],
+    "places": [
+      "park",
+      "bus_stop",
+      "launch_pad",
+      "pawn_shop",
+      "church"
+    ],
+    "steps": [
+      {
+        "verb": "press",
+        "zone": "subject"
+      },
+      {
+        "verb": "push",
+        "zone": "place"
+      }
+    ]
+  },
+  {
+    "id": "hold_still_for",
+    "textKey": "job_hold_still_for",
+    "spawn": "origin",
+    "maxCount": 3,
+    "subjectTags": [
+      "any"
+    ],
+    "places": [
+      "park",
+      "church",
+      "bus_stop",
+      "grandmas",
+      "launch_pad"
+    ],
+    "steps": [
+      {
+        "verb": "press",
+        "zone": "subject"
+      },
+      {
+        "verb": "hold",
+        "zone": "subject",
+        "n": 3,
+        "mode": "still"
+      }
+    ]
+  },
+  {
+    "id": "wait_in_queue",
+    "textKey": "job_wait_in_queue",
+    "spawn": "origin",
+    "maxCount": 3,
+    "subjectTags": [
+      "mobile"
+    ],
+    "places": [
+      "bus_stop",
+      "pawn_shop",
+      "church",
+      "grandmas"
+    ],
+    "steps": [
+      {
+        "verb": "escort",
+        "zone": "place"
+      },
+      {
+        "verb": "wait",
+        "zone": "place",
+        "n": 6
+      }
+    ]
+  },
+  {
+    "id": "wash",
+    "textKey": "job_wash",
+    "spawn": "origin",
+    "maxCount": 3,
+    "subjectTags": [
+      "any"
+    ],
+    "places": [
+      "into_the_bath",
+      "park"
+    ],
+    "steps": [
+      {
+        "verb": "press",
+        "zone": "subject"
+      },
+      {
+        "verb": "strike",
+        "zone": "subject",
+        "n": 6
+      }
+    ]
+  },
+  {
+    "id": "sweep",
+    "textKey": "job_sweep",
+    "spawn": "origin",
+    "maxCount": 3,
+    "subjectTags": [
+      "any"
+    ],
+    "places": [
+      "church",
+      "bus_stop",
+      "park",
+      "pawn_shop"
+    ],
+    "steps": [
+      {
+        "verb": "press",
+        "zone": "place"
+      },
+      {
+        "verb": "strike",
+        "zone": "place",
+        "n": 8
+      }
+    ]
+  },
+  {
+    "id": "paint_fence",
+    "textKey": "job_paint_fence",
+    "spawn": "origin",
+    "maxCount": 3,
+    "subjectTags": [
+      "any"
+    ],
+    "places": [
+      "park",
+      "grandmas",
+      "pawn_shop"
+    ],
+    "steps": [
+      {
+        "verb": "press",
+        "zone": "place"
+      },
+      {
+        "verb": "strike",
+        "zone": "place",
+        "n": 10
+      }
+    ]
+  },
+  {
+    "id": "water_plants",
+    "textKey": "job_water_plants",
+    "spawn": "origin",
+    "maxCount": 3,
+    "subjectTags": [
+      "any"
+    ],
+    "places": [
+      "grandmas",
+      "park",
+      "church"
+    ],
+    "steps": [
+      {
+        "verb": "press",
+        "zone": "place"
+      },
+      {
+        "verb": "strike",
+        "zone": "place",
+        "n": 5
+      }
+    ]
+  },
+  {
+    "id": "return_lost",
+    "textKey": "job_return_lost",
+    "spawn": "place",
+    "maxCount": 3,
+    "subjectTags": [
+      "mobile"
+    ],
+    "places": [
+      "park",
+      "bus_stop",
+      "church",
+      "launch_pad"
+    ],
+    "steps": [
+      {
+        "verb": "press",
+        "zone": "subject"
+      },
+      {
+        "verb": "escort",
+        "zone": "origin"
+      }
+    ]
+  },
+  {
+    "id": "babysit",
+    "textKey": "job_babysit",
+    "spawn": "origin",
+    "maxCount": 3,
+    "subjectTags": [
+      "mobile"
+    ],
+    "places": [
+      "park",
+      "grandmas",
+      "into_the_bath"
+    ],
+    "steps": [
+      {
+        "verb": "escort",
+        "zone": "place"
+      },
+      {
+        "verb": "wait",
+        "zone": "place",
+        "n": 8
+      }
+    ]
+  },
+  {
+    "id": "catch_runaway",
+    "textKey": "job_catch_runaway",
+    "spawn": "place",
+    "maxCount": 3,
+    "subjectTags": [
+      "mobile"
+    ],
+    "places": [
+      "park",
+      "bus_stop",
+      "launch_pad"
+    ],
+    "steps": [
+      {
+        "verb": "press",
+        "zone": "subject"
+      },
+      {
+        "verb": "escort",
+        "zone": "origin"
+      }
+    ],
+    "runaway": true
+  },
+  {
+    "id": "stack",
+    "textKey": "job_stack",
+    "spawn": "origin",
+    "maxCount": 1,
+    "subjectTags": [
+      "light"
+    ],
+    "places": [
+      "park",
+      "pawn_shop",
+      "launch_pad",
+      "church"
+    ],
+    "steps": [
+      {
+        "verb": "grab",
+        "zone": "subject"
+      },
+      {
+        "verb": "carry",
+        "zone": "place"
+      },
+      {
+        "verb": "place",
+        "zone": "place"
+      },
+      {
+        "verb": "hold",
+        "zone": "place",
+        "n": 2,
+        "mode": "still"
+      }
+    ]
+  },
+  {
+    "id": "hide_from",
+    "textKey": "job_hide_from",
+    "spawn": "origin",
+    "maxCount": 3,
+    "subjectTags": [
+      "any"
+    ],
+    "places": [
+      "church",
+      "park",
+      "pawn_shop",
+      "launch_pad"
+    ],
+    "steps": [
+      {
+        "verb": "wait",
+        "zone": "place",
+        "n": 8
+      },
+      {
+        "verb": "press",
+        "zone": "origin"
+      }
+    ]
+  },
+  {
+    "id": "guard_spot",
+    "textKey": "job_guard_spot",
+    "spawn": "origin",
+    "maxCount": 3,
+    "subjectTags": [
+      "any"
+    ],
+    "places": [
+      "bus_stop",
+      "launch_pad",
+      "church",
+      "pawn_shop"
+    ],
+    "steps": [
+      {
+        "verb": "wait",
+        "zone": "place",
+        "n": 10
+      },
+      {
+        "verb": "strike",
+        "zone": "place",
+        "n": 3
+      }
+    ]
+  },
+  {
+    "id": "serenade",
+    "textKey": "job_serenade",
+    "spawn": "origin",
+    "maxCount": 3,
+    "subjectTags": [
+      "any"
+    ],
+    "places": [
+      "park",
+      "grandmas",
+      "church",
+      "into_the_bath"
+    ],
+    "steps": [
+      {
+        "verb": "press",
+        "zone": "subject"
+      },
+      {
+        "verb": "hold",
+        "zone": "subject",
+        "n": 5,
+        "mode": "press"
+      }
+    ]
+  }
+]

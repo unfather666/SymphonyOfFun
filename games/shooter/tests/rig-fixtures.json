@@ -1,0 +1,415 @@
+[
+ {
+  "items": [],
+  "expect": {
+   "shots": [
+    {
+     "projectile": "bolt",
+     "damage": 8.0,
+     "rateMs": 220.0,
+     "speed": 260.0,
+     "lifeMs": 900.0,
+     "size": 3.0,
+     "count": 1,
+     "spread": 0.05,
+     "pierce": 0,
+     "bounce": 0,
+     "homing": 0.0,
+     "knockback": 0.0,
+     "element": "none",
+     "dirs": 1,
+     "selfMadness": 0
+    }
+   ],
+   "onHit": [],
+   "onKill": []
+  }
+ },
+ {
+  "items": [
+   "rivet_bolt"
+  ],
+  "expect": {
+   "shots": [
+    {
+     "projectile": "bolt",
+     "damage": 8.0,
+     "rateMs": 220.0,
+     "speed": 260.0,
+     "lifeMs": 900.0,
+     "size": 3.0,
+     "count": 1,
+     "spread": 0.05,
+     "pierce": 0,
+     "bounce": 0,
+     "homing": 0.0,
+     "knockback": 0.0,
+     "element": "none",
+     "dirs": 1,
+     "selfMadness": 0
+    }
+   ],
+   "onHit": [],
+   "onKill": []
+  }
+ },
+ {
+  "items": [
+   "rivet_bolt",
+   "rivet_magazine",
+   "rivet_hardened"
+  ],
+  "expect": {
+   "shots": [
+    {
+     "projectile": "bolt",
+     "damage": 11.2,
+     "rateMs": 154.0,
+     "speed": 260.0,
+     "lifeMs": 900.0,
+     "size": 3.0,
+     "count": 1,
+     "spread": 0.05,
+     "pierce": 1,
+     "bounce": 0,
+     "homing": 0.0,
+     "knockback": 0.0,
+     "element": "none",
+     "dirs": 1,
+     "selfMadness": 0
+    }
+   ],
+   "onHit": [],
+   "onKill": []
+  }
+ },
+ {
+  "items": [
+   "flak_shell",
+   "flak_pellets",
+   "flak_choke"
+  ],
+  "expect": {
+   "shots": [
+    {
+     "projectile": "shell",
+     "damage": 12.6,
+     "rateMs": 600.0,
+     "speed": 230.0,
+     "lifeMs": 700.0,
+     "size": 4.0,
+     "count": 5,
+     "spread": 0.3,
+     "pierce": 0,
+     "bounce": 0,
+     "homing": 0.0,
+     "knockback": 0.0,
+     "element": "none",
+     "dirs": 1,
+     "selfMadness": 0
+    }
+   ],
+   "onHit": [],
+   "onKill": []
+  }
+ },
+ {
+  "items": [
+   "tesla_arc",
+   "tesla_capacitor",
+   "tesla_spike"
+  ],
+  "expect": {
+   "shots": [
+    {
+     "projectile": "arc",
+     "damage": 18.0,
+     "rateMs": 390.0,
+     "speed": 600.0,
+     "lifeMs": 150.0,
+     "size": 2.0,
+     "count": 1,
+     "spread": 0.0,
+     "pierce": 2,
+     "bounce": 0,
+     "homing": 0.0,
+     "knockback": 0.0,
+     "element": "none",
+     "dirs": 1,
+     "selfMadness": 0
+    }
+   ],
+   "onHit": [
+    "chain"
+   ],
+   "onKill": []
+  }
+ },
+ {
+  "items": [
+   "harpoon_head",
+   "harpoon_chain",
+   "harpoon_winch"
+  ],
+  "expect": {
+   "shots": [
+    {
+     "projectile": "bolt",
+     "damage": 22.0,
+     "rateMs": 650.0,
+     "speed": 330.0,
+     "lifeMs": 900.0,
+     "size": 4.0,
+     "count": 1,
+     "spread": 0.0,
+     "pierce": 3,
+     "bounce": 0,
+     "homing": 0.0,
+     "knockback": 2.0,
+     "element": "none",
+     "dirs": 1,
+     "selfMadness": 0
+    }
+   ],
+   "onHit": [
+    "pull"
+   ],
+   "onKill": []
+  }
+ },
+ {
+  "items": [
+   "sonar_wave",
+   "sonar_tuner",
+   "sonar_echo"
+  ],
+  "expect": {
+   "shots": [
+    {
+     "projectile": "wave",
+     "damage": 6.0,
+     "rateMs": 700.0,
+     "speed": 144.0,
+     "lifeMs": 800.0,
+     "size": 4.5,
+     "count": 1,
+     "spread": 0.0,
+     "pierce": 0,
+     "bounce": 2,
+     "homing": 0.0,
+     "knockback": 1.0,
+     "element": "none",
+     "dirs": 1,
+     "selfMadness": 0
+    }
+   ],
+   "onHit": [],
+   "onKill": []
+  }
+ },
+ {
+  "items": [
+   "rivet_bolt",
+   "flak_shell"
+  ],
+  "expect": {
+   "shots": [
+    {
+     "projectile": "bolt",
+     "damage": 8.0,
+     "rateMs": 220.0,
+     "speed": 260.0,
+     "lifeMs": 900.0,
+     "size": 3.0,
+     "count": 1,
+     "spread": 0.05,
+     "pierce": 0,
+     "bounce": 0,
+     "homing": 0.0,
+     "knockback": 0.0,
+     "element": "none",
+     "dirs": 1,
+     "selfMadness": 0
+    },
+    {
+     "projectile": "shell",
+     "damage": 18.0,
+     "rateMs": 600.0,
+     "speed": 200.0,
+     "lifeMs": 700.0,
+     "size": 4.0,
+     "count": 1,
+     "spread": 0.0,
+     "pierce": 0,
+     "bounce": 0,
+     "homing": 0.0,
+     "knockback": 0.0,
+     "element": "none",
+     "dirs": 1,
+     "selfMadness": 0
+    }
+   ],
+   "onHit": [],
+   "onKill": []
+  }
+ },
+ {
+  "items": [
+   "flame_beam",
+   "void_lens",
+   "cryo_coolant",
+   "flame_burn"
+  ],
+  "expect": {
+   "shots": [
+    {
+     "projectile": "beam",
+     "damage": 3.96,
+     "rateMs": 80.0,
+     "speed": 700.0,
+     "lifeMs": 130.0,
+     "size": 2.8,
+     "count": 1,
+     "spread": 0.1,
+     "pierce": 0,
+     "bounce": 0,
+     "homing": 0.0,
+     "knockback": 0.0,
+     "element": "ice",
+     "dirs": 1,
+     "selfMadness": 0
+    }
+   ],
+   "onHit": [
+    "burn"
+   ],
+   "onKill": []
+  }
+ },
+ {
+  "items": [
+   "hymn_wave",
+   "hymn_choir",
+   "hymn_psi",
+   "hymn_choir"
+  ],
+  "expect": {
+   "shots": [
+    {
+     "projectile": "wave",
+     "damage": 5.0,
+     "rateMs": 600.0,
+     "speed": 110.0,
+     "lifeMs": 900.0,
+     "size": 3.0,
+     "count": 5,
+     "spread": 1.0,
+     "pierce": 0,
+     "bounce": 0,
+     "homing": 0.0,
+     "knockback": 0.0,
+     "element": "psi",
+     "dirs": 1,
+     "selfMadness": 0
+    }
+   ],
+   "onHit": [],
+   "onKill": []
+  }
+ },
+ {
+  "items": [
+   "signal_core",
+   "signal_carrier",
+   "signal_static"
+  ],
+  "expect": {
+   "shots": [
+    {
+     "projectile": "bolt",
+     "damage": 16.8,
+     "rateMs": 266.0,
+     "speed": 220.0,
+     "lifeMs": 900.0,
+     "size": 3.0,
+     "count": 1,
+     "spread": 0.0,
+     "pierce": 0,
+     "bounce": 0,
+     "homing": 0.0,
+     "knockback": 0.0,
+     "element": "none",
+     "dirs": 8,
+     "selfMadness": 6
+    }
+   ],
+   "onHit": [
+    "chain"
+   ],
+   "onKill": []
+  }
+ },
+ {
+  "items": [
+   "drone_core",
+   "drone_battery",
+   "drone_homing",
+   "siphon_ammo",
+   "siphon_leech"
+  ],
+  "expect": {
+   "shots": [
+    {
+     "projectile": "drone",
+     "damage": 5.0,
+     "rateMs": 560.0,
+     "speed": 120.0,
+     "lifeMs": 4500.0,
+     "size": 4.0,
+     "count": 1,
+     "spread": 0.0,
+     "pierce": 3,
+     "bounce": 0,
+     "homing": 1.0,
+     "knockback": 0.0,
+     "element": "none",
+     "dirs": 1,
+     "selfMadness": 0
+    }
+   ],
+   "onHit": [],
+   "onKill": [
+    "ammo",
+    "heal"
+   ]
+  }
+ },
+ {
+  "items": [
+   "rivet_magazine"
+  ],
+  "expect": {
+   "shots": [
+    {
+     "projectile": "bolt",
+     "damage": 8.0,
+     "rateMs": 154.0,
+     "speed": 260.0,
+     "lifeMs": 900.0,
+     "size": 3.0,
+     "count": 1,
+     "spread": 0.05,
+     "pierce": 0,
+     "bounce": 0,
+     "homing": 0.0,
+     "knockback": 0.0,
+     "element": "none",
+     "dirs": 1,
+     "selfMadness": 0
+    }
+   ],
+   "onHit": [],
+   "onKill": []
+  }
+ }
+]

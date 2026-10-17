@@ -1,0 +1,20 @@
+[
+ {
+  "id": "priest",
+  "tier": 5,
+  "hp": 48,
+  "speed": 36,
+  "size": 8,
+  "sprite": "priest",
+  "brain": "priest",
+  "touchDamage": 6,
+  "score": 150,
+  "tags": [
+   "caster"
+  ],
+  "shotSpeed": 80,
+  "shotDamage": 10,
+  "shotCount": 3,
+  "shotSpread": 0.6
+ }
+]

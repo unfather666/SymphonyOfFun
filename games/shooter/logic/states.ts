@@ -3,6 +3,10 @@ import { DT, TAU } from './consts';
 import { spawnEnemyBullet } from './bullets';
 import { splitEnemy } from './combat';
 import { flowTarget } from './flow';
+import { triggerLight } from './lightscript';
+import { boxOpen, TILE } from './tiles';
+import { cue, spark, spawnEnemy } from './world';
+import { CUE } from './cues';
 import type { CState, Enemy, World } from './types';
 
 const tgt = { x: 0, y: 0 };
@@ -14,6 +18,7 @@ export interface StateFns {
 }
 
 const noop = () => {};
+const still = (_w: World, e: Enemy) => void (e.vx = e.vy = 0);
 
 /** Point the enemy at the player (or the next flow-field tile when walls are in the way) at `speed`. */
 function seek(w: World, e: Enemy, speed: number, lateral: number): void {
@@ -118,6 +123,64 @@ export const STATES: readonly StateFns[] = [
     update: noop,
     exit: noop,
   },
+  // ring: a full circle of bullets, then stand still
+  {
+    enter: (w, e, s) => {
+      e.vx = e.vy = 0;
+      const n = s.count > 0 ? s.count : 8;
+      const off = w.rng.float() * TAU;
+      for (let i = 0; i < n; i++) spawnEnemyBullet(w, e.x, e.y, off + (i / n) * TAU, e.def.shotSpeed ?? 90, e.def.shotDamage ?? 10);
+      cue(w, CUE.bossRoar);
+    },
+    update: still,
+    exit: noop,
+  },
+  // summon: spawn s.count of s.spawn around the caster
+  {
+    enter: (w, e, s) => {
+      e.vx = e.vy = 0;
+      for (let i = 0; i < s.count; i++) {
+        const a = (i / Math.max(1, s.count)) * TAU + e.phase;
+        const x = e.x + Math.cos(a) * 20;
+        const y = e.y + Math.sin(a) * 20;
+        if (boxOpen(w.map, x, y, w.defs.get(s.spawn)?.size ?? 8)) spawnEnemy(w, s.spawn, x, y, false, e.room);
+      }
+      spark(w, e.x, e.y, 10, 30, 1);
+    },
+    update: still,
+    exit: noop,
+  },
+  // teleport: jump to a random open spot in the caster's room, away from the player
+  {
+    enter: (w, e) => {
+      e.vx = e.vy = 0;
+      const r = w.plan.rooms[e.room];
+      if (!r) return;
+      for (let t = 0; t < 8; t++) {
+        const x = (r.x + 1 + w.rng.float() * (r.w - 2)) * TILE;
+        const y = (r.y + 1 + w.rng.float() * (r.h - 2)) * TILE;
+        if (!boxOpen(w.map, x, y, e.def.size) || (x - w.player.x) ** 2 + (y - w.player.y) ** 2 < 48 * 48) continue;
+        spark(w, e.x, e.y, 6, 30, 1);
+        e.x = e.px = x;
+        e.y = e.py = y;
+        spark(w, x, y, 6, 30, 1);
+        return;
+      }
+    },
+    update: still,
+    exit: noop,
+  },
+  // dark: put the lights out for the state's duration
+  {
+    enter: (w, e, s) => {
+      e.vx = e.vy = 0;
+      triggerLight(w, { kind: 'blackout', ms: s.ms });
+    },
+    update: still,
+    exit: noop,
+  },
+  // windup: stand and gather; the wiring layer draws the tell
+  { enter: (_w, e) => void (e.vx = e.vy = 0), update: still, exit: noop },
 ];
 
 export { DT };

@@ -1,6 +1,8 @@
 // Fart meter and stress. The meter fills by distance walked, by stress and while clenching; it empties as farts.
 // Clench holds a fart back (stress up, meter keeps rising to clenchMax); release is always a bigger, loud fart.
+import { chooseEnding, endRun } from './endings';
 import { doFart, kindForMeter } from './farts';
+import { gainMul, noFartActive } from './items';
 import { checkLost } from './reputation';
 import type { Sim } from './sim';
 import type { SimInput } from './types';
@@ -43,7 +45,7 @@ export function stepMeters(sim: Sim, input: SimInput): void {
   const mr = rules.meter;
   const m = sim.meters;
   const clenching = input.clench;
-  let fill = walkFill(sim.player.moved, input.run, mr.perPx, mr.runMult);
+  let fill = walkFill(sim.player.moved, input.run, mr.perPx, mr.runMult) * gainMul(sim);
   if (m.stress > mr.stressFartAbove) fill += mr.stressRate * DT;
   if (clenching) {
     if (m.clenchSince < 0) m.clenchSince = sim.now;
@@ -52,12 +54,19 @@ export function stepMeters(sim: Sim, input: SimInput): void {
   m.fart = Math.min(clenching ? mr.clenchMax : mr.max, m.fart + fill);
   stepStress(sim, clenching);
   checkLost(sim);
-  const ready = sim.now - m.lastFartAt >= rules.fart.cooldownMs;
+  const corked = noFartActive(sim);
+  if (sim.inv.corkOwed && !corked) {
+    sim.inv.corkOwed = false;
+    doFart(sim, farts.length - 1);
+    return;
+  }
+  const ready = sim.now - m.lastFartAt >= rules.fart.cooldownMs && !corked;
 
   if (clenching) {
     if (!m.ballooned && sim.now - m.clenchSince >= mr.balloonMs) {
       m.ballooned = true;
       sim.deps.emit('mrfart:balloon', { reputation: Math.round(m.reputation) });
+      endRun(sim, chooseEnding(sim, 'clench'));
     }
     return;
   }
@@ -65,7 +74,7 @@ export function stepMeters(sim: Sim, input: SimInput): void {
     const held = sim.now - m.clenchSince;
     m.clenchSince = -1;
     m.ballooned = false;
-    if (held >= mr.clenchMinMs) {
+    if (held >= mr.clenchMinMs && !corked) {
       doFart(sim, farts.length - 1, clenchForce(held, mr.clenchBonus, mr.clenchBonusMs));
       return;
     }

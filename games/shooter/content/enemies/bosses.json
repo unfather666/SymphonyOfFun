@@ -1,0 +1,86 @@
+[
+ {
+  "id": "dagon",
+  "tier": 1,
+  "hp": 1200,
+  "speed": 38,
+  "size": 11,
+  "sprite": "dagon",
+  "brain": "dagon",
+  "touchDamage": 12,
+  "score": 1500,
+  "tags": [
+   "boss",
+   "deep"
+  ],
+  "boss": true,
+  "drawSize": 24,
+  "shotSpeed": 90,
+  "shotDamage": 8,
+  "shotCount": 5,
+  "shotSpread": 1.0
+ },
+ {
+  "id": "hastur_herald",
+  "tier": 4,
+  "hp": 2000,
+  "speed": 45,
+  "size": 10,
+  "sprite": "hastur_herald",
+  "brain": "hastur_herald",
+  "touchDamage": 15,
+  "score": 2500,
+  "tags": [
+   "boss",
+   "psi"
+  ],
+  "boss": true,
+  "drawSize": 24,
+  "shotSpeed": 120,
+  "shotDamage": 10,
+  "shotCount": 7,
+  "shotSpread": 1.4
+ },
+ {
+  "id": "star_spawn",
+  "tier": 7,
+  "hp": 2800,
+  "speed": 30,
+  "size": 13,
+  "sprite": "star_spawn",
+  "brain": "star_spawn",
+  "touchDamage": 22,
+  "score": 4000,
+  "tags": [
+   "boss",
+   "star"
+  ],
+  "boss": true,
+  "drawSize": 24,
+  "shotSpeed": 100,
+  "shotDamage": 14,
+  "shotCount": 9,
+  "shotSpread": 2.0
+ },
+ {
+  "id": "the_signal",
+  "tier": 9,
+  "hp": 4500,
+  "speed": 40,
+  "size": 12,
+  "sprite": "the_signal",
+  "brain": "the_signal",
+  "touchDamage": 20,
+  "score": 9000,
+  "tags": [
+   "boss",
+   "final"
+  ],
+  "boss": true,
+  "drawSize": 24,
+  "shotSpeed": 130,
+  "shotDamage": 14,
+  "shotCount": 7,
+  "shotSpread": 1.6
+ }
+]

@@ -1,0 +1,38 @@
+[
+ {
+  "id": "void_bolt",
+  "set": 9,
+  "kind": "core",
+  "projectile": "bolt",
+  "damage": 14,
+  "rateMs": 400,
+  "speed": 200,
+  "lifeMs": 1200,
+  "size": 4,
+  "element": "void",
+  "count": 1,
+  "spread": 0,
+  "tags": [
+   "set9"
+  ]
+ },
+ {
+  "id": "void_lens",
+  "set": 9,
+  "kind": "mod",
+  "sizeMul": 1.4,
+  "damageMul": 1.2,
+  "tags": [
+   "set9"
+  ]
+ },
+ {
+  "id": "void_pull",
+  "set": 9,
+  "kind": "aux",
+  "onHit": "pull",
+  "tags": [
+   "set9"
+  ]
+ }
+]

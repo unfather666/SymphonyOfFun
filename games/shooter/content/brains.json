@@ -1,8 +1,498 @@
 [
-  { "id": "cultist", "start": "wander", "states": {
-      "wander": { "kind": "wander", "ms": 1300, "next": "shoot" },
-      "shoot": { "kind": "shoot", "ms": 300, "next": "wander" } } },
-  { "id": "deep_one", "start": "chase", "states": {
-      "chase": { "kind": "chase", "ms": 2500, "next": "burst" },
-      "burst": { "kind": "burst", "ms": 400, "speedMul": 2.6, "next": "chase" } } }
+ {
+  "id": "cultist",
+  "start": "wander",
+  "states": {
+   "wander": {
+    "kind": "wander",
+    "ms": 1300,
+    "next": "shoot"
+   },
+   "shoot": {
+    "kind": "shoot",
+    "ms": 300,
+    "next": "wander"
+   }
+  }
+ },
+ {
+  "id": "deep_one",
+  "start": "chase",
+  "states": {
+   "chase": {
+    "kind": "chase",
+    "ms": 2500,
+    "next": "burst"
+   },
+   "burst": {
+    "kind": "burst",
+    "ms": 400,
+    "speedMul": 2.6,
+    "next": "chase"
+   }
+  }
+ },
+ {
+  "id": "whisperer",
+  "start": "strafe",
+  "states": {
+   "strafe": {
+    "kind": "strafe",
+    "ms": 1800,
+    "dist": 40,
+    "nearR": 28,
+    "nearTo": "flee",
+    "next": "strafe"
+   },
+   "flee": {
+    "kind": "flee",
+    "ms": 700,
+    "next": "strafe"
+   }
+  }
+ },
+ {
+  "id": "eye",
+  "start": "idle",
+  "states": {
+   "idle": {
+    "kind": "idle",
+    "ms": 3600000,
+    "next": "idle"
+   }
+  }
+ },
+ {
+  "id": "dreamer",
+  "start": "chase",
+  "states": {
+   "chase": {
+    "kind": "chase",
+    "ms": 2200,
+    "zig": 0.6,
+    "next": "strafe"
+   },
+   "strafe": {
+    "kind": "strafe",
+    "ms": 1200,
+    "dist": 50,
+    "next": "chase"
+   }
+  }
+ },
+ {
+  "id": "hound",
+  "start": "chase",
+  "states": {
+   "chase": {
+    "kind": "chase",
+    "ms": 1800,
+    "next": "lunge",
+    "zig": 0.8
+   },
+   "lunge": {
+    "kind": "burst",
+    "ms": 300,
+    "next": "chase",
+    "speedMul": 1.8
+   }
+  }
+ },
+ {
+  "id": "swarm",
+  "start": "chase",
+  "states": {
+   "chase": {
+    "kind": "chase",
+    "ms": 3600000,
+    "next": "chase",
+    "zig": 0.3
+   }
+  }
+ },
+ {
+  "id": "shoggoth",
+  "start": "chase",
+  "states": {
+   "chase": {
+    "kind": "chase",
+    "ms": 3600000,
+    "next": "chase"
+   }
+  }
+ },
+ {
+  "id": "mi_go",
+  "start": "strafe",
+  "states": {
+   "strafe": {
+    "kind": "strafe",
+    "ms": 1500,
+    "next": "bomb",
+    "dist": 70
+   },
+   "bomb": {
+    "kind": "shoot",
+    "ms": 300,
+    "next": "strafe"
+   }
+  }
+ },
+ {
+  "id": "priest",
+  "start": "strafe",
+  "states": {
+   "strafe": {
+    "kind": "strafe",
+    "ms": 1400,
+    "next": "shoot",
+    "dist": 60
+   },
+   "shoot": {
+    "kind": "shoot",
+    "ms": 300,
+    "next": "strafe2"
+   },
+   "strafe2": {
+    "kind": "strafe",
+    "ms": 1400,
+    "next": "shoot2",
+    "dist": 60
+   },
+   "shoot2": {
+    "kind": "shoot",
+    "ms": 300,
+    "next": "jump"
+   },
+   "jump": {
+    "kind": "teleport",
+    "ms": 200,
+    "next": "dark"
+   },
+   "dark": {
+    "kind": "dark",
+    "ms": 1800,
+    "next": "gather"
+   },
+   "gather": {
+    "kind": "windup",
+    "ms": 500,
+    "next": "strafe"
+   }
+  }
+ },
+ {
+  "id": "dagon",
+  "start": "advance",
+  "states": {
+   "advance": {
+    "kind": "chase",
+    "ms": 2200,
+    "next": "fan"
+   },
+   "fan": {
+    "kind": "shoot",
+    "ms": 500,
+    "next": "advance"
+   },
+   "ring1": {
+    "kind": "ring",
+    "ms": 700,
+    "next": "rush1",
+    "count": 10
+   },
+   "rush1": {
+    "kind": "chase",
+    "ms": 1800,
+    "next": "fan2",
+    "speedMul": 1.6
+   },
+   "fan2": {
+    "kind": "shoot",
+    "ms": 400,
+    "next": "ring1"
+   },
+   "summon1": {
+    "kind": "summon",
+    "ms": 900,
+    "next": "rush2",
+    "count": 3,
+    "spawn": "deep_one"
+   },
+   "rush2": {
+    "kind": "burst",
+    "ms": 500,
+    "next": "ring2",
+    "speedMul": 3
+   },
+   "ring2": {
+    "kind": "ring",
+    "ms": 600,
+    "next": "fan3",
+    "count": 14
+   },
+   "fan3": {
+    "kind": "shoot",
+    "ms": 500,
+    "next": "advance3"
+   },
+   "advance3": {
+    "kind": "chase",
+    "ms": 2500,
+    "next": "summon1"
+   }
+  },
+  "phases": [
+   {
+    "hp": 0.66,
+    "state": "ring1"
+   },
+   {
+    "hp": 0.33,
+    "state": "summon1"
+   }
+  ]
+ },
+ {
+  "id": "hastur_herald",
+  "start": "drift",
+  "states": {
+   "drift": {
+    "kind": "strafe",
+    "ms": 1800,
+    "next": "fan",
+    "dist": 80
+   },
+   "fan": {
+    "kind": "shoot",
+    "ms": 400,
+    "next": "gather"
+   },
+   "gather": {
+    "kind": "windup",
+    "ms": 400,
+    "next": "drift"
+   },
+   "blink": {
+    "kind": "teleport",
+    "ms": 300,
+    "next": "night"
+   },
+   "night": {
+    "kind": "dark",
+    "ms": 2000,
+    "next": "ringh",
+    "speedMul": 1
+   },
+   "ringh": {
+    "kind": "ring",
+    "ms": 600,
+    "next": "fanh",
+    "count": 14
+   },
+   "fanh": {
+    "kind": "shoot",
+    "ms": 400,
+    "next": "drifth"
+   },
+   "drifth": {
+    "kind": "strafe",
+    "ms": 1500,
+    "next": "blink",
+    "dist": 80
+   },
+   "vanish": {
+    "kind": "teleport",
+    "ms": 250,
+    "next": "ringx"
+   },
+   "ringx": {
+    "kind": "ring",
+    "ms": 500,
+    "next": "fanx",
+    "count": 18
+   },
+   "fanx": {
+    "kind": "shoot",
+    "ms": 350,
+    "next": "callx"
+   },
+   "callx": {
+    "kind": "summon",
+    "ms": 700,
+    "next": "vanish",
+    "count": 2,
+    "spawn": "whisperer"
+   }
+  },
+  "phases": [
+   {
+    "hp": 0.66,
+    "state": "blink"
+   },
+   {
+    "hp": 0.33,
+    "state": "vanish"
+   }
+  ]
+ },
+ {
+  "id": "star_spawn",
+  "start": "lumber",
+  "states": {
+   "lumber": {
+    "kind": "chase",
+    "ms": 2400,
+    "next": "fan"
+   },
+   "fan": {
+    "kind": "shoot",
+    "ms": 500,
+    "next": "lumber"
+   },
+   "brood": {
+    "kind": "summon",
+    "ms": 900,
+    "next": "ringb",
+    "count": 8,
+    "spawn": "spawnling"
+   },
+   "ringb": {
+    "kind": "ring",
+    "ms": 600,
+    "next": "lumberb",
+    "count": 20
+   },
+   "lumberb": {
+    "kind": "chase",
+    "ms": 2200,
+    "next": "fanb",
+    "speedMul": 1.2
+   },
+   "fanb": {
+    "kind": "shoot",
+    "ms": 450,
+    "next": "brood"
+   },
+   "rage": {
+    "kind": "burst",
+    "ms": 600,
+    "next": "ringr",
+    "speedMul": 3.5
+   },
+   "ringr": {
+    "kind": "ring",
+    "ms": 500,
+    "next": "fanr",
+    "count": 24
+   },
+   "fanr": {
+    "kind": "shoot",
+    "ms": 400,
+    "next": "broodr"
+   },
+   "broodr": {
+    "kind": "summon",
+    "ms": 800,
+    "next": "rage",
+    "count": 8,
+    "spawn": "spawnling"
+   }
+  },
+  "phases": [
+   {
+    "hp": 0.66,
+    "state": "brood"
+   },
+   {
+    "hp": 0.33,
+    "state": "rage"
+   }
+  ]
+ },
+ {
+  "id": "the_signal",
+  "start": "hum",
+  "states": {
+   "hum": {
+    "kind": "strafe",
+    "ms": 1800,
+    "next": "fan",
+    "dist": 90
+   },
+   "fan": {
+    "kind": "shoot",
+    "ms": 400,
+    "next": "hum"
+   },
+   "dim": {
+    "kind": "dark",
+    "ms": 2200,
+    "next": "ringd"
+   },
+   "ringd": {
+    "kind": "ring",
+    "ms": 600,
+    "next": "eyes",
+    "count": 16
+   },
+   "eyes": {
+    "kind": "summon",
+    "ms": 800,
+    "next": "humd",
+    "count": 2,
+    "spawn": "eye"
+   },
+   "humd": {
+    "kind": "strafe",
+    "ms": 1600,
+    "next": "fand",
+    "dist": 90
+   },
+   "fand": {
+    "kind": "shoot",
+    "ms": 400,
+    "next": "dim"
+   },
+   "jumpf": {
+    "kind": "teleport",
+    "ms": 250,
+    "next": "ringf"
+   },
+   "ringf": {
+    "kind": "ring",
+    "ms": 450,
+    "next": "burstf",
+    "count": 24
+   },
+   "burstf": {
+    "kind": "burst",
+    "ms": 500,
+    "next": "dreams",
+    "speedMul": 3
+   },
+   "dreams": {
+    "kind": "summon",
+    "ms": 700,
+    "next": "fanf",
+    "count": 2,
+    "spawn": "dreamer"
+   },
+   "fanf": {
+    "kind": "shoot",
+    "ms": 350,
+    "next": "jumpf"
+   }
+  },
+  "phases": [
+   {
+    "hp": 0.66,
+    "state": "dim"
+   },
+   {
+    "hp": 0.33,
+    "state": "jumpf"
+   }
+  ]
+ }
 ]

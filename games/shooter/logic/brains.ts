@@ -1,7 +1,7 @@
 // Brains are data (content/brains.json): named states with a duration and a next state. Compiled to numbers once.
-import type { BrainDef, CBrain, CState } from './types';
+import type { BrainDef, CBrain, CPhase, CState } from './types';
 
-export const STATE_KINDS = ['idle', 'wander', 'chase', 'strafe', 'shoot', 'flee', 'burst', 'split'] as const;
+export const STATE_KINDS = ['idle', 'wander', 'chase', 'strafe', 'shoot', 'flee', 'burst', 'split', 'ring', 'summon', 'teleport', 'dark', 'windup'] as const;
 
 export function compileBrains(defs: readonly BrainDef[]): { brains: Map<string, CBrain>; errors: string[] } {
   const brains = new Map<string, CBrain>();
@@ -20,11 +20,18 @@ export function compileBrains(defs: readonly BrainDef[]): { brains: Map<string, 
       if (s.nearTo !== undefined && !ix.has(s.nearTo)) bad.push(`state "${n}" nearTo missing state "${s.nearTo}"`);
       states.push({
         kind, ms: s.ms, next: ix.get(s.next) ?? 0, speedMul: s.speedMul ?? 1, dist: s.dist ?? 0, zig: s.zig ?? 0,
-        nearR: s.nearR ?? 0, nearTo: s.nearTo !== undefined ? (ix.get(s.nearTo) ?? -1) : -1,
+        nearR: s.nearR ?? 0, nearTo: s.nearTo !== undefined ? (ix.get(s.nearTo) ?? -1) : -1, count: s.count ?? 0, spawn: s.spawn ?? '',
       });
     }
+    const phases: CPhase[] = [];
+    for (const p of d.phases ?? []) {
+      if (!ix.has(p.state)) bad.push(`phase goes to missing state "${p.state}"`);
+      else if (!(p.hp > 0 && p.hp < 1)) bad.push(`phase hp ${p.hp} must be between 0 and 1`);
+      else phases.push({ hp: p.hp, state: ix.get(p.state)! });
+    }
+    phases.sort((a, b) => b.hp - a.hp);
     if (bad.length) errors.push(`brain "${d.id}" dropped: ${bad.join('; ')}.`);
-    else brains.set(d.id, { start: ix.get(d.start)!, states });
+    else brains.set(d.id, { start: ix.get(d.start)!, states, phases });
   }
   return { brains, errors };
 }

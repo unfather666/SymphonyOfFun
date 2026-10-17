@@ -3,6 +3,7 @@ import { CUE } from './cues';
 import { HIT_BLIND, HIT_BURN, HIT_CHAIN, HIT_FREEZE, HIT_PULL, KILL_AMMO, KILL_HEAL } from './effects';
 import { gridQuery } from './grid';
 import { cue, dropPickup, spark, spawnEnemy } from './world';
+import { boxOpen } from './tiles';
 import type { Enemy, World } from './types';
 import { awardKill } from './score';
 
@@ -29,14 +30,14 @@ export function damageEnemy(w: World, e: Enemy, dmg: number, killMask: number): 
 
 export function killEnemy(w: World, e: Enemy, killMask: number): void {
   const def = e.def;
-  awardKill(w, def.score, def.tier);
+  awardKill(w, def.score);
   w.kills++;
   cue(w, CUE.kill);
   spark(w, e.x, e.y, e.elite ? 14 : 8, e.elite ? 18 : 22, 1);
   if (killMask & KILL_HEAL) w.player.hp = Math.min(w.player.maxHp, w.player.hp + w.rules.heal_on_kill);
   if (killMask & KILL_AMMO) w.player.overdriveUntil = w.now + w.rules.overdrive_ms;
   if (def.splitInto) splitEnemy(w, e);
-  if (e.elite && w.dropItems.length > 0) dropPickup(w, e.x, e.y, 0, w.dropItems[Math.floor(w.rng.float() * w.dropItems.length)]!);
+  if ((e.elite || def.boss) && w.dropItems.length > 0) dropPickup(w, e.x, e.y, 0, w.dropItems[Math.floor(w.rng.float() * w.dropItems.length)]!);
   else if (w.rng.chance(0.08)) dropPickup(w, e.x, e.y, w.rng.chance(0.3) ? 2 : 1, 0);
   w.enemies.release(e);
 }
@@ -47,7 +48,12 @@ export function splitEnemy(w: World, e: Enemy): void {
   const n = def.splitCount ?? 0;
   for (let i = 0; i < n; i++) {
     const a = (i / Math.max(1, n)) * Math.PI * 2 + e.phase;
-    spawnEnemy(w, def.splitInto!, e.x + Math.cos(a) * 8, e.y + Math.sin(a) * 8, false, e.room);
+    const x = e.x + Math.cos(a) * 8;
+    const y = e.y + Math.sin(a) * 8;
+    // A child that would overlap a wall is born on its parent's spot instead.
+    const half = w.defs.get(def.splitInto!)?.size ?? 8;
+    if (boxOpen(w.map, x, y, half)) spawnEnemy(w, def.splitInto!, x, y, false, e.room);
+    else spawnEnemy(w, def.splitInto!, e.x, e.y, false, e.room);
   }
 }
 

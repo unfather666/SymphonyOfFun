@@ -4,9 +4,12 @@ import { KIND } from '../logic/effects';
 import type { World } from '../logic/types';
 import { cameraAt, type Cam } from './camera';
 import { drawHud } from './hud';
-import { drawLighting } from './lighting';
+import type { HudRig } from '../progressControl';
+import { drawLighting, litAt } from './lighting';
+import { drawGhosts, drawMadnessPost, drawTunnel, maskJitter } from './madnessFx';
 
 const cam: Cam = { x: 0, y: 0 };
+const jitter = { x: 0, y: 0 };
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
@@ -40,7 +43,7 @@ function drawBullets(ctx: CoreContext, w: World): void {
   }
 }
 
-export function drawScene(ctx: CoreContext, w: World, alpha: number): void {
+export function drawScene(ctx: CoreContext, w: World, alpha: number, rig: HudRig): void {
   const g = ctx.gfx;
   const p = w.player;
   const ppx = lerp(p.px, p.x, alpha);
@@ -64,9 +67,12 @@ export function drawScene(ctx: CoreContext, w: World, alpha: number): void {
     const e = es[i]!;
     const x = lerp(e.px, e.x, alpha) - cam.x;
     const y = lerp(e.py, e.y, alpha) - cam.y;
-    g.drawSprite(e.def.sprite, frame, x - 8, y - 8, e.vx < 0);
-    if (w.now - e.hurtAt < w.rules.hit_flash_ms) g.frame(x - 7, y - 7, 14, 14, 7);
-    else if (e.elite) g.frame(x - 7, y - 7, 14, 14, 18);
+    if (e.def.hidden && !litAt(w, e.x, e.y)) continue;
+    const ds = e.def.drawSize ?? 16;
+    g.drawSprite(e.def.sprite, frame, x - ds / 2, y - ds / 2, e.vx < 0);
+    if (e.def.turnDegS) g.line(x, y, x + Math.cos(e.heading) * 14, y + Math.sin(e.heading) * 14, 10);
+    if (w.now - e.hurtAt < w.rules.hit_flash_ms) g.frame(x - ds / 2 + 1, y - ds / 2 + 1, ds - 2, ds - 2, 7);
+    else if (e.elite) g.frame(x - ds / 2 + 1, y - ds / 2 + 1, ds - 2, ds - 2, 18);
   }
 
   if (!(w.now < p.iUntil && w.now >= p.dashUntil && (w.stepNo >> 2) & 1)) {
@@ -84,16 +90,24 @@ export function drawScene(ctx: CoreContext, w: World, alpha: number): void {
     g.rect(q.x - cam.x, q.y - cam.y, q.size, q.size, q.colour);
   }
 
-  const ambient = w.now < p.flareUntil ? Math.min(w.plan.ambient, w.rules.ambient_flare + (w.plan.ambient - w.rules.ambient_flare) * Math.max(0, 1 - (p.flareUntil - w.now) / 400)) : w.plan.ambient;
-  drawLighting(g, w, cam, { px: ppx, py: ppy, alpha }, ambient);
+  const reduced = ctx.settings.reducedFx;
+  drawGhosts(ctx, w, cam);
+  maskJitter(w, jitter);
+  if (reduced) jitter.x = jitter.y = 0;
+  drawLighting(g, ctx.display.ctx2d, w, cam, { px: ppx, py: ppy, alpha }, reduced, jitter);
 
   // Eyes glow through the dark.
   for (let i = 0; i < w.enemies.n; i++) {
     const e = es[i]!;
     const x = lerp(e.px, e.x, alpha) - cam.x;
     const y = lerp(e.py, e.y, alpha) - cam.y;
+    if (e.def.hidden && !litAt(w, e.x, e.y)) continue;
     g.rect(x - 3, y - 4, 2, 2, 18);
     g.rect(x + 1, y - 4, 2, 2, 18);
   }
-  drawHud(ctx, w);
+  if (!reduced) {
+    drawMadnessPost(ctx, w);
+    drawTunnel(ctx, w, ppx - cam.x, ppy - cam.y);
+  }
+  drawHud(ctx, w, rig);
 }

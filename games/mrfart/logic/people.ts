@@ -5,9 +5,9 @@ import { PS_DWELL, PS_FLEE, PS_STARTLED, PS_WALK, TAG_PERSON, tagOf } from './ty
 import type { Person, PersonDef } from './types';
 import type { Sim } from './sim';
 
-export function createPerson(idx: number, def: PersonDef): Person {
-  const route: number[] = [];
-  for (const [tx, ty, dwell] of def.loop ?? []) route.push((tx + 0.5) * TILE, (ty + 0.5) * TILE, dwell);
+/** A person from data: a fixed `loop` (tile coords) if given, else a daily route built from home and anchors. */
+export function createPerson(idx: number, def: PersonDef, route: number[] = []): Person {
+  if (route.length === 0) for (const [tx, ty, dwell] of def.loop ?? []) route.push((tx + 0.5) * TILE, (ty + 0.5) * TILE, dwell);
   if (route.length === 0) route.push(TILE, TILE, 1000);
   return {
     idx, def, x: route[0]!, y: route[1]!, px: route[0]!, py: route[1]!, h: NO_BODY, facing: 0,

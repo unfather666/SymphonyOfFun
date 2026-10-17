@@ -1,7 +1,7 @@
 // Proves box movement slides along walls with exact positions, plus line of sight and the flow field. Area: logic/tiles, flow. 2026-10-17
 import { describe, expect, test } from 'vitest';
 import { computeFlow, flowTarget } from '../logic/flow';
-import { BLOCKED_X, BLOCKED_Y, T_FLOOR, T_WALL, lineClear, moveBox, type TileMap } from '../logic/tiles';
+import { BLOCKED_X, BLOCKED_Y, T_FLOOR, T_WALL, boxOpen, lineClear, moveBox, type TileMap } from '../logic/tiles';
 
 function map(rows: string[]): TileMap {
   const h = rows.length;
@@ -61,5 +61,25 @@ describe('flow field', () => {
     const out = { x: 0, y: 0 };
     expect(flowTarget(m, dist, 1 * 16 + 8, 1 * 16 + 8, out)).toBe(true);
     expect(out).toEqual({ x: 1 * 16 + 8, y: 2 * 16 + 8 });
+  });
+});
+
+describe('boxes that start inside a wall', () => {
+  const m = map(['#####', '#...#', '#...#', '#####']);
+  test('moving away from the wall is free: the box is not snapped back through it', () => {
+    const p = { x: 40, y: 17 };
+    expect(moveBox(m, p, 6, 0, 2)).toBe(0);
+    expect(p.y).toBe(19);
+  });
+  test('walls ahead still stop it', () => {
+    const p = { x: 40, y: 17 };
+    expect(moveBox(m, p, 6, 0, 40)).toBe(BLOCKED_Y);
+    expect(p.y).toBe(3 * 16 - 6);
+  });
+  test('boxOpen sees any overlapped wall', () => {
+    expect(boxOpen(m, 24, 24, 6)).toBe(true);
+    expect(boxOpen(m, 24, 17, 6)).toBe(false);
+    expect(boxOpen(m, 24, 26, 6)).toBe(true);
+    expect(boxOpen(m, -2, 24, 4)).toBe(false);
   });
 });

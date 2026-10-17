@@ -43,6 +43,11 @@
     "def": "deep_one",
     "tx": 14,
     "ty": 15
+   },
+   {
+    "def": "whisperer",
+    "tx": 22,
+    "ty": 5
    }
   ],
   [
@@ -69,8 +74,45 @@
    {
     "def": "deep_one",
     "tx": 24,
-    "ty": 15
+    "ty": 15,
+    "elite": true
+   },
+   {
+    "def": "eye",
+    "tx": 26,
+    "ty": 12
+   },
+   {
+    "def": "dreamer",
+    "tx": 6,
+    "ty": 4
    }
   ]
+ ],
+ "script": [
+  {
+   "atWave": 2,
+   "kind": "spotlight",
+   "x": 240,
+   "y": 150,
+   "r": 52,
+   "ms": 7000
+  },
+  {
+   "atMs": 15000,
+   "kind": "blackout",
+   "ms": 2500
+  },
+  {
+   "atMs": 22000,
+   "kind": "strobe",
+   "ms": 3000,
+   "hz": 6
+  },
+  {
+   "atMs": 30000,
+   "kind": "pulse",
+   "ms": 6000
+  }
  ]
 }

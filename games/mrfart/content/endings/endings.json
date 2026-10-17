@@ -1,0 +1,50 @@
+[
+ {
+  "id": "moon_shot",
+  "order": 1,
+  "trigger": "rep_zero",
+  "needItem": "rocket_beans",
+  "needForce": 200
+ },
+ {
+  "id": "tar_feather",
+  "order": 2,
+  "trigger": "rep_zero",
+  "needLoudInShop": 3
+ },
+ {
+  "id": "exiled_to_sea",
+  "order": 3,
+  "trigger": "rep_zero",
+  "needCell": "harbour"
+ },
+ {
+  "id": "elected_mayor",
+  "order": 4,
+  "trigger": "rep_zero",
+  "needTasks": 500
+ },
+ {
+  "id": "scientific_study",
+  "order": 5,
+  "trigger": "rep_zero",
+  "needCursed": 3
+ },
+ {
+  "id": "pitchforks",
+  "order": 6,
+  "trigger": "rep_zero"
+ },
+ {
+  "id": "balloon",
+  "order": 7,
+  "trigger": "clench"
+ },
+ {
+  "id": "parade",
+  "order": 8,
+  "trigger": "tasks",
+  "needTasks": 1000,
+  "win": true
+ }
+]

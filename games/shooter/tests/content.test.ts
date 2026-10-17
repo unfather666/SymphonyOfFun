@@ -18,7 +18,7 @@ describe('content', () => {
     for (const d of BRAIN_DEFS) expect(problemsOf(d as never, BRAIN_SCHEMA), d.id).toEqual([]);
     const r = compileBrains(BRAIN_DEFS);
     expect(r.errors).toEqual([]);
-    expect(STATE_KINDS.length).toBe(8);
+    expect(STATE_KINDS.length).toBe(13);
   });
   test('a broken brain is dropped with a plain message', () => {
     const bad: BrainDef = { id: 'bad', tags: [], start: 'x', states: { a: { kind: 'dance', ms: 5, next: 'zzz' } } };

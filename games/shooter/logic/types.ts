@@ -4,90 +4,8 @@ import type { Pool, PoolItem } from './pool';
 import type { Rng } from './rng';
 import type { Rules } from './rules';
 import type { TileMap } from './tiles';
-
-// ---- content defs (frozen JSON, cast at the wiring boundary) ----
-export interface EnemyDef {
-  id: string;
-  tags: readonly string[];
-  hp: number;
-  speed: number;
-  /** Half-width of the hit box in px. */
-  size: number;
-  sprite: string;
-  brain: string;
-  touchDamage: number;
-  score: number;
-  tier: number;
-  flies?: boolean;
-  shotSpeed?: number;
-  shotDamage?: number;
-  shotCount?: number;
-  shotSpread?: number;
-  madnessAura?: number;
-  auraR?: number;
-  splitInto?: string;
-  splitCount?: number;
-}
-
-export interface BrainStateDef {
-  kind: string;
-  ms: number;
-  next: string;
-  speedMul?: number;
-  dist?: number;
-  zig?: number;
-  nearR?: number;
-  nearTo?: string;
-}
-export interface BrainDef {
-  id: string;
-  tags: readonly string[];
-  start: string;
-  states: Record<string, BrainStateDef>;
-}
-export interface CState {
-  kind: number;
-  ms: number;
-  next: number;
-  speedMul: number;
-  dist: number;
-  zig: number;
-  nearR: number;
-  nearTo: number;
-}
-export interface CBrain {
-  start: number;
-  states: CState[];
-}
-
-// ---- level plan (hand-written room or generated) ----
-export interface SpawnEntry {
-  def: string;
-  x: number;
-  y: number;
-  elite?: boolean;
-}
-export interface RoomPlan {
-  /** Tile rectangle. */
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  waves: SpawnEntry[][];
-}
-export interface LevelPlan {
-  id: string;
-  w: number;
-  h: number;
-  tiles: Uint8Array;
-  /** Pixels. */
-  start: { x: number; y: number };
-  exit: { x: number; y: number } | null;
-  rooms: RoomPlan[];
-  /** Darkness alpha 0..1. */
-  ambient: number;
-  tier: number;
-}
+import type { EnemyDef, BrainStateDef, BrainPhaseDef, BrainDef, CState, CPhase, CBrain, SpawnEntry, RoomPlan, ScriptEntry, LevelPlan } from './defs';
+export type { EnemyDef, BrainStateDef, BrainPhaseDef, BrainDef, CState, CPhase, CBrain, SpawnEntry, RoomPlan, ScriptEntry, LevelPlan } from './defs';
 
 // ---- pooled entities ----
 export interface Enemy extends PoolItem {
@@ -119,6 +37,9 @@ export interface Enemy extends PoolItem {
   los: boolean;
   /** Per-enemy phase offset for zigzag. */
   phase: number;
+  maxHp: number;
+  /** Next brain phase to trigger (bosses). */
+  bossPhase: number;
 }
 
 export interface Bullet extends PoolItem {
@@ -159,6 +80,18 @@ export interface Particle extends PoolItem {
   size: number;
   /** 1 = also punches a light in the mask. */
   glow: number;
+}
+
+/** Render-only hallucination: kind 0 an enemy that is not there, 1 a bullet that passes through. */
+export interface Ghost extends PoolItem {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  dieAt: number;
+  kind: number;
+  /** Index of the enemy def whose sprite to draw (kind 0). */
+  arg: number;
 }
 
 export interface Pickup extends PoolItem {
@@ -235,9 +168,45 @@ export interface RoomState {
   wave: number;
   /** Entries of the current wave already spawned. */
   spawned: number;
+  /** The current wave has started (counted once in waveCount). */
+  begun: boolean;
   /** 0 not entered, 1 fighting, 2 cleared. */
   state: number;
   nextWaveAt: number;
+}
+
+/** One running light trick. kind: 0 blackout, 1 spotlight, 2 strobe, 3 pulse. */
+export interface LightFx {
+  active: boolean;
+  kind: number;
+  startAt: number;
+  until: number;
+  x: number;
+  y: number;
+  r: number;
+  hz: number;
+}
+
+export interface LightState {
+  fx: LightFx[];
+  /** Next script entry to consider. */
+  idx: number;
+  /** Darkness alpha now (script, pulse and flare applied; strobe excluded). */
+  ambient: number;
+  strobeOn: boolean;
+  /** 0..1 breathing for the pulse trick. */
+  pulse: number;
+  nextBeatAt: number;
+  spotOn: boolean;
+  spotX: number;
+  spotY: number;
+  spotR: number;
+}
+
+/** Madness 4: inverted move axis in seeded bursts. phase 0 waiting, 1 warning, 2 inverted. */
+export interface Inversion {
+  phase: number;
+  at: number;
 }
 
 export type Status = 'play' | 'dead' | 'cleared';
@@ -246,6 +215,8 @@ export interface World {
   rules: Rules;
   /** Gameplay randomness (core stream 'sim'). */
   rng: Rng;
+  /** Madness-4 inversion timing (own stream so tiers never shift the sim's draws). */
+  madRng: Rng;
   /** Cosmetic randomness (particles, ghosts). Never used for gameplay decisions. */
   fxRng: Rng;
   now: number;
@@ -269,6 +240,21 @@ export interface World {
   score: number;
   kills: number;
   spawnCount: number;
+  /** Waves started so far (light script trigger). */
+  waveCount: number;
+  combo: number;
+  comboUntil: number;
+  /** 0..100. */
+  madness: number;
+  /** Madness added by auras and eyes this step (decay only when 0). */
+  madnessIn: number;
+  light: LightState;
+  inv: Inversion;
+  ghosts: Pool<Ghost>;
+  defList: readonly EnemyDef[];
+  defIndex: ReadonlyMap<string, number>;
+  fxNextAt: number;
+  whisperAt: number;
   /** Sound / feedback cues for the wiring layer: codes from cues.ts. Full policy: skip. */
   out: Int32Array;
   outN: number;

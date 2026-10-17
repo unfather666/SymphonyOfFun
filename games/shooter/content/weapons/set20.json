@@ -1,0 +1,39 @@
+[
+ {
+  "id": "signal_core",
+  "set": 20,
+  "kind": "core",
+  "projectile": "bolt",
+  "damage": 14,
+  "rateMs": 380,
+  "speed": 220,
+  "lifeMs": 900,
+  "size": 3,
+  "dirs": 8,
+  "selfMadness": 6,
+  "count": 1,
+  "spread": 0,
+  "tags": [
+   "set20"
+  ]
+ },
+ {
+  "id": "signal_carrier",
+  "set": 20,
+  "kind": "mod",
+  "rateMul": 0.7,
+  "damageMul": 1.2,
+  "tags": [
+   "set20"
+  ]
+ },
+ {
+  "id": "signal_static",
+  "set": 20,
+  "kind": "aux",
+  "onHit": "chain",
+  "tags": [
+   "set20"
+  ]
+ }
+]

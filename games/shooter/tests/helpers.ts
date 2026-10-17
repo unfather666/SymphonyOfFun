@@ -44,7 +44,7 @@ export function makeWorld(o: MakeOpts = {}): World {
   const plan = o.plan ?? roomPlan();
   const p = o.noWaves ? { ...plan, rooms: plan.rooms.map((r) => ({ ...r, waves: [] })) } : plan;
   const brains = compileBrains([...BRAIN_DEFS, ...(o.extraBrains ?? [])]).brains;
-  return createWorld({ rules: RULES, rng: mulberry32(o.seed ?? 1), fxRng: mulberry32((o.seed ?? 1) + 99), plan: p, defs: ENEMIES, brains, shot: DEFAULT_SHOT(RULES), now: 0 });
+  return createWorld({ rules: RULES, rng: mulberry32(o.seed ?? 1), madRng: mulberry32((o.seed ?? 1) + 7), fxRng: mulberry32((o.seed ?? 1) + 99), plan: p, defs: ENEMIES, brains, shot: DEFAULT_SHOT(RULES), now: 0 });
 }
 
 export const IDLE_BRAIN: BrainDef = { id: 'idle_test', tags: [], start: 'i', states: { i: { kind: 'idle', ms: 3_600_000, next: 'i' } } };
@@ -53,3 +53,22 @@ export const IDLE_BRAIN: BrainDef = { id: 'idle_test', tags: [], start: 'i', sta
 export function run(w: World, n: number, cmd: Command = makeCommand()): void {
   for (let i = 0; i < n; i++) stepWorld(w, cmd, (w.stepNo + 1) * (1000 / 60));
 }
+
+import type { ItemDef } from '../logic/rig';
+export const ITEMS = readDefs('weapons') as unknown as ItemDef[];
+export const itemsById = new Map(ITEMS.map((i) => [i.id, i]));
+export const pick = (ids: string[]): ItemDef[] => ids.map((id) => itemsById.get(id)!);
+
+import { CUE } from '../logic/cues';
+/** Run with a per-step hook; collects cue codes seen (the world's cue buffer is cleared each step like the wiring layer does). */
+export function runCollect(w: World, n: number, cmd: Command = makeCommand(), each?: (w: World) => void): number[] {
+  const seen: number[] = [];
+  for (let i = 0; i < n; i++) {
+    run(w, 1, cmd);
+    for (let k = 0; k < w.outN; k++) seen.push(w.out[k]!);
+    w.outN = 0;
+    each?.(w);
+  }
+  return seen;
+}
+export { CUE };
