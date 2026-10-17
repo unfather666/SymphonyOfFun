@@ -1,5 +1,5 @@
 // Proves the racer boots in headless Chromium, draws with few calls, holds ~60 fps (optionally 4x CPU throttle) and survives driving (racer, 2026-10-17).
-// Run: npm run dev, then PW=/path/to/node_modules/playwright-core [LEVEL=1] [SEED=1] [THROTTLE=4] [SECS=12] [SHOT=out.png] node agent-tests/racer-smoke.mjs
+// Run: npm run dev, then PW=/path/to/node_modules/playwright-core [LEVEL=1] [SEED=1] [THROTTLE=4] [SECS=12] [SHOT=out.png [SHOT_EVERY=20]] [EXTRA=&bot=1] node agent-tests/racer-smoke.mjs
 import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
@@ -19,20 +19,21 @@ if (process.env.THROTTLE) {
 }
 await page.goto(URL);
 await page.waitForTimeout(1500);
-await page.keyboard.down('j');
+const bot = /bot=1/.test(process.env.EXTRA ?? '');
+if (!bot) await page.keyboard.down('j');
 const secs = Number(process.env.SECS ?? 12);
 const samples = [];
 for (let i = 0; i < secs; i++) {
-  await page.keyboard.down(i % 4 < 2 ? 'ArrowLeft' : 'ArrowRight');
+  if (!bot) await page.keyboard.down(i % 4 < 2 ? 'ArrowLeft' : 'ArrowRight');
   await page.waitForTimeout(500);
-  await page.keyboard.up(i % 4 < 2 ? 'ArrowLeft' : 'ArrowRight');
+  if (!bot) await page.keyboard.up(i % 4 < 2 ? 'ArrowLeft' : 'ArrowRight');
   await page.waitForTimeout(500);
   samples.push(await page.evaluate(() => ({ ...window.sof.stats(), ...window.sofRacer.info() })));
-  if (i === Math.floor(secs / 2) && process.env.SHOT) await page.screenshot({ path: process.env.SHOT });
+  if (process.env.SHOT && (process.env.SHOT_EVERY ? i % Number(process.env.SHOT_EVERY) === Number(process.env.SHOT_EVERY) - 1 : i === Math.floor(secs / 2))) await page.screenshot({ path: process.env.SHOT_EVERY ? process.env.SHOT.replace('.png', `-${i + 1}.png`) : process.env.SHOT });
 }
 const last = samples[samples.length - 1];
 const avg = (k) => samples.reduce((a, s) => a + s[k], 0) / samples.length;
 const worst = Math.max(...samples.map((s) => s.stepWorst));
-console.log(JSON.stringify({ url: URL, throttle: process.env.THROTTLE ?? 1, fps: avg('fps').toFixed(1), stepAvg: avg('stepAvg').toFixed(3), stepWorst: worst.toFixed(3), drawAvg: avg('drawAvg').toFixed(3), calls: last.calls, tris: last.tris, dist: Math.round(last.s), deaths: last.deaths, errors }, null, 1));
+console.log(JSON.stringify({ ahead: last.ahead, url: URL, throttle: process.env.THROTTLE ?? 1, fps: avg('fps').toFixed(1), stepAvg: avg('stepAvg').toFixed(3), stepWorst: worst.toFixed(3), drawAvg: avg('drawAvg').toFixed(3), calls: last.calls, tris: last.tris, dist: Math.round(last.s), deaths: last.deaths, phase: last.phase, minFps: Math.min(...samples.map((x) => x.fps)).toFixed(1), errors }, null, 1));
 await browser.close();
 process.exit(errors.length ? 1 : 0);

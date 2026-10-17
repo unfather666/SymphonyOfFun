@@ -1,8 +1,8 @@
 // The whole simulation as plain data and one step function. No core imports; index.ts feeds it input and beats.
 import { carMaxSpeed, newCar, placeCar, savePrev, stepCar, type Car, type CarEnv } from './car';
-import { cruiseSpeed, levelBars, segmentLength } from './level';
+import { cruiseSpeed, hopBeats, levelBars, segmentLength } from './level';
 import { foldHash, HASH_START, hash32 } from './rng';
-import { createTrack, ensure, restartAt, type Track } from './track';
+import { createTrack, ensure, generateNext, restartAt, type Track } from './track';
 import { STEP_S, type DriveInput, type KindDef, type LevelDef, type Rules, type ThemeDef } from './types';
 
 export const PHASE_RUN = 0;
@@ -58,7 +58,7 @@ export function createSim(o: SimOpts): Sim {
   const meter = o.meter ?? 4;
   const segLen = segmentLength(o.level, o.rules, o.bpm);
   const seed = hash32(o.runSeed, o.level.no);
-  const track = createTrack({ seed, kinds: o.kinds, theme: o.theme, rules: o.rules, segLen, sectionBeats: o.rules.sectionBars * meter });
+  const track = createTrack({ seed, kinds: o.kinds, theme: o.theme, rules: o.rules, segLen, sectionBeats: o.rules.sectionBars * meter, rampCooldown: hopBeats(o.level, o.rules, o.theme.gravity, segLen) });
   const car = newCar();
   const totalBars = levelBars(o.rules.levelSeconds, o.bpm, meter);
   const sim: Sim = {
@@ -148,6 +148,26 @@ function respawn(sim: Sim): void {
   resetCar(sim, sectionStart);
   sim.seekBar = sectionStart / sim.meter;
   sim.phase = PHASE_RUN;
+}
+
+/** Dev only: jump the car to the start of beat `beat` (generates the road up to it). */
+export function warpTo(sim: Sim, beat: number): void {
+  ensure(sim.track, beat);
+  sim.car.s = beat * sim.segLen;
+  placeCar(sim.car, sim.env);
+  savePrev(sim.car);
+}
+
+/** Dev only: warp to three beats before the first segment of kind `id` after beat 12. Returns false if none in 2000 beats. */
+export function warpToKind(sim: Sim, id: string, kinds: readonly KindDef[]): boolean {
+  for (let i = 0; i < 2000; i++) {
+    const seg = generateNext(sim.track);
+    if (seg && seg.index > 12 && kinds[seg.kind]!.id === id) {
+      warpTo(sim, seg.index - 3);
+      return true;
+    }
+  }
+  return false;
 }
 
 /** The song ended: the level is over. */
