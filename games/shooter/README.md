@@ -9,6 +9,7 @@ Run: `npm run dev`, then open `/?game=shooter&seed=1`.
 |---|---|---|---|
 | S0 stub | Title screen, demo song, Esc → pause → quit | `?game=shooter` | (replaced by M0) |
 | M0 | One lit room (30x18 tiles, lantern cone, flickering lamp, glass, water), player walk/aim/fire/dash/flare, cultist (walks and shoots) and deep one (chases and lunges), two waves, exit opens when clear, death restarts the room, hit/kill sfx, flow-field pathing round walls | `?game=shooter&seed=1` (J fire, K dash, L flare, WASD move, arrows or mouse aim) | One room only, default Rivet bolt only, no music |
+| M1 | 60 items / 20 sets / 3 kinds as JSON, `resolveRig` (cores alternate, mods fold, aux add effects), 6 slots x 3 presets (only slot 1 until level 10 unlocks more), rig menu (`;`), preset cycle (Q/E), elites drop unowned items, progress saved (points, items, presets), all 6 projectile kinds | `?game=shooter`, press `;`; dev console `sof.cheat('give_all')` and `sof.cheat('slots6')` | Slots 2-6 and set unlocks by points need levels (M3) |
 
 ## Core asks
 - `chip.sequencer.detune(voice, cents)` (design §4.7): not in the frozen API. M2 does without (see M2 row).

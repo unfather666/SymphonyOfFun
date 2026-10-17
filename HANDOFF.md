@@ -9,10 +9,11 @@ One section per area. Update your own section in each milestone commit (BUILD-PL
 - Not yet done: `desktop.yml` has never run (S2, when Un asks); 4x-throttle budget row for the launcher (S2).
 
 ## Shooter
-- State: M0 done (one lit room, player, cultist + deep one, waves, exit, restart). Branch `shooter-m0`.
-- Next: M1 rig (60 items JSON, `resolveRig`, slot UI, presets saved) - 5 projectile kinds already exist in `logic/bullets.ts` and `logic/effects.ts`.
+- State: M0 merged (one lit room). M1 in review: rig (60 items in 20 sets as JSON, `resolveRig` with 13 exact fixtures, up to 6 slots x 3 presets, rig menu on `;`, elite drops, progress save v1 with points).
+- Next: M2 light and madness (light script, madness meter T1-T5, whisperer/eye/dreamer, ghosts, music warp).
 - Check: `npm run check`; browser: `npm run dev` then `PW=$(npm root -g)/playwright node games/shooter/agent-tests/smoke.mjs`.
-- Decisions: see `games/shooter/README.md` "Decisions" and PR descriptions. Core ask: sequencer detune (README).
+- Dev cheats (dev build console): `sof.cheat('give_all')`, `sof.cheat('slots6')`.
+- Decisions: see `games/shooter/README.md` and PR descriptions. Core ask: sequencer detune.
 
 ## Racer
 - State (M0 done, 2026-10-17): car, pooled road, HUD, beat clock hooked to core `chip:beat`; Three view in `games/racer/render/three/`. Layout and decisions in `games/racer/README.md`.
