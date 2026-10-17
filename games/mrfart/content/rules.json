@@ -1,0 +1,8 @@
+{
+  "world": { "dayMs": 480000, "startHour": 8 },
+  "player": { "speed": 70, "runMult": 1.6, "radius": 5, "mass": 1, "damping": 8, "gain": 0.35 },
+  "people": { "speed": 28, "radius": 5, "mass": 1, "damping": 5, "gain": 0.25 },
+  "meter": { "max": 100, "perPx": 0.02, "runMult": 2, "randomMinMs": 2000, "randomMaxMs": 6000, "randomDiv": 200 },
+  "fart": { "forceScale": 4, "falloff": 1, "maxForce": 1000, "originBack": 6, "cooldownMs": 400 },
+  "caps": { "bodies": 128, "bodiesReduced": 96, "pieces": 256, "piecesReduced": 128, "puffs": 192, "puffsReduced": 96, "joints": 64, "pieceLifeMs": 3000, "piecesPerBreak": 4 }
+}

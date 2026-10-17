@@ -1,0 +1,25 @@
+[
+  {
+    "id": "quiet", "min": 0, "force": 20, "radius": 24, "witnessRadius": 48, "notice": 0.3, "intol": 1, "absurd": 0,
+    "drain": 30, "breaks": false, "shake": 0, "volume": 0.35, "puffs": 3, "ring": false, "notes": 0,
+    "sfx": { "layers": [
+      { "voice": "noise", "freq": 900, "freqEnd": 300, "durMs": 220, "volume": 0.4 },
+      { "voice": "pulseA", "freq": 95, "freqEnd": 60, "durMs": 200, "volume": 0.3, "duty": 0.5 } ] }
+  },
+  {
+    "id": "squeaky", "min": 40, "force": 35, "radius": 32, "witnessRadius": 72, "notice": 0.7, "intol": 3, "absurd": 1,
+    "drain": 60, "breaks": false, "shake": 0.5, "volume": 0.5, "puffs": 5, "ring": false, "notes": 3,
+    "sfx": { "layers": [
+      { "voice": "noise", "freq": 1400, "freqEnd": 2200, "durMs": 160, "volume": 0.3 },
+      { "voice": "triangle", "freq": 330, "freqEnd": 990, "durMs": 240, "volume": 0.5 },
+      { "voice": "pulseB", "freq": 660, "freqEnd": 1100, "durMs": 180, "volume": 0.2, "duty": 0.25, "delayMs": 40 } ] }
+  },
+  {
+    "id": "loud", "min": 70, "force": 80, "radius": 64, "witnessRadius": 120, "notice": 1, "intol": 6, "absurd": 0,
+    "drain": 100, "breaks": true, "shake": 3, "volume": 0.8, "puffs": 9, "ring": true, "notes": 0,
+    "sfx": { "layers": [
+      { "voice": "noise", "freq": 500, "freqEnd": 120, "durMs": 520, "volume": 0.8 },
+      { "voice": "pulseA", "freq": 70, "freqEnd": 38, "durMs": 460, "volume": 0.6, "duty": 0.5 },
+      { "voice": "fm", "freq": 55, "freqEnd": 33, "durMs": 420, "volume": 0.7, "fmRatio": 1.5, "fmDepth": 2 } ] }
+  }
+]
