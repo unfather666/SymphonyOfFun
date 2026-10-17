@@ -2,7 +2,7 @@
 import { describe, expect, test } from 'vitest';
 import { newProgress } from '../logic/rig';
 import { PROGRESS_VERSION, migrateProgress, sanitizeProgress } from '../logic/saveData';
-import { levelStatus, moveCursor, startCursor } from '../logic/select';
+import { CELL_H, CELL_W, GRID_X, GRID_Y, RIG_BTN, cellAt, inRigButton, levelStatus, moveCursor, startCursor } from '../logic/select';
 import { levelPoints } from '../logic/unlocks';
 import { ITEMS, RULES } from './helpers';
 
@@ -33,6 +33,28 @@ describe('level select', () => {
     expect(startCursor([1], 500, M)).toBe(2);
     expect(startCursor([1, 2], 10, M)).toBe(2);
     expect(startCursor([100], 1e9, M)).toBe(100);
+  });
+});
+
+describe('level select taps', () => {
+  test('a tap inside a cell gives that level number, centre and corners', () => {
+    expect(cellAt(GRID_X + 1, GRID_Y + 1)).toBe(1);
+    expect(cellAt(GRID_X + CELL_W - 0.1, GRID_Y + CELL_H - 0.1)).toBe(1);
+    expect(cellAt(GRID_X + CELL_W + 0.1, GRID_Y + 1)).toBe(2);
+    expect(cellAt(GRID_X + 9.5 * CELL_W, GRID_Y + 9.5 * CELL_H)).toBe(100);
+    expect(cellAt(GRID_X + 5.5 * CELL_W, GRID_Y + 3.5 * CELL_H)).toBe(36);
+  });
+  test('taps outside the grid give 0', () => {
+    expect(cellAt(GRID_X - 1, GRID_Y + 5)).toBe(0);
+    expect(cellAt(GRID_X + 5, GRID_Y - 1)).toBe(0);
+    expect(cellAt(GRID_X + 10 * CELL_W, GRID_Y + 5)).toBe(0);
+    expect(cellAt(GRID_X + 5, GRID_Y + 10 * CELL_H)).toBe(0);
+  });
+  test('the RIG button rectangle is hit inside and missed outside, and never overlaps the grid', () => {
+    expect(inRigButton(RIG_BTN.x + 1, RIG_BTN.y + 1)).toBe(true);
+    expect(inRigButton(RIG_BTN.x + RIG_BTN.w, RIG_BTN.y + 1)).toBe(false);
+    expect(inRigButton(RIG_BTN.x + 1, RIG_BTN.y - 1)).toBe(false);
+    expect(cellAt(RIG_BTN.x + 1, RIG_BTN.y + 1)).toBe(0);
   });
 });
 

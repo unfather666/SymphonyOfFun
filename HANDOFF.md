@@ -9,10 +9,10 @@ One section per area. Update your own section in each milestone commit (BUILD-PL
 - Not yet done: `desktop.yml` has never run (S2, when Un asks); 4x-throttle budget row for the launcher (S2).
 
 ## Shooter
-- State: M0 to M2 merged. M3 on branch `shooter-m3`: level generator, level tables, level select, save v2.
-- Next: M4 (polish, budget at 4x throttle).
-- Check: `npm run check`; browser: `npm run dev` then `PW=$(npm root -g)/playwright node games/shooter/agent-tests/smoke.mjs` (also `levels-smoke.mjs`).
-- Dev cheats (dev console): `sof.cheat('points')`, `'god'`, `'give_all'`, `'slots6'`, `'madness3'`, `'madness'`.
+- State: M0 to M3 merged. M4 on branch `shooter-m4`: touch level select, stress cheat, budget at 4x throttle, browser passes.
+- Next: nothing planned; remaining ideas are balance tuning and a real sequencer detune once core has it.
+- Check: `npm run check`; browser: `npm run dev` then `PW=$(npm root -g)/playwright node games/shooter/agent-tests/smoke.mjs` (also `levels-smoke.mjs`, `playthrough.mjs`, `budget.mjs`).
+- Dev cheats (dev console): `sof.cheat('points')`, `'god'`, `'give_all'`, `'slots6'`, `'madness3'`, `'madness'`, `'clear'`, `'stress'`.
 - Core ask: sequencer detune (see `games/shooter/README.md`).
 
 ## Racer
