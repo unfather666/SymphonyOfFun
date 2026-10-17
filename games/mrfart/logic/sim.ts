@@ -11,6 +11,8 @@ import { generateOffer } from './jobs';
 import type { Job, JobOffer, Subject, Zone } from './jobTypes';
 import { stepPipeline } from './pipeline';
 import { createSubjects, stepSubjects } from './subjects';
+import { defaultOptions } from './save';
+import type { Options } from './save';
 import { createTrail, pushTrail } from './trail';
 import type { Trail } from './trail';
 import type { VerbCtx } from './verbs';
@@ -37,6 +39,9 @@ export interface Sim {
   meters: Meters;
   /** In-game day number; the day changes at 00:00. */
   day: number;
+  /** Days already lived before this session (from a save). */
+  dayBase: number;
+  options: Options;
   /** People close enough, with line of sight, to see Mr Fart. */
   watchers: number;
   subjects: Subject[];
@@ -106,7 +111,7 @@ export function createSim(deps: SimDeps): Sim {
     pieces: createPieces(reduced ? rules.caps.piecesReduced : rules.caps.pieces),
     puffs: createPuffs(reduced ? rules.caps.puffsReduced : rules.caps.puffs),
     meters: { fart: 0, stress: 0, reputation: rules.reputation.start, intolToday: 0, clenchSince: -1, ballooned: false, nextRollAt: 0, lastFartAt: -1e9 },
-    day: dayIndexAt(0, rules.world.dayMs, rules.world.startHour), watchers: 0, status: STATUS_PLAYING, ending: '', trail: createTrail(), aim: { x: 0, y: 0 },
+    day: dayIndexAt(0, rules.world.dayMs, rules.world.startHour), dayBase: 0, options: defaultOptions(), watchers: 0, status: STATUS_PLAYING, ending: '', trail: createTrail(), aim: { x: 0, y: 0 },
     inv: createInventory(deps.items.length), stats: newStats(), mods: newMods(), hold: false, shopDoors: [], wantShop: false,
     subjects: createSubjects(rules.caps.subjects), job: null, jobSeq: 0, carrying: -1, progress: { tasksDone: 0, coins: 0, absurd: 0 },
     board: { offers: [], hour: -1 }, boardZone: { x: start.x - 22, y: start.y, r: rules.jobs.boardR }, prompt: 0, wantBoard: false,
@@ -198,7 +203,7 @@ function stepRules(sim: Sim, input: SimInput): void {
   if (input.use) useItem(sim);
   refreshBoard(sim, false);
   stepMeters(sim, input);
-  const d = dayIndexAt(sim.now, rules.world.dayMs, rules.world.startHour);
+  const d = sim.dayBase + dayIndexAt(sim.now, rules.world.dayMs, rules.world.startHour);
   if (d > sim.day) settleDay(sim, d);
 }
 
