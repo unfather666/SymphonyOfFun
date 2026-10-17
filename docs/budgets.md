@@ -13,3 +13,4 @@ Measured with the F3 readout, Chromium DevTools CPU throttle 4x unless noted. Ap
 | 2026-10-17 | mrfart M1 | street block, 5 people, 10 props, player running | 1.1 / 4.4 | 3.5 | 59 | Headless Chromium, CDP 4x CPU throttle; worst step is a single spike (first frames), avg is the figure to trust |
 | 2026-10-17 | shooter M2 | test_room with light tricks, madness, ghosts | 0.18 / 0.90 | not measured | 60 | Headless Chromium, NO throttle; 4x row at M4 |
 | 2026-10-17 | racer M2 | level 10 rainbow road, autopilot 9 s | 0.03 / 0.5 (unthrottled) | 0.60 | 57 | Headless Chromium + software GL, no CPU throttle; assembled 215-bar song loaded, beat index tracks 172 bpm (27 beats in 9.4 s) |
+| 2026-10-17 | mrfart M2 | street block, 5 people, 10 props, job active with leash | 1.2 / 3.8 | 3.6 | 60 | Headless Chromium, CDP 4x CPU throttle |

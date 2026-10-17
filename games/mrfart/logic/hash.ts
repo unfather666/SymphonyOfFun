@@ -10,5 +10,7 @@ export function stateHash(sim: Sim): number {
   for (const p of sim.people) { mix(p.x); mix(p.y); mix(p.intol); }
   for (const p of sim.props) { mix(p.x); mix(p.y); mix(p.angle); }
   mix(sim.lastFart.count);
+  for (const s of sim.subjects) if (s.active) { mix(s.x); mix(s.y); }
+  mix(sim.progress.tasksDone);
   return h;
 }

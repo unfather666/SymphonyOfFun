@@ -2,6 +2,7 @@
 import type { Handle, PhysicsApi } from '../physics/PhysicsApi';
 import type { MapData } from './map';
 import type { Rng } from './rng';
+import type { Catalog } from './jobs';
 import type { Rules } from './rules';
 
 export interface FartDef {
@@ -128,6 +129,8 @@ export interface SimInput {
   my: number;
   run: boolean;
   clench: boolean;
+  /** A pressed this step. */
+  interact: boolean;
 }
 
 export type EmitFn = (name: string, payload: Record<string, number | string | boolean>) => void;
@@ -139,7 +142,8 @@ export interface SimDeps {
   farts: readonly FartDef[];
   props: readonly PropDef[];
   people: readonly PersonDef[];
-  rng: { fart: Rng; fx: Rng; people: Rng; notice: Rng };
+  rng: { fart: Rng; fx: Rng; people: Rng; notice: Rng; jobs: Rng };
+  catalog: Catalog;
   emit: EmitFn;
   reducedFx?: boolean;
 }

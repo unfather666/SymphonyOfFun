@@ -3,10 +3,15 @@ import farts from '../content/farts/farts.json';
 import props from '../content/props/props.json';
 import people from '../content/people/people.json';
 import mapJson from '../content/map.json';
+import jobTypes from '../content/job_types/types.json';
+import subjects from '../content/subjects/subjects.json';
+import places from '../content/places/places.json';
 import rulesJson from '../content/rules.json';
 import { createNullPhysics } from '../physics/NullPhysics';
 import { createRapierPhysics } from '../physics/rapier/RapierPhysics';
 import { buildMap } from '../logic/map';
+import type { Catalog } from '../logic/jobs';
+import type { JobTypeDef, PlaceDef, SubjectDef } from '../logic/jobTypes';
 import type { MapDef } from '../logic/map';
 import { createRng } from '../logic/rng';
 import { parseRules } from '../logic/rules';
@@ -20,7 +25,9 @@ export const fartDefs = [...(farts as FartDef[])].sort((a, b) => a.min - b.min);
 export const propDefs = props as PropDef[];
 export const personDefs = people as unknown as PersonDef[];
 export const mapDef = mapJson as unknown as MapDef;
-export const IDLE: SimInput = { mx: 0, my: 0, run: false, clench: false };
+export const IDLE: SimInput = { mx: 0, my: 0, run: false, clench: false, interact: false };
+export const PRESS: SimInput = { ...IDLE, interact: true };
+export const catalog: Catalog = { types: jobTypes as unknown as JobTypeDef[], subjects: subjects as unknown as SubjectDef[], places: places as unknown as PlaceDef[] };
 
 export interface MakeOpts {
   seed?: number;
@@ -41,7 +48,8 @@ export async function makeSim(o: MakeOpts = {}): Promise<Made> {
   const events: Made['events'] = [];
   const sim = createSim({
     physics, rules, map: buildMap(o.map ?? mapDef), farts: fartDefs, props: propDefs, people: o.people ?? personDefs,
-    rng: { fart: createRng(seed), fx: createRng(seed + 1), people: createRng(seed + 2), notice: createRng(seed + 3), ...o.rng },
+    rng: { fart: createRng(seed), fx: createRng(seed + 1), people: createRng(seed + 2), notice: createRng(seed + 3), jobs: createRng(seed + 4), ...o.rng },
+    catalog,
     emit: (name, payload) => events.push({ name, payload }),
   });
   return {

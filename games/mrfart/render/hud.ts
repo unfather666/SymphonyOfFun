@@ -2,7 +2,9 @@
 import type { Gfx2d } from '../../../src/core/api';
 import { SCREEN_H, SCREEN_W } from '../../../src/core/api';
 import { formatClock, hourAt } from '../logic/clock';
+import type { JobOffer } from '../logic/jobTypes';
 import type { Sim } from '../logic/sim';
+import { PROMPT_KEYS } from '../logic/verbs';
 import { STATUS_LOST } from '../logic/types';
 
 type Text = (key: string, params?: Record<string, string | number>) => string;
@@ -13,7 +15,7 @@ function bar(g: Gfx2d, x: number, y: number, w: number, frac: number, colour: nu
   g.frame(x - 1, y - 1, w + 2, 9, 7);
 }
 
-export function drawHud(g: Gfx2d, sim: Sim, text: Text): void {
+export function drawHud(g: Gfx2d, sim: Sim, text: Text, jobLine?: (o: JobOffer) => string): void {
   const { rules } = sim.deps;
   const m = sim.meters;
   const frac = Math.min(1, m.fart / rules.meter.max);
@@ -33,9 +35,18 @@ export function drawHud(g: Gfx2d, sim: Sim, text: Text): void {
     g.rect(x, 27, 7, 4, 7);
     g.rect(x + 2, 28, 3, 2, 2);
   }
-  if (sim.now < 8000) {
-    g.drawText(text('hint_move'), 8, 22, { colour: 7, shadow: 2 });
-    g.drawText(text('hint_run'), 8, 32, { colour: 7, shadow: 2 });
+  g.drawText(text('coins', { n: sim.progress.coins }), 6, 17, { colour: 18, shadow: 2 });
+  g.drawText(text('tasks', { n: sim.progress.tasksDone }), 6, 27, { colour: 6, shadow: 2 });
+  if (sim.job && jobLine) {
+    const steps = sim.deps.catalog.types[sim.job.offer.type]!.steps.length;
+    g.rect(0, SCREEN_H - 36, SCREEN_W, 20, 2);
+    g.drawText(jobLine(sim.job.offer), 6, SCREEN_H - 34, { colour: 7 });
+    g.drawText(text('job_step', { n: sim.job.step + 1, total: steps }), 6, SCREEN_H - 25, { colour: 18 });
+  }
+  if (sim.prompt > 0) g.drawText(text(PROMPT_KEYS[sim.prompt]!), SCREEN_W / 2, SCREEN_H - 52, { colour: 7, shadow: 2, align: 'center' });
+  if (sim.now < 8000 && !sim.job) {
+    g.drawText(text('hint_move'), 8, 40, { colour: 7, shadow: 2 });
+    g.drawText(text('hint_run'), 8, 50, { colour: 7, shadow: 2 });
   }
   if (sim.status === STATUS_LOST) {
     g.rect(0, 84, SCREEN_W, 48, 2);

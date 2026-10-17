@@ -60,6 +60,21 @@ describe.each(makers)('PhysicsApi contract: %s', (_name, make) => {
     expect(p.stats().bodies).toBe(3);
   });
 
+  test('setPosition moves the body and stops it', async () => {
+    await fresh();
+    const h = person(0, 0);
+    p.setTargetVelocity(h, 50, 0, 0.5);
+    run(p, 10);
+    p.setPosition(h, 200, 120);
+    const o = out();
+    p.pose(h, o);
+    expect([o.x, o.y, o.vx, o.vy]).toEqual([200, 120, 0, 0]);
+    p.setTargetVelocity(h, 0, 0, 0.5);
+    run(p, 5);
+    p.pose(h, o);
+    expect(Math.abs(o.x - 200)).toBeLessThan(0.5);
+  });
+
   test('steering reaches the target velocity and moves the body', async () => {
     await fresh();
     const h = person(0, 0);

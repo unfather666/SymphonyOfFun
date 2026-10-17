@@ -67,6 +67,14 @@ export function createNullPhysics(opts: NullOptions = {}): PhysicsApi {
       free.push(handleSlot(h));
       live--;
     },
+    setPosition(h, x, y) {
+      const s = find(h);
+      if (!s) return;
+      s.x = x;
+      s.y = y;
+      s.vx = 0;
+      s.vy = 0;
+    },
     setTargetVelocity(h, vx, vy, gain = 0.25) {
       const s = find(h);
       if (!s) return;

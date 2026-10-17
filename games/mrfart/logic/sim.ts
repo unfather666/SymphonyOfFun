@@ -2,7 +2,12 @@
 import { NO_BODY } from '../physics/PhysicsApi';
 import type { Pose } from '../physics/PhysicsApi';
 import { TILE, nodePos } from './map';
-import { dayIndexAt } from './clock';
+import { dayIndexAt, hourAt } from './clock';
+import { generateOffer } from './jobs';
+import type { Job, JobOffer, Subject, Zone } from './jobTypes';
+import { stepPipeline } from './pipeline';
+import { createSubjects, stepSubjects } from './subjects';
+import type { VerbCtx } from './verbs';
 import { stepMeters, scheduleRoll } from './meters';
 import { createPerson, spawnPersonBody, stepPeople } from './people';
 import { createPieces, createPuffs, updatePieces, updatePuffs } from './pools';
@@ -25,6 +30,19 @@ export interface Sim {
   day: number;
   /** People close enough, with line of sight, to see Mr Fart. */
   watchers: number;
+  subjects: Subject[];
+  job: Job | null;
+  jobSeq: number;
+  /** Index of the subject being carried, -1 for none. */
+  carrying: number;
+  progress: { tasksDone: number; coins: number; absurd: number };
+  board: { offers: JobOffer[]; hour: number };
+  boardZone: Zone;
+  /** A-button hint to show (PR_* in verbs.ts). */
+  prompt: number;
+  /** The player asked for the job board this step; the wiring layer opens it. */
+  wantBoard: boolean;
+  verbCtx: VerbCtx;
   /** 0 playing, 1 reputation ran out. */
   status: number;
   lastFart: FartInfo;
@@ -72,12 +90,16 @@ export function createSim(deps: SimDeps): Sim {
     puffs: createPuffs(reduced ? rules.caps.puffsReduced : rules.caps.puffs),
     meters: { fart: 0, stress: 0, reputation: rules.reputation.start, intolToday: 0, clenchSince: -1, ballooned: false, nextRollAt: 0, lastFartAt: -1e9 },
     day: dayIndexAt(0, rules.world.dayMs, rules.world.startHour), watchers: 0, status: STATUS_PLAYING,
+    subjects: createSubjects(rules.caps.subjects), job: null, jobSeq: 0, carrying: -1, progress: { tasksDone: 0, coins: 0, absurd: 0 },
+    board: { offers: [], hour: -1 }, boardZone: { x: start.x - 22, y: start.y, r: rules.jobs.boardR }, prompt: 0, wantBoard: false,
+    verbCtx: { sim: null as unknown as Sim, job: null as unknown as Job, step: { verb: '', zone: 'subject' }, press: false },
     lastFart: { count: 0, kind: 0, x: 0, y: 0, force: 0, radius: 0, at: -1e9 },
     qbuf: new Int32Array(256), toBreak: new Int32Array(256), toBreakN: 0,
     pose: { x: 0, y: 0, angle: 0, vx: 0, vy: 0 },
   };
   for (const p of people) spawnPersonBody(sim, p);
   scheduleRoll(sim);
+  refreshBoard(sim, true);
   return sim;
 }
 
@@ -97,6 +119,13 @@ function readPoses(sim: Sim): void {
       p.y = o.y;
     }
   }
+  for (let i = 0; i < sim.subjects.length; i++) {
+    const p = sim.subjects[i]!;
+    if (p.active && p.h !== NO_BODY && physics.pose(p.h, o)) {
+      p.x = o.x;
+      p.y = o.y;
+    }
+  }
   for (let i = 0; i < sim.props.length; i++) {
     const p = sim.props[i]!;
     if (p.h !== NO_BODY && physics.pose(p.h, o)) {
@@ -104,6 +133,19 @@ function readPoses(sim: Sim): void {
       p.y = o.y;
       p.angle = o.angle;
     }
+  }
+}
+
+/** New offers on the board at the start and whenever the in-game hour changes. */
+export function refreshBoard(sim: Sim, force: boolean): void {
+  const { rules, catalog, map, rng } = sim.deps;
+  const hour = Math.floor(hourAt(sim.now, rules.world.dayMs, rules.world.startHour));
+  if (!force && hour === sim.board.hour) return;
+  sim.board.hour = hour;
+  sim.board.offers.length = 0;
+  for (let i = 0; i < rules.jobs.offers; i++) {
+    const o = generateOffer(catalog, map, rules, rng.jobs, sim.progress.tasksDone, sim.player.x, sim.player.y);
+    if (o) sim.board.offers.push(o);
   }
 }
 
@@ -131,7 +173,8 @@ export function stepSim(sim: Sim, nowMs: number, input: SimInput): void {
   savePrev(sim);
   const pl = sim.player;
   const len = Math.hypot(input.mx, input.my);
-  const sp = rules.player.speed * (input.run ? rules.player.runMult : 1);
+  const carry = sim.carrying >= 0 ? sim.subjects[sim.carrying]!.def!.carryMult : 1;
+  const sp = rules.player.speed * (input.run ? rules.player.runMult : 1) * carry;
   const nx = len > 1 ? input.mx / len : input.mx, ny = len > 1 ? input.my / len : input.my;
   physics.setTargetVelocity(pl.h, nx * sp, ny * sp, rules.player.gain);
   pl.running = input.run;
@@ -140,6 +183,9 @@ export function stepSim(sim: Sim, nowMs: number, input: SimInput): void {
   physics.step();
   readPoses(sim);
   stepWatchers(sim);
+  stepSubjects(sim);
+  stepPipeline(sim, input.interact);
+  refreshBoard(sim, false);
   stepMeters(sim, input);
   const d = dayIndexAt(sim.now, rules.world.dayMs, rules.world.startHour);
   if (d > sim.day) settleDay(sim, d);
