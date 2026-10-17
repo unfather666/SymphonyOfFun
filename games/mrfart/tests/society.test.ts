@@ -20,7 +20,7 @@ const open = (wall = false): MapDef => ({
 });
 const still = (id: string, tx: number, ty: number): PersonDef => ({ id, name: id, role: 'granny', speed: 20, shirt: 5, hair: 6, skin: 15, loop: [[tx, ty, 1e9]] });
 const LOUD = 2;
-const HOLD: SimInput = { mx: 0, my: 0, run: false, clench: true };
+const HOLD: SimInput = { mx: 0, my: 0, run: false, clench: true, interact: false };
 
 describe('clock', () => {
   test('hours, day boundary and format', () => {

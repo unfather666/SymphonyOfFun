@@ -1,5 +1,6 @@
 // Reputation: settled against the day's intolerance at 00:00; people forget half of theirs.
-import { STATUS_LOST } from './types';
+import { chooseEnding, endRun, newStats } from './endings';
+import { restock } from './items';
 import { lineClear } from './map';
 import type { Sim } from './sim';
 
@@ -20,13 +21,12 @@ export function settleDay(sim: Sim, newDay: number): void {
   sim.day = newDay;
   sim.deps.emit('mrfart:midnight', { day: newDay, reputation: Math.round(m.reputation * 10) / 10 });
   checkLost(sim);
+  sim.stats = newStats();
+  restock(sim);
 }
 
 export function checkLost(sim: Sim): void {
-  if (sim.meters.reputation <= 0 && sim.status !== STATUS_LOST) {
-    sim.status = STATUS_LOST;
-    sim.deps.emit('mrfart:game_over', { ending: 'pitchforks' });
-  }
+  if (sim.meters.reputation <= 0) endRun(sim, chooseEnding(sim, 'rep_zero'));
 }
 
 /** Count people close enough with a clear view; refreshed every few steps. */

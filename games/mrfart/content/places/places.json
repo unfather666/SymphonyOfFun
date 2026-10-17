@@ -1,0 +1,47 @@
+[
+ {
+  "id": "across_street",
+  "kind": "across",
+  "cell": "none"
+ },
+ {
+  "id": "park",
+  "kind": "cell",
+  "cell": "park"
+ },
+ {
+  "id": "bus_stop",
+  "kind": "cell",
+  "cell": "busstop"
+ },
+ {
+  "id": "up_the_tree",
+  "kind": "tree",
+  "cell": "park"
+ },
+ {
+  "id": "into_the_bath",
+  "kind": "cell",
+  "cell": "house"
+ },
+ {
+  "id": "grandmas",
+  "kind": "cell",
+  "cell": "grandma"
+ },
+ {
+  "id": "launch_pad",
+  "kind": "cell",
+  "cell": "launch"
+ },
+ {
+  "id": "church",
+  "kind": "cell",
+  "cell": "church"
+ },
+ {
+  "id": "pawn_shop",
+  "kind": "cell",
+  "cell": "pawn"
+ }
+]

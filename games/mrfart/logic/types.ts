@@ -2,6 +2,9 @@
 import type { Handle, PhysicsApi } from '../physics/PhysicsApi';
 import type { MapData } from './map';
 import type { Rng } from './rng';
+import type { Catalog } from './jobs';
+import type { EndingDef } from './endings';
+import type { ItemDef } from './items';
 import type { Rules } from './rules';
 
 export interface FartDef {
@@ -44,11 +47,14 @@ export interface PersonDef {
   readonly shirt: number;
   readonly hair: number;
   readonly skin: number;
+  /** Home cell [col, row] and the kinds of places visited in a day (shop, park, busstop, church, pawn). */
+  readonly home?: readonly [number, number];
+  readonly anchors?: readonly string[];
   /** Fixed loop in tile coordinates: [tx, ty, dwellMs]. */
   readonly loop?: ReadonlyArray<readonly [number, number, number]>;
 }
 
-export const STATUS_PLAYING = 0, STATUS_LOST = 1;
+export const STATUS_PLAYING = 0, STATUS_LOST = 1, STATUS_WON = 2;
 
 export const FACE_DOWN = 0, FACE_UP = 1, FACE_LEFT = 2, FACE_RIGHT = 3;
 
@@ -62,6 +68,9 @@ export interface Player {
   facing: number;
   /** Px moved by the last step. */
   moved: number;
+  /** Intended velocity this step (px/s): what the player is pushing with, even when blocked. */
+  ix: number;
+  iy: number;
   running: boolean;
 }
 
@@ -128,6 +137,14 @@ export interface SimInput {
   my: number;
   run: boolean;
   clench: boolean;
+  /** A pressed this step. */
+  interact: boolean;
+  /** A is held (serenade). */
+  hold?: boolean;
+  /** Y pressed: use the selected item. */
+  use?: boolean;
+  /** L / R pressed: -1 or 1 to cycle the selected item. */
+  cycle?: number;
 }
 
 export type EmitFn = (name: string, payload: Record<string, number | string | boolean>) => void;
@@ -139,7 +156,10 @@ export interface SimDeps {
   farts: readonly FartDef[];
   props: readonly PropDef[];
   people: readonly PersonDef[];
-  rng: { fart: Rng; fx: Rng; people: Rng; notice: Rng };
+  items: readonly ItemDef[];
+  endings: readonly EndingDef[];
+  rng: { fart: Rng; fx: Rng; people: Rng; notice: Rng; jobs: Rng; items: Rng };
+  catalog: Catalog;
   emit: EmitFn;
   reducedFx?: boolean;
 }
