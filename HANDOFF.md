@@ -15,9 +15,9 @@ One section per area. Update your own section in each milestone commit (BUILD-PL
 - Decisions: see `games/shooter/README.md` "Decisions" and PR descriptions. Core ask: sequencer detune (README).
 
 ## Racer
-- State (M0 done, 2026-10-17): car, pooled road, HUD, beat clock hooked to core `chip:beat`; Three view in `games/racer/render/three/`. Layout and decisions in `games/racer/README.md`.
+- State (M1 done, 2026-10-17): car, all 11 road kinds generated and drawn, HUD, beat clock hooked to core `chip:beat`, autopilot (`logic/bot.ts`); Three view in `games/racer/render/three/`. Layout and decisions in `games/racer/README.md`. Regenerate the generator hash fixture with `UPDATE_FIXTURES=1 npx vitest run games/racer/tests/trackgen.test.ts` only when a generator change is intended.
 - Check: `npm run check`. Browser smoke + budget numbers: `agent-tests/racer-smoke.mjs` (needs `playwright-core` outside the repo; header has the command).
-- Next: M1 (all 11 segment kinds, generator hash fixture, curves/hills/ramps/gaps), M2 music assembler, M3 hazards/death/pieces/power-ups, M4 10 levels/polish.
+- Next: M2 music assembler, M3 hazards/death/pieces/power-ups, M4 10 levels/polish.
 
 ## Mr Fart (M1 done 2026-10-17)
 - State: M0 merged (#2): physics behind `PhysicsApi`, sim in `logic/`, placeholder render. M1 (`mrfart-m1`): stress, clench, witnesses, intolerance, midnight settlement, reputation, people reactions; 55 game tests.

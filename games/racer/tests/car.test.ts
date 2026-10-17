@@ -161,3 +161,14 @@ describe('jump, gap and edge', () => {
     expect(leave.deaths).toBe(1);
   });
 });
+
+describe('landing room', () => {
+  test('hopBeats grows with a hop that lasts longer and shrinks with a longer segment', async () => {
+    const { hopBeats } = await import('../logic/level');
+    const { levels } = await import('./helpers');
+    const l = levels[0]!;
+    expect(hopBeats(l, rules, 1, 12)).toBe(Math.ceil(((2 * 15) / 22) * 30 * 1.2 / 12) + 2);
+    expect(hopBeats(l, rules, 0.4, 12)).toBeGreaterThan(hopBeats(l, rules, 1, 12));
+    expect(hopBeats(l, rules, 1, 24)).toBeLessThan(hopBeats(l, rules, 1, 12));
+  });
+});

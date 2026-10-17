@@ -25,6 +25,8 @@ export interface TrackOpts {
   rules: Rules;
   segLen: number;
   sectionBeats: number;
+  /** Landing room after a gap, in beats. Default 0 (tests of the generator alone). */
+  rampCooldown?: number;
 }
 
 export function createTrack(o: TrackOpts): Track {
@@ -33,7 +35,7 @@ export function createTrack(o: TrackOpts): Track {
   const straight = o.kinds.findIndex((k) => k.id === 'straight');
   const gap = o.kinds.findIndex((k) => k.id === 'gap');
   if (straight < 0 || gap < 0) throw new Error('road kinds "straight" and "gap" are required');
-  const ctx: GenCtx = { seed: o.seed, kinds: o.kinds, weights: makeWeights(o.kinds, o.theme), theme: o.theme, rules: o.rules, segLen: o.segLen, rand: newRand(), straight, gap };
+  const ctx: GenCtx = { seed: o.seed, kinds: o.kinds, weights: makeWeights(o.kinds, o.theme), theme: o.theme, rules: o.rules, segLen: o.segLen, rand: newRand(), straight, gap, rampCooldown: o.rampCooldown ?? 0 };
   const ring: Segment[] = [];
   for (let i = 0; i < size; i++) ring.push(newSegment());
   const snaps: GenState[] = [];

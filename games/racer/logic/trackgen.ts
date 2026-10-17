@@ -11,6 +11,8 @@ export interface GenState {
   lastKind: number;
   run: number;
   pendingGap: boolean;
+  /** Beats left in which no ramp may start: the landing room after a gap. */
+  rampBlock: number;
 }
 
 export interface GenCtx {
@@ -24,10 +26,12 @@ export interface GenCtx {
   rand: Rand;
   straight: number;
   gap: number;
+  /** Beats after a gap during which ramps are not allowed (see hopBeats). */
+  rampCooldown: number;
 }
 
 export function newGenState(): GenState {
-  return { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, lastKind: 0, run: 0, pendingGap: false };
+  return { x: 0, y: 0, z: 0, yaw: 0, pitch: 0, lastKind: 0, run: 0, pendingGap: false, rampBlock: 0 };
 }
 
 export function copyGen(dst: GenState, src: GenState): void {
@@ -39,6 +43,7 @@ export function copyGen(dst: GenState, src: GenState): void {
   dst.lastKind = src.lastKind;
   dst.run = src.run;
   dst.pendingGap = src.pendingGap;
+  dst.rampBlock = src.rampBlock;
 }
 
 export function newSegment(): Segment {
@@ -64,6 +69,7 @@ function allowed(ctx: GenCtx, st: GenState, k: number): boolean {
   const yawCap = ctx.rules.yawCapDeg * DEG;
   const pitchCap = ctx.rules.pitchCapDeg * DEG;
   if (k === st.lastKind && st.run >= kd.maxRun) return false;
+  if (kd.ramp && st.rampBlock > 0) return false;
   if (kd.turnDeg !== 0 && Math.abs(st.yaw + kd.turnDeg * DEG) > yawCap) return false;
   if (kd.dPitchDeg > 0 && st.pitch >= pitchCap - 1e-6) return false;
   if (kd.dPitchDeg < 0 && st.pitch <= -pitchCap + 1e-6) return false;
@@ -149,5 +155,7 @@ export function genSegment(seg: Segment, st: GenState, index: number, ctx: GenCt
   st.pitch = seg.pitch1;
   st.run = k === st.lastKind ? st.run + 1 : 1;
   st.lastKind = k;
-  if (seg.ramp) st.pendingGap = randFloat(r) < ctx.theme.gapChance;
+  st.pendingGap = seg.ramp && randFloat(r) < ctx.theme.gapChance;
+  if (seg.gap) st.rampBlock = ctx.rampCooldown;
+  else if (st.rampBlock > 0) st.rampBlock--;
 }
