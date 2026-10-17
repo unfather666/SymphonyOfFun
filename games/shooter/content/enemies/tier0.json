@@ -1,0 +1,4 @@
+[
+  { "id": "cultist", "tier": 0, "hp": 20, "speed": 40, "size": 6, "sprite": "cultist", "brain": "cultist", "touchDamage": 8, "score": 10, "shotSpeed": 90, "shotDamage": 10, "tags": ["human"] },
+  { "id": "deep_one", "tier": 0, "hp": 30, "speed": 68, "size": 6, "sprite": "deep_one", "brain": "deep_one", "touchDamage": 12, "score": 15, "tags": ["deep"] }
+]
