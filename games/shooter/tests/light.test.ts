@@ -84,10 +84,10 @@ describe('songs', () => {
     expect(songs.map((s) => s.id).sort()).toEqual(['boss', ...Array.from({ length: 10 }, (_, i) => `tier${i}`)].sort());
     for (const s of songs) expect(problemsOf(s, SONG_SCHEMA), String(s.id)).toEqual([]);
   });
-  test('every song has a normal half and a warped half of 8 bars; patterns are 16 steps of whole numbers', () => {
+  test('every song is two 4-bar sections; patterns are 16 steps of whole numbers', () => {
     for (const s of songs) {
       const secs = s.sections as Array<{ bars: number; patterns: Record<string, number[]> }>;
-      expect(secs.map((x) => x.bars), String(s.id)).toEqual([4, 4, 4, 4]);
+      expect(secs.map((x) => x.bars), String(s.id)).toEqual([4, 4]);
       for (const sec of secs)
         for (const role of ['drums', 'bass', 'lead', 'pad']) {
           const p = sec.patterns[role]!;
@@ -95,9 +95,6 @@ describe('songs', () => {
           for (const v of p) expect(Number.isInteger(v) && v >= -1 && v <= 127).toBe(true);
           if (role === 'drums') for (const v of p) expect(v >= -1 && v <= 5).toBe(true);
         }
-      const lead = (i: number) => secs[i]!.patterns.lead!;
-      expect(lead(2)).not.toEqual(lead(0));
-      expect(lead(2).map((v) => (v > 0 ? v - 1 : v))).toEqual(lead(0));
       expect(secs[1]!.patterns.drums).not.toEqual(secs[0]!.patterns.drums);
     }
   });
