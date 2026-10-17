@@ -12,7 +12,7 @@ import { createRng } from '../logic/rng';
 import { parseRules } from '../logic/rules';
 import { createSim, stepSim } from '../logic/sim';
 import type { Sim } from '../logic/sim';
-import type { FartDef, PersonDef, PropDef, SimInput } from '../logic/types';
+import type { FartDef, PersonDef, PropDef, SimDeps, SimInput } from '../logic/types';
 import { STEP_MS } from '../../../src/core/api';
 
 export const rules = parseRules(rulesJson);
@@ -27,6 +27,7 @@ export interface MakeOpts {
   physics?: 'rapier' | 'null';
   map?: MapDef;
   people?: PersonDef[];
+  rng?: Partial<SimDeps['rng']>;
 }
 export interface Made {
   sim: Sim;
@@ -40,7 +41,7 @@ export async function makeSim(o: MakeOpts = {}): Promise<Made> {
   const events: Made['events'] = [];
   const sim = createSim({
     physics, rules, map: buildMap(o.map ?? mapDef), farts: fartDefs, props: propDefs, people: o.people ?? personDefs,
-    rng: { fart: createRng(seed), fx: createRng(seed + 1), people: createRng(seed + 2) },
+    rng: { fart: createRng(seed), fx: createRng(seed + 1), people: createRng(seed + 2), notice: createRng(seed + 3), ...o.rng },
     emit: (name, payload) => events.push({ name, payload }),
   });
   return {

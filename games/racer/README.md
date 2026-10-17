@@ -20,7 +20,7 @@ Run: `npm run dev`, then open `/?game=racer&seed=1` (add `&level=1..10`). Keys: 
 | Milestone | What works | How to see it | Known gaps |
 |---|---|---|---|
 | M0 car on a beat | Pooled endless road, car accelerates/steers/brakes, demo song, beat marker, FOV pulse, sync bonus, HUD, 22 draw calls | `?game=racer&seed=1` | Straights only, no hazards, demo song |
-| M1 road to the beat | See below | `?game=racer&seed=1&level=7` | |
+| M1 road to the beat | All 11 segment kinds drive and draw: curves, hills, ramps, gaps (jump with `;`), narrow bridges (fall off the edge), split barrier, wide road, tunnels; landing room after every gap; fall = death, respawn at section start; generator hash fixture; autopilot completes all 10 levels in tests | `?game=racer&seed=1&level=7`; dev params `&bot=1` (autopilot), `&at=<beat or kind id>&freeze=1` (jump to a segment and hold the frame) | No hazards yet; song is still the launcher demo song; death is a plain 2.5 s pause (calamities come in M3) |
 
 ## Core asks
 (none)

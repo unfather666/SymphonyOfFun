@@ -25,3 +25,13 @@ export function intensityAt(section: number, sections: number): number {
   if (f >= 0.55 && f < 0.65) return 0.4;
   return 1;
 }
+
+/**
+ * Beats a hop can cover at the fastest sustained speed, plus two for the landing. After a gap no ramp may start inside
+ * this, so a jump taken anywhere on the ramp always has road to land on.
+ */
+export function hopBeats(level: LevelDef, rules: Rules, themeGravity: number, segLen: number): number {
+  const hopSeconds = (2 * rules.jumpSpeed) / (rules.gravity * themeGravity);
+  const fastest = level.maxSpeed * (1 + rules.syncMaxStacks * rules.syncBonusPerStack);
+  return Math.ceil((hopSeconds * fastest) / segLen) + 2;
+}

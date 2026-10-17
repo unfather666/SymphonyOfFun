@@ -1,5 +1,11 @@
 {
   "title": "MR FART",
+  "rep": "REP",
+  "day": "DAY {n}",
+  "game_over": "RUN OUT OF TOWN",
+  "game_over_hint": "ESC THEN QUIT",
+  "stress": "STRESS",
+  "hint_clench": "CLENCH  L  HOLD THEN LET GO",
   "meter": "FART",
   "loading": "LOADING PHYSICS",
   "hint_move": "MOVE  ARROWS OR WASD",
