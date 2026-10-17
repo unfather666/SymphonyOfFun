@@ -5,13 +5,18 @@ import { parseRules, type Rules } from '../logic/rules';
 import { parseRoom, type RoomDef } from '../logic/room';
 import type { BrainDef, CBrain, EnemyDef, LevelPlan } from '../logic/types';
 import rulesRaw from './rules.json';
-import { BRAIN_SCHEMA, ENEMY_SCHEMA, ROOM_SCHEMA, SFX_SCHEMA, SPRITE_SCHEMA } from './schemas';
+import type { ItemDef } from '../logic/rig';
+import type { Unlocks } from '../logic/unlocks';
+import unlocksRaw from './unlocks.json';
+import { BRAIN_SCHEMA, ENEMY_SCHEMA, ITEM_SCHEMA, ROOM_SCHEMA, SFX_SCHEMA, SPRITE_SCHEMA } from './schemas';
 
 export interface Content {
   rules: Rules;
   enemies: EnemyDef[];
   brains: Map<string, CBrain>;
   rooms: Map<string, LevelPlan>;
+  items: ItemDef[];
+  unlocks: Unlocks;
   problems: string[];
 }
 
@@ -39,7 +44,10 @@ export function loadContent(ctx: CoreContext): Content {
     if (parsed.plan) rooms.set(r.id, parsed.plan);
   }
 
-  problems.push(...enemies.errors, ...brainReg.errors, ...sprites.errors, ...sfx.errors, ...roomReg.errors);
+  const itemReg = ctx.content.load('item', import.meta.glob('./weapons/*.json', { eager: true }), ITEM_SCHEMA);
+  const items = itemReg.all() as unknown as ItemDef[];
+
+  problems.push(...itemReg.errors, ...enemies.errors, ...brainReg.errors, ...sprites.errors, ...sfx.errors, ...roomReg.errors);
   for (const p of problems) ctx.log.warn(`content:${p.slice(0, 60)}`, p);
-  return { rules: rules.rules, enemies: enemies.all() as unknown as EnemyDef[], brains: compiled.brains, rooms, problems };
+  return { rules: rules.rules, enemies: enemies.all() as unknown as EnemyDef[], brains: compiled.brains, rooms, items, unlocks: unlocksRaw as Unlocks, problems };
 }

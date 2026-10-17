@@ -4,6 +4,7 @@ import { KIND } from '../logic/effects';
 import type { World } from '../logic/types';
 import { cameraAt, type Cam } from './camera';
 import { drawHud } from './hud';
+import type { HudRig } from '../progressControl';
 import { drawLighting } from './lighting';
 
 const cam: Cam = { x: 0, y: 0 };
@@ -40,7 +41,7 @@ function drawBullets(ctx: CoreContext, w: World): void {
   }
 }
 
-export function drawScene(ctx: CoreContext, w: World, alpha: number): void {
+export function drawScene(ctx: CoreContext, w: World, alpha: number, rig: HudRig): void {
   const g = ctx.gfx;
   const p = w.player;
   const ppx = lerp(p.px, p.x, alpha);
@@ -95,5 +96,5 @@ export function drawScene(ctx: CoreContext, w: World, alpha: number): void {
     g.rect(x - 3, y - 4, 2, 2, 18);
     g.rect(x + 1, y - 4, 2, 2, 18);
   }
-  drawHud(ctx, w);
+  drawHud(ctx, w, rig);
 }

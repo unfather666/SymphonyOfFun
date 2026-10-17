@@ -1,0 +1,37 @@
+[
+ {
+  "id": "rivet_bolt",
+  "set": 6,
+  "kind": "core",
+  "projectile": "bolt",
+  "damage": 8,
+  "rateMs": 220,
+  "speed": 260,
+  "lifeMs": 900,
+  "size": 3,
+  "count": 1,
+  "spread": 0.05,
+  "tags": [
+   "set6"
+  ]
+ },
+ {
+  "id": "rivet_magazine",
+  "set": 6,
+  "kind": "mod",
+  "rateMul": 0.7,
+  "tags": [
+   "set6"
+  ]
+ },
+ {
+  "id": "rivet_hardened",
+  "set": 6,
+  "kind": "mod",
+  "damageMul": 1.4,
+  "pierceAdd": 1,
+  "tags": [
+   "set6"
+  ]
+ }
+]

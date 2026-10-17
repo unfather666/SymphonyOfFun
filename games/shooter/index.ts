@@ -3,12 +3,13 @@ import type { CoreContext, GameInstance, GameModule } from '../../src/core/api';
 import { loadContent, type Content } from './content/load';
 import { CUE } from './logic/cues';
 import { mulberry32 } from './logic/rng';
+import { clearBonus } from './logic/score';
 import { makeCommand, stepWorld } from './logic/sim';
-import { DEFAULT_SHOT } from './logic/shots';
 import { createWorld, resetWorld } from './logic/world';
 import type { Command, World } from './logic/types';
 import { cameraAt, type Cam } from './render/camera';
 import { drawScene } from './render/scene';
+import { createProgressControl, type ProgressControl } from './progressControl';
 
 const SFX_OF_CUE: Record<number, string> = {
   [CUE.shotBolt]: 'shot_bolt',
@@ -35,6 +36,8 @@ function create(ctx: CoreContext): GameInstance {
   const cmd: Command = makeCommand();
   const cam: Cam = { x: 0, y: 0 };
   let endedAt = 0;
+  let prog: ProgressControl;
+  let banked = false;
 
   function readCommand(): void {
     const inp = ctx.input;
@@ -53,6 +56,16 @@ function create(ctx: CoreContext): GameInstance {
     cmd.fire = inp.held('a') || ptr.down;
     cmd.dash = inp.pressed('b');
     cmd.flare = inp.pressed('x');
+    if (inp.pressed('y')) prog.openRig();
+    if (inp.pressed('l')) prog.cycle(-1);
+    if (inp.pressed('r')) prog.cycle(1);
+  }
+
+  function drainGained(): void {
+    if (world.gainedN === 0) return;
+    for (let i = 0; i < world.gainedN; i++) prog.give(world.gained[i]!);
+    world.gainedN = 0;
+    world.dropItems = prog.drops();
   }
 
   function drainCues(): void {
@@ -82,9 +95,12 @@ function create(ctx: CoreContext): GameInstance {
         plan,
         defs: content.enemies,
         brains: content.brains,
-        shot: DEFAULT_SHOT(content.rules),
+        shot: { shots: [], onHit: 0, onKill: 0 },
         now: ctx.clock.nowMs(),
       });
+      prog = createProgressControl(ctx, content, () => world);
+      world.dropItems = prog.drops();
+      prog.apply(world);
       if (content.problems.length) ctx.ui.notice(ctx.strings('content_problem'), 3000);
     },
     update() {
@@ -99,11 +115,17 @@ function create(ctx: CoreContext): GameInstance {
         else if (world.status === 'cleared' && ctx.input.pressed('a')) restart(now);
       }
       stepWorld(world, cmd, now);
+      drainGained();
+      if (world.status === 'cleared' && !banked) {
+        banked = true;
+        prog.progress.totalPoints += world.score + clearBonus(world);
+        prog.save();
+      }
       if (world.status !== 'play' && endedAt === 0) endedAt = now;
       drainCues();
     },
     draw(alpha) {
-      drawScene(ctx, world, alpha);
+      drawScene(ctx, world, alpha, prog.hud);
     },
     pause() {},
     shutdown() {},
@@ -111,6 +133,9 @@ function create(ctx: CoreContext): GameInstance {
 
   function restart(now: number): void {
     resetWorld(world, now);
+    banked = false;
+    prog.apply(world);
+    world.dropItems = prog.drops();
     ctx.gfx.fade(0, 300);
     endedAt = now;
   }

@@ -21,11 +21,12 @@ export function stepWorld(w: World, cmd: Command, now: number): void {
     updateParticles(w);
     return;
   }
-  updatePlayer(w, cmd);
-
+  // Index enemies first so the player's instant shots (arcs) see them.
   gridClear(w.grid);
   const live = w.enemies.live;
   for (let i = 0; i < w.enemies.n; i++) gridInsert(w.grid, live[i]!.slot, live[i]!.x, live[i]!.y);
+  updatePlayer(w, cmd);
+
   if (w.enemies.n > 0 && now >= w.flowAt) {
     computeFlow(w.map, Math.floor(w.player.x / TILE), Math.floor(w.player.y / TILE), w.flow, w.flowQ, 60);
     w.flowAt = now + 100;

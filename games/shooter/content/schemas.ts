@@ -43,3 +43,36 @@ export const ROOM_SCHEMA: Schema = {
 export const SFX_SCHEMA: Schema = {
   layers: { type: 'any' },
 };
+
+const num = (min: number, max: number, int = false) => ({ type: 'number' as const, min, max, int, optional: true });
+export const ITEM_SCHEMA: Schema = {
+  set: { type: 'number', min: 1, max: 20, int: true },
+  kind: { type: 'string', oneOf: ['core', 'mod', 'aux'] },
+  projectile: { type: 'string', oneOf: ['bolt', 'beam', 'arc', 'shell', 'wave', 'drone'], optional: true },
+  damage: num(0.5, 500),
+  rateMs: num(40, 5000),
+  speed: num(20, 1200),
+  count: num(1, 12, true),
+  spread: num(0, 6.3),
+  lifeMs: num(50, 6000),
+  size: num(1, 24),
+  pierce: num(0, 99, true),
+  bounce: num(0, 9, true),
+  knockback: num(0, 20),
+  element: { type: 'string', oneOf: ['none', 'void', 'fire', 'ice', 'psi'], optional: true },
+  dirs: num(1, 8, true),
+  selfMadness: num(0, 20),
+  homing: num(0, 1.5),
+  damageMul: num(0.1, 5),
+  rateMul: num(0.2, 3),
+  speedMul: num(0.2, 3),
+  sizeMul: num(0.2, 4),
+  lifeMul: num(0.2, 4),
+  countAdd: num(-6, 8, true),
+  spreadAdd: num(-1, 3),
+  pierceAdd: num(-5, 9, true),
+  bounceAdd: num(0, 9, true),
+  knockbackAdd: num(0, 20),
+  onHit: { type: 'string', oneOf: ['burn', 'freeze', 'pull', 'chain', 'blind'], optional: true },
+  onKill: { type: 'string', oneOf: ['heal', 'ammo', 'light'], optional: true },
+};

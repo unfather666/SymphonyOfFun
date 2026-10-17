@@ -2,8 +2,10 @@
 import { describe, expect, test } from 'vitest';
 import { hurtPlayer } from '../logic/combat';
 import { hashWorld, makeCommand } from '../logic/sim';
-import { resetWorld, spawnEnemy } from '../logic/world';
-import { IDLE_BRAIN, ENEMIES, makeWorld, run } from './helpers';
+import { resolveRig } from '../logic/rig';
+import { DEFAULT_SHOT } from '../logic/shots';
+import { resetWorld, setShot, spawnEnemy } from '../logic/world';
+import { IDLE_BRAIN, ENEMIES, RULES, makeWorld, pick, run } from './helpers';
 import type { EnemyDef } from '../logic/types';
 
 const idleCultist = { ...ENEMIES.find((e) => e.id === 'cultist')!, id: 'idle_cultist', brain: 'idle_test', touchDamage: 0 } as EnemyDef;
@@ -138,5 +140,69 @@ describe('load', () => {
     c.ay = 1;
     run(w, 600, c);
     expect(w.bullets.n).toBeLessThanOrEqual(512);
+  });
+});
+
+describe('projectile kinds', () => {
+  // Three idle cultists in a line in front of the player; one shot, then let it fly.
+  function volley(ids: string[], gaps: number[], hp = 20) {
+    const w = withIdle();
+    setShot(w, resolveRig(pick(ids), DEFAULT_SHOT(RULES).shots[0]!));
+    const es = gaps.map((g) => spawnEnemy(w, 'idle_cultist', w.player.x + g, w.player.y, false, -1)!);
+    for (const e of es) e.hp = hp;
+    const c = makeCommand();
+    c.fire = true;
+    c.ax = 1;
+    run(w, 1, c);
+    c.fire = false;
+    run(w, 45, c);
+    return { w, es, hurt: es.map((e) => !e.alive || e.hp < hp) };
+  }
+  test('bolt without pierce hurts only the first', () => {
+    expect(volley(['rivet_bolt'], [30, 50, 70]).hurt).toEqual([true, false, false]);
+  });
+  test('beam pierces all in range', () => {
+    expect(volley(['flame_beam'], [30, 50, 70]).hurt).toEqual([true, true, true]);
+  });
+  test('shell splash reaches neighbours', () => {
+    expect(volley(['flak_shell'], [40, 48, 54]).hurt).toEqual([true, true, true]);
+  });
+  test('arc chains between targets', () => {
+    expect(volley(['tesla_arc'], [30, 50, 70]).hurt).toEqual([true, true, true]);
+  });
+  test('wave passes through everything it meets', () => {
+    expect(volley(['sonar_wave'], [30, 50, 70]).hurt).toEqual([true, true, true]);
+  });
+  test('hardened rivet (pierce 1) hurts two', () => {
+    expect(volley(['rivet_bolt', 'rivet_hardened'], [30, 50, 70]).hurt).toEqual([true, true, false]);
+  });
+  test('winch pulls the target towards the player, coolant slows it', () => {
+    const a = volley(['harpoon_head', 'harpoon_winch'], [60], 500);
+    expect(a.es[0]!.x).toBeLessThan(a.w.player.x + 60);
+    const b = volley(['rivet_bolt', 'cryo_coolant'], [30]);
+    expect(b.es[0]!.slowUntil).toBeGreaterThan(0);
+  });
+  test('eight-direction core fires one bullet per direction', () => {
+    const w = withIdle();
+    setShot(w, resolveRig(pick(['signal_core']), DEFAULT_SHOT(RULES).shots[0]!));
+    const c = makeCommand();
+    c.fire = true;
+    c.ax = 1;
+    run(w, 1, c);
+    expect(w.bullets.n).toBe(8);
+  });
+  test('kill effects: leech heals, ammo starts overdrive', () => {
+    const w = withIdle();
+    setShot(w, resolveRig(pick(['rivet_bolt', 'siphon_leech', 'siphon_ammo']), DEFAULT_SHOT(RULES).shots[0]!));
+    w.player.hp = 50;
+    const e = spawnEnemy(w, 'idle_cultist', w.player.x + 30, w.player.y, false, -1)!;
+    e.hp = 1;
+    const c = makeCommand();
+    c.fire = true;
+    c.ax = 1;
+    run(w, 20, c);
+    expect(e.alive).toBe(false);
+    expect(w.player.hp).toBe(55);
+    expect(w.player.overdriveUntil).toBeGreaterThan(w.now);
   });
 });

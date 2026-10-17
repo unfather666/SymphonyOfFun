@@ -1,0 +1,39 @@
+[
+ {
+  "id": "dagon_eye",
+  "set": 16,
+  "kind": "core",
+  "projectile": "beam",
+  "damage": 30,
+  "rateMs": 900,
+  "speed": 800,
+  "lifeMs": 200,
+  "size": 3,
+  "element": "void",
+  "selfMadness": 3,
+  "count": 1,
+  "spread": 0,
+  "tags": [
+   "set16"
+  ]
+ },
+ {
+  "id": "dagon_gaze",
+  "set": 16,
+  "kind": "mod",
+  "damageMul": 1.6,
+  "sizeMul": 1.5,
+  "tags": [
+   "set16"
+  ]
+ },
+ {
+  "id": "dagon_tear",
+  "set": 16,
+  "kind": "aux",
+  "onHit": "blind",
+  "tags": [
+   "set16"
+  ]
+ }
+]

@@ -1,0 +1,38 @@
+[
+ {
+  "id": "mirror_beam",
+  "set": 11,
+  "kind": "core",
+  "projectile": "beam",
+  "damage": 5,
+  "rateMs": 160,
+  "speed": 700,
+  "lifeMs": 160,
+  "size": 2,
+  "count": 1,
+  "spread": 0,
+  "tags": [
+   "set11"
+  ]
+ },
+ {
+  "id": "mirror_prism",
+  "set": 11,
+  "kind": "mod",
+  "bounceAdd": 2,
+  "spreadAdd": 0.1,
+  "countAdd": 1,
+  "tags": [
+   "set11"
+  ]
+ },
+ {
+  "id": "mirror_blind",
+  "set": 11,
+  "kind": "aux",
+  "onHit": "blind",
+  "tags": [
+   "set11"
+  ]
+ }
+]

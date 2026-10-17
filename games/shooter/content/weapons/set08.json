@@ -1,0 +1,37 @@
+[
+ {
+  "id": "flame_beam",
+  "set": 8,
+  "kind": "core",
+  "projectile": "beam",
+  "damage": 3,
+  "rateMs": 80,
+  "speed": 700,
+  "lifeMs": 130,
+  "size": 2,
+  "count": 1,
+  "spread": 0.1,
+  "tags": [
+   "set8"
+  ]
+ },
+ {
+  "id": "flame_nozzle",
+  "set": 8,
+  "kind": "mod",
+  "spreadAdd": 0.15,
+  "countAdd": 1,
+  "tags": [
+   "set8"
+  ]
+ },
+ {
+  "id": "flame_burn",
+  "set": 8,
+  "kind": "aux",
+  "onHit": "burn",
+  "tags": [
+   "set8"
+  ]
+ }
+]

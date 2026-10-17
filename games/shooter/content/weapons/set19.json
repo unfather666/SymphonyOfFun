@@ -1,0 +1,38 @@
+[
+ {
+  "id": "shard_core",
+  "set": 19,
+  "kind": "core",
+  "projectile": "bolt",
+  "damage": 18,
+  "rateMs": 300,
+  "speed": 300,
+  "lifeMs": 800,
+  "size": 3,
+  "count": 3,
+  "spread": 0.5,
+  "element": "ice",
+  "selfMadness": 2,
+  "tags": [
+   "set19"
+  ]
+ },
+ {
+  "id": "shard_edge",
+  "set": 19,
+  "kind": "mod",
+  "pierceAdd": 3,
+  "tags": [
+   "set19"
+  ]
+ },
+ {
+  "id": "shard_glow",
+  "set": 19,
+  "kind": "aux",
+  "onKill": "light",
+  "tags": [
+   "set19"
+  ]
+ }
+]

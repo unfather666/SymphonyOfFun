@@ -1,0 +1,38 @@
+[
+ {
+  "id": "sonar_wave",
+  "set": 5,
+  "kind": "core",
+  "projectile": "wave",
+  "damage": 6,
+  "rateMs": 700,
+  "speed": 120,
+  "lifeMs": 800,
+  "size": 3,
+  "knockback": 1,
+  "count": 1,
+  "spread": 0,
+  "tags": [
+   "set5"
+  ]
+ },
+ {
+  "id": "sonar_tuner",
+  "set": 5,
+  "kind": "mod",
+  "sizeMul": 1.5,
+  "speedMul": 1.2,
+  "tags": [
+   "set5"
+  ]
+ },
+ {
+  "id": "sonar_echo",
+  "set": 5,
+  "kind": "mod",
+  "bounceAdd": 2,
+  "tags": [
+   "set5"
+  ]
+ }
+]
