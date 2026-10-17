@@ -1,10 +1,41 @@
 name: desktop
-# Manual only, and only when Un asks. Not yet run: first run is part of stage S2.
+# Builds the desktop app for Windows, macOS and Linux and attaches the files to a GitHub Release.
+# - Run workflow (publish unticked): a private draft release, for testing.
+# - Run workflow (publish ticked) or push a tag like v1.0.0: a public release.
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: Release version, e.g. v1.0.0 (only used when publishing)
+        default: v1.0.0
+      publish:
+        description: Publish a public release (unticked = private draft for testing)
+        type: boolean
+        default: false
+  push:
+    tags: ['v*']
+concurrency:
+  group: desktop-${{ github.ref }}
+  cancel-in-progress: false
+permissions:
+  contents: write
+env:
+  STAMP: SymphonyOfFun-ver${{ github.run_number }}
+  TAURI_CLI: '@tauri-apps/cli@2.12.3' # pinned here rather than in package.json so every PR's npm ci stays lean
 jobs:
-  windows:
-    runs-on: windows-latest
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            args: --no-bundle
+          - os: macos-latest
+            args: --target universal-apple-darwin --bundles dmg
+            rust_targets: aarch64-apple-darwin,x86_64-apple-darwin
+          - os: ubuntu-22.04 # oldest supported glibc, so the AppImage runs on more distros
+            args: --bundles appimage
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
@@ -13,18 +44,69 @@ jobs:
           node-version: 22
           cache: npm
       - uses: dtolnay/rust-toolchain@stable
-      - run: npm ci
-      # Tauri CLI is pinned here rather than in package.json so every PR's npm ci stays lean.
-      - run: node scripts/make-icon.mjs src-tauri/app-icon.png
-      - run: npx --yes @tauri-apps/cli@2.12.3 icon src-tauri/app-icon.png
-      - run: npx --yes @tauri-apps/cli@2.12.3 build
-      - name: Stamp build number on the executable
-        shell: pwsh
+        with:
+          targets: ${{ matrix.rust_targets }}
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+      - if: runner.os == 'Linux'
         run: |
-          $exe = Get-ChildItem src-tauri/target/release -Filter *.exe | Select-Object -First 1
-          New-Item -ItemType Directory -Force out | Out-Null
-          Copy-Item $exe.FullName "out/SymphonyOfFun-ver${{ github.run_number }}.exe"
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libgtk-3-dev librsvg2-dev patchelf file
+      - run: npm ci
+      - run: node scripts/make-icon.mjs src-tauri/app-icon.png
+      - run: npx --yes ${{ env.TAURI_CLI }} icon src-tauri/app-icon.png
+      - run: npx --yes ${{ env.TAURI_CLI }} build ${{ matrix.args }}
+      - name: Stamp build number on the file
+        shell: bash
+        run: |
+          mkdir out
+          case "$RUNNER_OS" in
+            Windows) cp src-tauri/target/release/*.exe "out/$STAMP.exe" ;;
+            macOS)   cp src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg "out/$STAMP.dmg" ;;
+            Linux)   cp src-tauri/target/release/bundle/appimage/*.AppImage "out/$STAMP.AppImage" ;;
+          esac
+          ls -l out
       - uses: actions/upload-artifact@v4
         with:
-          name: SymphonyOfFun-ver${{ github.run_number }}
+          name: ${{ env.STAMP }}-${{ runner.os }}
           path: out
+          retention-days: 7
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+          merge-multiple: true
+      - name: Pick tag and visibility
+        id: pick
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = push ]; then
+            echo "tag=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"; echo "draft=false" >> "$GITHUB_OUTPUT"
+          elif [ "${{ inputs.publish }}" = true ]; then
+            echo "tag=${{ inputs.version }}" >> "$GITHUB_OUTPUT"; echo "draft=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=test-ver${{ github.run_number }}" >> "$GITHUB_OUTPUT"; echo "draft=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.pick.outputs.tag }}
+          name: Symphony of Fun ${{ steps.pick.outputs.tag }} (build ${{ github.run_number }})
+          target_commitish: ${{ github.sha }}
+          draft: ${{ steps.pick.outputs.draft }}
+          files: out/*
+          fail_on_unmatched_files: true
+          body: |
+            Download the file for your computer:
+            - **Windows:** `${{ env.STAMP }}.exe` (no install, just run it)
+            - **macOS:** `${{ env.STAMP }}.dmg` (open it and drag the app to Applications)
+            - **Linux:** `${{ env.STAMP }}.AppImage` (mark it executable, then run it)
+
+            These builds aren't code-signed, so your computer may warn you the first time:
+            - Windows: click **More info**, then **Run anyway**.
+            - macOS: right-click the app and choose **Open**, or allow it in System Settings > Privacy & Security.
