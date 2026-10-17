@@ -76,3 +76,13 @@ export const levelSchema: Schema = {
 
 export const propSchema: Schema = { parts: { type: 'any' } };
 export const vehicleSchema: Schema = { states: { type: 'any' } };
+
+export const patternSchema: Schema = {
+  role: { type: 'string', oneOf: ['drums', 'bass', 'lead', 'pad'] },
+  genre: { type: 'id' },
+  mode: { type: 'string', oneOf: ['major', 'minor', 'any'] },
+  bpmMin: n(40, 260),
+  bpmMax: n(40, 260),
+  meter: { ...n(3, 4, true), optional: true },
+  steps: { type: 'number[]' },
+};
