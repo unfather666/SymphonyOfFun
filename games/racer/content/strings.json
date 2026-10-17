@@ -1,5 +1,25 @@
 {
   "title": "TEMPO ROAD",
   "coming_soon": "COMING SOON",
-  "back_hint": "ESC THEN QUIT TO RETURN"
+  "back_hint": "ESC THEN QUIT TO RETURN",
+  "hud_speed": "KPH",
+  "hud_score": "SCORE",
+  "hud_dist": "DIST",
+  "hud_time": "TIME",
+  "hud_health": "HULL",
+  "hud_lives": "LIVES",
+  "hud_sync": "SYNC x{n}",
+  "level_title": "LEVEL {n}  {name}",
+  "theme_desert": "DESERT",
+  "theme_suburbs": "SUBURBS",
+  "theme_farmland": "FARMLAND",
+  "theme_harbour": "HARBOUR",
+  "theme_neon_city": "NEON CITY",
+  "theme_snow_pass": "SNOW PASS",
+  "theme_canyon": "CANYON",
+  "theme_haunted_woods": "HAUNTED WOODS",
+  "theme_moon_base": "MOON BASE",
+  "theme_rainbow_road": "RAINBOW ROAD",
+  "finish": "FINISH",
+  "content_warning": "SOME ROAD PARTS FAILED TO LOAD"
 }
