@@ -5,8 +5,8 @@
 Run: `npm run dev`, then open `/?game=racer&seed=1` (add `&level=1..10`). Keys: J accelerate (tap on the beat for a speed bonus), K brake, arrows/WASD steer, `;` jump on ramps, L use a power-up, Enter pause.
 
 ## Layout
-- `logic/` pure, Node-tested: `rng` (hash-seeded streams), `trackgen` + `track` (segment ring, section snapshots, poses), `car`, `sim` (one step function, phases, beat sync, respawn), `level` (bars, segment length, intensity).
-- `content/` JSON defs: `rules`, `segments` (11 kinds), `themes` (10), `levels` (10), `props`, `vehicles`, `strings.json`.
+- `logic/` pure, Node-tested: `songgen` (assembler), `rng` (hash-seeded streams), `trackgen` + `track` (segment ring, section snapshots, poses), `car`, `sim` (one step function, phases, beat sync, respawn), `level` (bars, segment length, intensity).
+- `content/` JSON defs: `rules`, `segments` (11 kinds), `themes` (10), `levels` (10), `patterns` (music), `props`, `vehicles`, `strings.json`.
 - `render/three/` the only place that imports `three`: `renderer`, `scene` (chase camera, pooled segment meshes), `segmentMesh` (road, props, dressing), `geo` (flat-shaded box/quad builder). `render/hud.ts` draws the HUD on the core 2D canvas.
 - `schemas.ts` field specs for the core loader. `index.ts` wires everything.
 
@@ -20,6 +20,7 @@ Run: `npm run dev`, then open `/?game=racer&seed=1` (add `&level=1..10`). Keys: 
 | Milestone | What works | How to see it | Known gaps |
 |---|---|---|---|
 | M0 car on a beat | Pooled endless road, car accelerates/steers/brakes, demo song, beat marker, FOV pulse, sync bonus, HUD, 22 draw calls | `?game=racer&seed=1` | Straights only, no hazards, demo song |
+| M2 music assembler | Every level plays its own 5:00 song at the level bpm: 8-bar sections, one pattern per role picked by tempo and meter from 24 patterns (6 genres), major/minor harmony families so genres can mix, section keys, intensity curve (drums+bass → +pad → everything, break without drums), seek to section start on respawn, FINISH when the song ends | `?game=racer&seed=1&level=1..10` | 24 of 96 patterns; no 3/4 sections until waltz patterns exist (M4) |
 | M1 road to the beat | All 11 segment kinds drive and draw: curves, hills, ramps, gaps (jump with `;`), narrow bridges (fall off the edge), split barrier, wide road, tunnels; landing room after every gap; fall = death, respawn at section start; generator hash fixture; autopilot completes all 10 levels in tests | `?game=racer&seed=1&level=7`; dev params `&bot=1` (autopilot), `&at=<beat or kind id>&freeze=1` (jump to a segment and hold the frame) | No hazards yet; song is still the launcher demo song; death is a plain 2.5 s pause (calamities come in M3) |
 
 ## Core asks

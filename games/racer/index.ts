@@ -1,13 +1,15 @@
 // Tempo Road: wires content, the pure sim, core services and the Three.js view. No game rules live here.
-import type { CoreContext, Def, GameInstance, GameModule, Registry } from '../../src/core/api';
+import type { CoreContext, Def, GameInstance, GameModule, Song } from '../../src/core/api';
 import { botInput } from './logic/bot';
 import { hasSeg, segAt } from './logic/track';
+import { levelBars } from './logic/level';
+import { assemble, chooseMeter, type PatternDef } from './logic/songgen';
 import { createSim, onBeat, stepSim, songEnded, warpTo, warpToKind, PHASE_RUN, type Sim } from './logic/sim';
 import type { DriveInput, KindDef, LevelDef, Rules, ThemeDef } from './logic/types';
 import { drawHud } from './render/hud';
 import { createRenderer, releaseRenderer, type GlRenderer } from './render/three/renderer';
 import { createScene, type RacerScene } from './render/three/scene';
-import { kindSchema, levelSchema, propSchema, rulesSchema, themeSchema, vehicleSchema } from './schemas';
+import { kindSchema, levelSchema, patternSchema, propSchema, rulesSchema, themeSchema, vehicleSchema } from './schemas';
 
 /** Dev readout: kinds of the next six segments. */
 function aheadKinds(sim: Sim, kinds: readonly KindDef[]): string {
@@ -46,9 +48,15 @@ function create(ctx: CoreContext): GameInstance {
       const q = new URLSearchParams(location.search);
       bot = import.meta.env.DEV && q.get('bot') === '1';
       freeze = import.meta.env.DEV && q.get('freeze') === '1';
-      ctx.chip.sequencer.load(ctx.chip.demoSong);
-      const bpm = ctx.chip.sequencer.bpm();
-      sim = createSim({ rules, level, theme, kinds, runSeed: ctx.random.runSeed, bpm });
+      const patterns = ctx.content.load<Def>('pattern', import.meta.glob('./content/patterns/*.json', { eager: true }), patternSchema).all() as unknown as PatternDef[];
+      let song: Song = ctx.chip.demoSong;
+      let meter = 4;
+      if (patterns.length > 0) {
+        meter = chooseMeter(level.meter3Chance ?? 0, ctx.random.runSeed, level.no, patterns);
+        song = assemble({ levelNo: level.no, runSeed: ctx.random.runSeed, bpm: level.bpm, meter, lengthBars: levelBars(rules.levelSeconds, level.bpm, meter), sectionBars: rules.sectionBars, patterns });
+      } else ctx.log.warn('racer:patterns', 'No music patterns loaded; playing the demo song.');
+      ctx.chip.sequencer.load(song);
+      sim = createSim({ rules, level, theme, kinds, runSeed: ctx.random.runSeed, bpm: ctx.chip.sequencer.bpm() || level.bpm, meter });
 
       const at = import.meta.env.DEV ? q.get('at') : null;
       if (at) {
@@ -75,7 +83,7 @@ function create(ctx: CoreContext): GameInstance {
       if (import.meta.env.DEV) {
         // Dev readout for agent-tests/racer-smoke.mjs and the budget row: draw calls, triangles, live sim numbers.
         (globalThis as { sofRacer?: unknown }).sofRacer = {
-          info: () => ({ calls: scene?.drawCalls() ?? 0, tris: scene?.triangles() ?? 0, s: sim?.car.s ?? 0, speed: sim?.car.speed ?? 0, deaths: sim?.deaths ?? 0, phase: sim?.phase ?? -1, beat: sim?.beat.index ?? -1, ahead: sim ? aheadKinds(sim, kindList) : '' }),
+          info: () => ({ calls: scene?.drawCalls() ?? 0, tris: scene?.triangles() ?? 0, s: sim?.car.s ?? 0, speed: sim?.car.speed ?? 0, deaths: sim?.deaths ?? 0, phase: sim?.phase ?? -1, beat: sim?.beat.index ?? -1, ahead: sim ? aheadKinds(sim, kindList) : '', song: ctx.chip.sequencer.bpm(), bars: ctx.chip.sequencer.lengthBars() }),
         };
       }
     },

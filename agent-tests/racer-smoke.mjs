@@ -34,6 +34,6 @@ for (let i = 0; i < secs; i++) {
 const last = samples[samples.length - 1];
 const avg = (k) => samples.reduce((a, s) => a + s[k], 0) / samples.length;
 const worst = Math.max(...samples.map((s) => s.stepWorst));
-console.log(JSON.stringify({ ahead: last.ahead, url: URL, throttle: process.env.THROTTLE ?? 1, fps: avg('fps').toFixed(1), stepAvg: avg('stepAvg').toFixed(3), stepWorst: worst.toFixed(3), drawAvg: avg('drawAvg').toFixed(3), calls: last.calls, tris: last.tris, dist: Math.round(last.s), deaths: last.deaths, phase: last.phase, minFps: Math.min(...samples.map((x) => x.fps)).toFixed(1), errors }, null, 1));
+console.log(JSON.stringify({ ahead: last.ahead, beat: last.beat, song: last.song, bars: last.bars, url: URL, throttle: process.env.THROTTLE ?? 1, fps: avg('fps').toFixed(1), stepAvg: avg('stepAvg').toFixed(3), stepWorst: worst.toFixed(3), drawAvg: avg('drawAvg').toFixed(3), calls: last.calls, tris: last.tris, dist: Math.round(last.s), deaths: last.deaths, phase: last.phase, minFps: Math.min(...samples.map((x) => x.fps)).toFixed(1), errors }, null, 1));
 await browser.close();
 process.exit(errors.length ? 1 : 0);
