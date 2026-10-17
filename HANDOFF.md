@@ -9,11 +9,10 @@ One section per area. Update your own section in each milestone commit (BUILD-PL
 - Not yet done: `desktop.yml` has never run (S2, when Un asks); 4x-throttle budget row for the launcher (S2).
 
 ## Shooter
-- State: M0 to M3 merged. M4 on branch `shooter-m4`: touch level select, stress cheat, budget at 4x throttle, browser passes.
-- Next: nothing planned; remaining ideas are balance tuning and a real sequencer detune once core has it.
+- State: M0 to M4 merged; playable from the launcher. Madness warp runs through the core sequencer rate.
+- Next: nothing planned; remaining ideas are balance tuning.
 - Check: `npm run check`; browser: `npm run dev` then `PW=$(npm root -g)/playwright node games/shooter/agent-tests/smoke.mjs` (also `levels-smoke.mjs`, `playthrough.mjs`, `budget.mjs`).
 - Dev cheats (dev console): `sof.cheat('points')`, `'god'`, `'give_all'`, `'slots6'`, `'madness3'`, `'madness'`, `'clear'`, `'stress'`.
-- Core ask: sequencer detune (see `games/shooter/README.md`).
 
 ## Racer
 - State (M4 done, 2026-10-17): level list, saves, touch controls, 96 patterns and tutorial captions on top of sim phases, hazards/pickups/pools/calamities on top of the road and car, autopilot (`logic/bot.ts`) clears every level in tests; Three view in `games/racer/render/three/`. Layout and decisions in `games/racer/README.md`. Regenerate the generator hash fixture with `UPDATE_FIXTURES=1 npx vitest run games/racer/tests/trackgen.test.ts` only when a generator change is intended.
