@@ -1,6 +1,9 @@
 // Fart kinds and the single door that fires one: doFart. Sim state changes only through here.
 import { MASS_REF, NO_BODY } from '../physics/PhysicsApi';
+import { SS_IDLE } from './jobTypes';
+import { fartMods, inKind } from './items';
 import { PUFF, NOTE, RING, spawnPiece, spawnPuff } from './pools';
+import { putDown } from './subjects';
 import { TAG_PROP, TAG_PERSON } from './types';
 import type { FartDef, Prop } from './types';
 import { witnessFart } from './witness';
@@ -32,10 +35,13 @@ export function breakProp(sim: Sim, p: Prop): void {
 /** Fire a fart of `kind` at the player's back. forceMul/radiusMul are for items (cursed ones raise them). */
 export function doFart(sim: Sim, kind: number, forceMul = 1, radiusMul = 1): void {
   const { physics, rules, farts, rng } = sim.deps;
+  const mods = fartMods(sim, kind, sim.mods);
+  kind = mods.kind;
   const def = farts[kind]!;
+  const loud = kind === farts.length - 1;
   const pl = sim.player;
   const ox = pl.x - FACE_DX[pl.facing]! * rules.fart.originBack, oy = pl.y - FACE_DY[pl.facing]! * rules.fart.originBack;
-  const force = Math.min(rules.fart.maxForce, def.force * rules.fart.forceScale * forceMul);
+  const force = Math.min(rules.fart.maxForce, def.force * rules.fart.forceScale * forceMul * mods.forceMul);
   const radius = def.radius * radiusMul;
   const buf = sim.qbuf;
   const n = physics.queryRadius(ox, oy, radius, buf);
@@ -69,6 +75,16 @@ export function doFart(sim: Sim, kind: number, forceMul = 1, radiusMul = 1): voi
   m.lastFartAt = sim.now;
   const f = sim.lastFart;
   f.count++; f.kind = kind; f.x = ox; f.y = oy; f.force = force; f.radius = radius; f.at = sim.now;
-  witnessFart(sim, kind, ox, oy, radiusMul);
-  sim.deps.emit('mrfart:fart', { kind, x: Math.round(ox), y: Math.round(oy), force: Math.round(force), shake: def.shake });
+  witnessFart(sim, kind, ox, oy, radiusMul * mods.witnessMul, mods.noticeMul, mods.intolMul);
+  const st = sim.stats;
+  st.maxForce = Math.max(st.maxForce, force);
+  if (loud && inKind(sim, 'shop', ox, oy)) st.loudInShop++;
+  if (inKind(sim, 'harbour', ox, oy)) st.harbourFart = true;
+  if (sim.job && kind > 0) sim.job.noisy++;
+  // A loud one shakes whatever is in your arms loose.
+  if (loud && sim.carrying >= 0) {
+    putDown(sim, sim.subjects[sim.carrying]!, SS_IDLE);
+    if (sim.job) sim.job.drops++;
+  }
+  sim.deps.emit('mrfart:fart', { kind, x: Math.round(ox), y: Math.round(oy), force: Math.round(force), shake: def.shake, key: mods.key, pitch: mods.pitch });
 }

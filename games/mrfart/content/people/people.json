@@ -1,7 +1,1082 @@
 [
-  { "id": "mrs_pibb", "shirt": 31, "hair": 6, "skin": 15, "name": "Mrs Pibb", "role": "granny", "speed": 22, "loop": [[15, 12, 4000], [30, 12, 3000]] },
-  { "id": "gus_mailman", "shirt": 29, "hair": 12, "skin": 14, "name": "Gus", "role": "mailman", "speed": 34, "loop": [[6, 12, 1500], [6, 3, 1500], [14, 3, 1500]] },
-  { "id": "tilly_kid", "shirt": 18, "hair": 13, "skin": 15, "name": "Tilly", "role": "kid", "speed": 38, "loop": [[24, 5, 800], [20, 20, 800], [28, 20, 800]] },
-  { "id": "bob_baker", "shirt": 7, "hair": 12, "skin": 15, "name": "Bob", "role": "baker", "speed": 26, "loop": [[3, 12, 5000], [14, 12, 2000]] },
-  { "id": "ana_jogger", "shirt": 22, "hair": 11, "skin": 14, "name": "Ana", "role": "jogger", "speed": 48, "loop": [[2, 24, 200], [31, 24, 200]] }
+ {
+  "id": "mrs_pibb",
+  "name": "Mrs Pibb",
+  "role": "granny",
+  "shirt": 26,
+  "hair": 31,
+  "skin": 15,
+  "speed": 32,
+  "home": [
+   0,
+   0
+  ],
+  "anchors": [
+   "church",
+   "park",
+   "pawn"
+  ]
+ },
+ {
+  "id": "gus",
+  "name": "Gus",
+  "role": "mailman",
+  "shirt": 26,
+  "hair": 18,
+  "skin": 13,
+  "speed": 20,
+  "home": [
+   1,
+   0
+  ],
+  "anchors": [
+   "shop",
+   "busstop",
+   "park"
+  ]
+ },
+ {
+  "id": "tilly",
+  "name": "Tilly",
+  "role": "kid",
+  "shirt": 7,
+  "hair": 17,
+  "skin": 12,
+  "speed": 36,
+  "home": [
+   2,
+   0
+  ],
+  "anchors": [
+   "park",
+   "church",
+   "busstop"
+  ]
+ },
+ {
+  "id": "bob",
+  "name": "Bob",
+  "role": "baker",
+  "shirt": 31,
+  "hair": 18,
+  "skin": 13,
+  "speed": 36,
+  "home": [
+   3,
+   0
+  ],
+  "anchors": [
+   "shop",
+   "park",
+   "pawn"
+  ]
+ },
+ {
+  "id": "ana",
+  "name": "Ana",
+  "role": "jogger",
+  "shirt": 7,
+  "hair": 2,
+  "skin": 12,
+  "speed": 24,
+  "home": [
+   4,
+   0
+  ],
+  "anchors": [
+   "church",
+   "pawn",
+   "shop"
+  ]
+ },
+ {
+  "id": "old_pete",
+  "name": "Old Pete",
+  "role": "cop",
+  "shirt": 26,
+  "hair": 12,
+  "skin": 15,
+  "speed": 36,
+  "home": [
+   5,
+   0
+  ],
+  "anchors": [
+   "church",
+   "pawn",
+   "park"
+  ]
+ },
+ {
+  "id": "doris",
+  "name": "Doris",
+  "role": "nurse",
+  "shirt": 14,
+  "hair": 13,
+  "skin": 12,
+  "speed": 40,
+  "home": [
+   0,
+   1
+  ],
+  "anchors": [
+   "park",
+   "church",
+   "busstop"
+  ]
+ },
+ {
+  "id": "kevin",
+  "name": "Kevin",
+  "role": "farmer",
+  "shirt": 14,
+  "hair": 13,
+  "skin": 12,
+  "speed": 40,
+  "home": [
+   1,
+   1
+  ],
+  "anchors": [
+   "pawn",
+   "busstop",
+   "park"
+  ]
+ },
+ {
+  "id": "marge",
+  "name": "Marge",
+  "role": "priest",
+  "shirt": 29,
+  "hair": 12,
+  "skin": 12,
+  "speed": 20,
+  "home": [
+   2,
+   1
+  ],
+  "anchors": [
+   "park",
+   "church",
+   "shop"
+  ]
+ },
+ {
+  "id": "dex",
+  "name": "Dex",
+  "role": "clerk",
+  "shirt": 14,
+  "hair": 13,
+  "skin": 12,
+  "speed": 20,
+  "home": [
+   3,
+   1
+  ],
+  "anchors": [
+   "shop",
+   "park",
+   "park"
+  ]
+ },
+ {
+  "id": "lulu",
+  "name": "Lulu",
+  "role": "teen",
+  "shirt": 5,
+  "hair": 13,
+  "skin": 15,
+  "speed": 40,
+  "home": [
+   4,
+   1
+  ],
+  "anchors": [
+   "park",
+   "church",
+   "shop"
+  ]
+ },
+ {
+  "id": "hank",
+  "name": "Hank",
+  "role": "walker",
+  "shirt": 31,
+  "hair": 18,
+  "skin": 13,
+  "speed": 40,
+  "home": [
+   5,
+   1
+  ],
+  "anchors": [
+   "pawn",
+   "busstop",
+   "shop"
+  ]
+ },
+ {
+  "id": "fern",
+  "name": "Fern",
+  "role": "student",
+  "shirt": 14,
+  "hair": 12,
+  "skin": 12,
+  "speed": 32,
+  "home": [
+   0,
+   2
+  ],
+  "anchors": [
+   "park",
+   "shop",
+   "park"
+  ]
+ },
+ {
+  "id": "otis",
+  "name": "Otis",
+  "role": "mechanic",
+  "shirt": 7,
+  "hair": 2,
+  "skin": 12,
+  "speed": 32,
+  "home": [
+   1,
+   2
+  ],
+  "anchors": [
+   "shop",
+   "park",
+   "busstop"
+  ]
+ },
+ {
+  "id": "peggy",
+  "name": "Peggy",
+  "role": "chef",
+  "shirt": 29,
+  "hair": 6,
+  "skin": 15,
+  "speed": 36,
+  "home": [
+   2,
+   2
+  ],
+  "anchors": [
+   "church",
+   "busstop",
+   "park"
+  ]
+ },
+ {
+  "id": "walt",
+  "name": "Walt",
+  "role": "artist",
+  "shirt": 22,
+  "hair": 18,
+  "skin": 15,
+  "speed": 20,
+  "home": [
+   3,
+   2
+  ],
+  "anchors": [
+   "park",
+   "church",
+   "park"
+  ]
+ },
+ {
+  "id": "cora",
+  "name": "Cora",
+  "role": "banker",
+  "shirt": 5,
+  "hair": 12,
+  "skin": 14,
+  "speed": 20,
+  "home": [
+   4,
+   2
+  ],
+  "anchors": [
+   "church",
+   "park",
+   "shop"
+  ]
+ },
+ {
+  "id": "ned",
+  "name": "Ned",
+  "role": "sailor",
+  "shirt": 31,
+  "hair": 18,
+  "skin": 12,
+  "speed": 20,
+  "home": [
+   5,
+   2
+  ],
+  "anchors": [
+   "busstop",
+   "park",
+   "church"
+  ]
+ },
+ {
+  "id": "iris",
+  "name": "Iris",
+  "role": "sunbather",
+  "shirt": 14,
+  "hair": 2,
+  "skin": 14,
+  "speed": 28,
+  "home": [
+   0,
+   3
+  ],
+  "anchors": [
+   "park",
+   "shop",
+   "shop"
+  ]
+ },
+ {
+  "id": "stan",
+  "name": "Stan",
+  "role": "janitor",
+  "shirt": 7,
+  "hair": 6,
+  "skin": 13,
+  "speed": 20,
+  "home": [
+   1,
+   3
+  ],
+  "anchors": [
+   "busstop",
+   "busstop",
+   "pawn"
+  ]
+ },
+ {
+  "id": "vera",
+  "name": "Vera",
+  "role": "granny",
+  "shirt": 26,
+  "hair": 6,
+  "skin": 15,
+  "speed": 36,
+  "home": [
+   2,
+   3
+  ],
+  "anchors": [
+   "busstop",
+   "park",
+   "church"
+  ]
+ },
+ {
+  "id": "moe",
+  "name": "Moe",
+  "role": "mailman",
+  "shirt": 10,
+  "hair": 18,
+  "skin": 13,
+  "speed": 28,
+  "home": [
+   3,
+   3
+  ],
+  "anchors": [
+   "church",
+   "park",
+   "pawn"
+  ]
+ },
+ {
+  "id": "beth",
+  "name": "Beth",
+  "role": "kid",
+  "shirt": 11,
+  "hair": 18,
+  "skin": 13,
+  "speed": 24,
+  "home": [
+   4,
+   3
+  ],
+  "anchors": [
+   "church",
+   "busstop",
+   "shop"
+  ]
+ },
+ {
+  "id": "cal",
+  "name": "Cal",
+  "role": "baker",
+  "shirt": 26,
+  "hair": 17,
+  "skin": 12,
+  "speed": 32,
+  "home": [
+   5,
+   3
+  ],
+  "anchors": [
+   "shop",
+   "shop",
+   "park"
+  ]
+ },
+ {
+  "id": "dot",
+  "name": "Dot",
+  "role": "jogger",
+  "shirt": 5,
+  "hair": 17,
+  "skin": 14,
+  "speed": 24,
+  "home": [
+   0,
+   0
+  ],
+  "anchors": [
+   "park",
+   "busstop",
+   "church"
+  ]
+ },
+ {
+  "id": "eli",
+  "name": "Eli",
+  "role": "cop",
+  "shirt": 31,
+  "hair": 13,
+  "skin": 14,
+  "speed": 36,
+  "home": [
+   1,
+   0
+  ],
+  "anchors": [
+   "busstop",
+   "busstop",
+   "shop"
+  ]
+ },
+ {
+  "id": "flo",
+  "name": "Flo",
+  "role": "nurse",
+  "shirt": 10,
+  "hair": 6,
+  "skin": 15,
+  "speed": 36,
+  "home": [
+   2,
+   0
+  ],
+  "anchors": [
+   "park",
+   "busstop",
+   "shop"
+  ]
+ },
+ {
+  "id": "gil",
+  "name": "Gil",
+  "role": "farmer",
+  "shirt": 11,
+  "hair": 18,
+  "skin": 12,
+  "speed": 20,
+  "home": [
+   3,
+   0
+  ],
+  "anchors": [
+   "pawn",
+   "church",
+   "park"
+  ]
+ },
+ {
+  "id": "hazel",
+  "name": "Hazel",
+  "role": "priest",
+  "shirt": 11,
+  "hair": 2,
+  "skin": 12,
+  "speed": 24,
+  "home": [
+   4,
+   0
+  ],
+  "anchors": [
+   "pawn",
+   "busstop",
+   "shop"
+  ]
+ },
+ {
+  "id": "ike",
+  "name": "Ike",
+  "role": "clerk",
+  "shirt": 31,
+  "hair": 6,
+  "skin": 12,
+  "speed": 28,
+  "home": [
+   5,
+   0
+  ],
+  "anchors": [
+   "busstop",
+   "church",
+   "shop"
+  ]
+ },
+ {
+  "id": "june",
+  "name": "June",
+  "role": "teen",
+  "shirt": 29,
+  "hair": 17,
+  "skin": 13,
+  "speed": 36,
+  "home": [
+   0,
+   1
+  ],
+  "anchors": [
+   "shop",
+   "shop",
+   "church"
+  ]
+ },
+ {
+  "id": "karl",
+  "name": "Karl",
+  "role": "walker",
+  "shirt": 18,
+  "hair": 18,
+  "skin": 14,
+  "speed": 20,
+  "home": [
+   1,
+   1
+  ],
+  "anchors": [
+   "shop",
+   "pawn",
+   "busstop"
+  ]
+ },
+ {
+  "id": "lena",
+  "name": "Lena",
+  "role": "student",
+  "shirt": 7,
+  "hair": 13,
+  "skin": 12,
+  "speed": 40,
+  "home": [
+   2,
+   1
+  ],
+  "anchors": [
+   "pawn",
+   "busstop",
+   "park"
+  ]
+ },
+ {
+  "id": "milo",
+  "name": "Milo",
+  "role": "mechanic",
+  "shirt": 7,
+  "hair": 2,
+  "skin": 15,
+  "speed": 36,
+  "home": [
+   3,
+   1
+  ],
+  "anchors": [
+   "busstop",
+   "shop",
+   "shop"
+  ]
+ },
+ {
+  "id": "nora",
+  "name": "Nora",
+  "role": "chef",
+  "shirt": 10,
+  "hair": 31,
+  "skin": 14,
+  "speed": 28,
+  "home": [
+   4,
+   1
+  ],
+  "anchors": [
+   "park",
+   "busstop",
+   "church"
+  ]
+ },
+ {
+  "id": "oz",
+  "name": "Oz",
+  "role": "artist",
+  "shirt": 7,
+  "hair": 31,
+  "skin": 15,
+  "speed": 20,
+  "home": [
+   5,
+   1
+  ],
+  "anchors": [
+   "shop",
+   "pawn",
+   "shop"
+  ]
+ },
+ {
+  "id": "pam",
+  "name": "Pam",
+  "role": "banker",
+  "shirt": 31,
+  "hair": 18,
+  "skin": 15,
+  "speed": 32,
+  "home": [
+   0,
+   2
+  ],
+  "anchors": [
+   "shop",
+   "pawn",
+   "shop"
+  ]
+ },
+ {
+  "id": "quinn",
+  "name": "Quinn",
+  "role": "sailor",
+  "shirt": 7,
+  "hair": 2,
+  "skin": 12,
+  "speed": 28,
+  "home": [
+   1,
+   2
+  ],
+  "anchors": [
+   "park",
+   "busstop",
+   "busstop"
+  ]
+ },
+ {
+  "id": "rex",
+  "name": "Rex",
+  "role": "sunbather",
+  "shirt": 22,
+  "hair": 18,
+  "skin": 15,
+  "speed": 32,
+  "home": [
+   2,
+   2
+  ],
+  "anchors": [
+   "shop",
+   "park",
+   "pawn"
+  ]
+ },
+ {
+  "id": "sue",
+  "name": "Sue",
+  "role": "janitor",
+  "shirt": 7,
+  "hair": 17,
+  "skin": 12,
+  "speed": 28,
+  "home": [
+   3,
+   2
+  ],
+  "anchors": [
+   "park",
+   "church",
+   "shop"
+  ]
+ },
+ {
+  "id": "tom",
+  "name": "Tom",
+  "role": "granny",
+  "shirt": 11,
+  "hair": 18,
+  "skin": 12,
+  "speed": 32,
+  "home": [
+   4,
+   2
+  ],
+  "anchors": [
+   "shop",
+   "busstop",
+   "shop"
+  ]
+ },
+ {
+  "id": "uma",
+  "name": "Uma",
+  "role": "mailman",
+  "shirt": 18,
+  "hair": 12,
+  "skin": 13,
+  "speed": 40,
+  "home": [
+   5,
+   2
+  ],
+  "anchors": [
+   "church",
+   "pawn",
+   "park"
+  ]
+ },
+ {
+  "id": "vic",
+  "name": "Vic",
+  "role": "kid",
+  "shirt": 18,
+  "hair": 18,
+  "skin": 15,
+  "speed": 32,
+  "home": [
+   0,
+   3
+  ],
+  "anchors": [
+   "church",
+   "busstop",
+   "shop"
+  ]
+ },
+ {
+  "id": "wren",
+  "name": "Wren",
+  "role": "baker",
+  "shirt": 14,
+  "hair": 6,
+  "skin": 15,
+  "speed": 24,
+  "home": [
+   1,
+   3
+  ],
+  "anchors": [
+   "church",
+   "shop",
+   "park"
+  ]
+ },
+ {
+  "id": "xan",
+  "name": "Xan",
+  "role": "jogger",
+  "shirt": 31,
+  "hair": 12,
+  "skin": 13,
+  "speed": 24,
+  "home": [
+   2,
+   3
+  ],
+  "anchors": [
+   "busstop",
+   "church",
+   "shop"
+  ]
+ },
+ {
+  "id": "yuri",
+  "name": "Yuri",
+  "role": "cop",
+  "shirt": 5,
+  "hair": 18,
+  "skin": 12,
+  "speed": 28,
+  "home": [
+   3,
+   3
+  ],
+  "anchors": [
+   "busstop",
+   "shop",
+   "church"
+  ]
+ },
+ {
+  "id": "zed",
+  "name": "Zed",
+  "role": "nurse",
+  "shirt": 26,
+  "hair": 12,
+  "skin": 13,
+  "speed": 32,
+  "home": [
+   4,
+   3
+  ],
+  "anchors": [
+   "park",
+   "busstop",
+   "pawn"
+  ]
+ },
+ {
+  "id": "abe",
+  "name": "Abe",
+  "role": "farmer",
+  "shirt": 26,
+  "hair": 18,
+  "skin": 14,
+  "speed": 40,
+  "home": [
+   5,
+   3
+  ],
+  "anchors": [
+   "shop",
+   "busstop",
+   "shop"
+  ]
+ },
+ {
+  "id": "bea",
+  "name": "Bea",
+  "role": "priest",
+  "shirt": 5,
+  "hair": 12,
+  "skin": 12,
+  "speed": 40,
+  "home": [
+   0,
+   0
+  ],
+  "anchors": [
+   "pawn",
+   "shop",
+   "busstop"
+  ]
+ },
+ {
+  "id": "cyd",
+  "name": "Cyd",
+  "role": "clerk",
+  "shirt": 14,
+  "hair": 18,
+  "skin": 12,
+  "speed": 40,
+  "home": [
+   1,
+   0
+  ],
+  "anchors": [
+   "busstop",
+   "church",
+   "park"
+  ]
+ },
+ {
+  "id": "dan",
+  "name": "Dan",
+  "role": "teen",
+  "shirt": 11,
+  "hair": 2,
+  "skin": 14,
+  "speed": 24,
+  "home": [
+   2,
+   0
+  ],
+  "anchors": [
+   "busstop",
+   "park",
+   "shop"
+  ]
+ },
+ {
+  "id": "edna",
+  "name": "Edna",
+  "role": "walker",
+  "shirt": 7,
+  "hair": 13,
+  "skin": 12,
+  "speed": 40,
+  "home": [
+   3,
+   0
+  ],
+  "anchors": [
+   "busstop",
+   "shop",
+   "shop"
+  ]
+ },
+ {
+  "id": "fitz",
+  "name": "Fitz",
+  "role": "student",
+  "shirt": 11,
+  "hair": 6,
+  "skin": 15,
+  "speed": 28,
+  "home": [
+   4,
+   0
+  ],
+  "anchors": [
+   "busstop",
+   "busstop",
+   "shop"
+  ]
+ },
+ {
+  "id": "gwen",
+  "name": "Gwen",
+  "role": "mechanic",
+  "shirt": 26,
+  "hair": 17,
+  "skin": 12,
+  "speed": 24,
+  "home": [
+   5,
+   0
+  ],
+  "anchors": [
+   "church",
+   "busstop",
+   "park"
+  ]
+ },
+ {
+  "id": "hugh",
+  "name": "Hugh",
+  "role": "chef",
+  "shirt": 29,
+  "hair": 18,
+  "skin": 13,
+  "speed": 32,
+  "home": [
+   0,
+   1
+  ],
+  "anchors": [
+   "church",
+   "shop",
+   "shop"
+  ]
+ },
+ {
+  "id": "ivy",
+  "name": "Ivy",
+  "role": "artist",
+  "shirt": 22,
+  "hair": 6,
+  "skin": 15,
+  "speed": 32,
+  "home": [
+   1,
+   1
+  ],
+  "anchors": [
+   "church",
+   "busstop",
+   "shop"
+  ]
+ },
+ {
+  "id": "jack",
+  "name": "Jack",
+  "role": "banker",
+  "shirt": 22,
+  "hair": 17,
+  "skin": 14,
+  "speed": 32,
+  "home": [
+   2,
+   1
+  ],
+  "anchors": [
+   "busstop",
+   "shop",
+   "park"
+  ]
+ },
+ {
+  "id": "kit",
+  "name": "Kit",
+  "role": "sailor",
+  "shirt": 7,
+  "hair": 18,
+  "skin": 12,
+  "speed": 24,
+  "home": [
+   3,
+   1
+  ],
+  "anchors": [
+   "church",
+   "shop",
+   "shop"
+  ]
+ },
+ {
+  "id": "lou",
+  "name": "Lou",
+  "role": "sunbather",
+  "shirt": 14,
+  "hair": 17,
+  "skin": 14,
+  "speed": 28,
+  "home": [
+   4,
+   1
+  ],
+  "anchors": [
+   "shop",
+   "busstop",
+   "pawn"
+  ]
+ },
+ {
+  "id": "mae",
+  "name": "Mae",
+  "role": "janitor",
+  "shirt": 7,
+  "hair": 2,
+  "skin": 15,
+  "speed": 28,
+  "home": [
+   5,
+   1
+  ],
+  "anchors": [
+   "park",
+   "shop",
+   "busstop"
+  ]
+ }
 ]

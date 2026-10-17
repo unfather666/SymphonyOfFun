@@ -1,0 +1,30 @@
+[
+ {
+  "id": "quietly",
+  "minTier": 1,
+  "cond": "quiet",
+  "bonus": 1.5,
+  "limitMs": 0
+ },
+ {
+  "id": "before_the_bus",
+  "minTier": 1,
+  "cond": "time",
+  "bonus": 1.5,
+  "limitMs": 90000
+ },
+ {
+  "id": "without_dropping_it",
+  "minTier": 1,
+  "cond": "nodrop",
+  "bonus": 1.5,
+  "limitMs": 0
+ },
+ {
+  "id": "while_it_is_on_fire",
+  "minTier": 3,
+  "cond": "fire",
+  "bonus": 2,
+  "limitMs": 0
+ }
+]

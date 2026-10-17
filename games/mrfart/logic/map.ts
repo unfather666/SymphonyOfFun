@@ -14,6 +14,11 @@ export interface CellTypeDef {
   door?: number;
   trees?: Array<[number, number]>;
   props?: Array<{ def: string; at: [number, number] }>;
+  /** Fill the lot with this tile (water for the harbour); the last `dock` rows stay walkable. */
+  floor?: number;
+  dock?: number;
+  /** Where people stand when the cell has no door: lot-local tile. */
+  anchor?: [number, number];
 }
 export interface MapDef {
   cell: { w: number; h: number; streetX: number; streetY: number };
@@ -87,8 +92,9 @@ export function buildMap(def: MapDef): MapData {
         for (let lx = 0; lx < cw; lx++) {
           const street = lx >= streetX || ly >= streetY;
           let id: number = ct.kind === 'park' && !street ? T.PARK : T.GRASS;
+          if (!street && ct.floor !== undefined) id = ly >= streetY - (ct.dock ?? 2) ? T.SIDEWALK : ct.floor;
           if (street) id = T.STREET;
-          else if (ly === streetY - 1 || lx === streetX - 1) id = ct.kind === 'park' ? T.PARK : T.SIDEWALK;
+          else if ((ly === streetY - 1 || lx === streetX - 1) && ct.floor === undefined) id = ct.kind === 'park' ? T.PARK : T.SIDEWALK;
           set(ox + lx, oy + ly, id);
         }
       let doorX = (ox + streetX / 2) * TILE, doorY = (oy + streetY / 2) * TILE;
@@ -99,6 +105,10 @@ export function buildMap(def: MapDef): MapData {
         set(dx, dy, T.DOOR);
         doorX = (dx + 0.5) * TILE;
         doorY = (dy + 1.5) * TILE;
+      }
+      if (!ct.building && ct.anchor) {
+        doorX = (ox + ct.anchor[0] + 0.5) * TILE;
+        doorY = (oy + ct.anchor[1] + 0.5) * TILE;
       }
       for (const [tx, ty] of ct.trees ?? []) {
         set(ox + tx, oy + ty, T.TREE);
@@ -156,4 +166,18 @@ export function lineClear(map: MapData, x0: number, y0: number, x1: number, y1: 
 export function nodePos(map: MapData, col: number, row: number, out: { x: number; y: number }): void {
   out.x = (OFF + col * map.cellW + map.streetX + 1.5) * TILE;
   out.y = (OFF + row * map.cellH + map.streetY + 1.5) * TILE;
+}
+
+/** The cell index containing a point (clamped to the map), for 'which shop am I in' questions. */
+export function cellAt(map: MapData, x: number, y: number): number {
+  const col = Math.min(map.cols - 1, Math.max(0, Math.floor((x / TILE - OFF) / map.cellW)));
+  const row = Math.min(map.rows - 1, Math.max(0, Math.floor((y / TILE - OFF) / map.cellH)));
+  return row * map.cols + col;
+}
+
+export function streetCenterX(map: MapData, col: number): number {
+  return (OFF + col * map.cellW + map.streetX + 1.5) * TILE;
+}
+export function streetCenterY(map: MapData, row: number): number {
+  return (OFF + row * map.cellH + map.streetY + 1.5) * TILE;
 }

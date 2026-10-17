@@ -5,6 +5,10 @@ export interface StepDef {
   readonly leash?: boolean;
   /** Soft timer in seconds: shown on the job card, never fails the job. */
   readonly timerSoft?: number;
+  /** Seconds (hold, wait) or presses (strike). */
+  readonly n?: number;
+  /** hold: stand still, or hold A. */
+  readonly mode?: 'still' | 'press';
 }
 export interface JobTypeDef {
   readonly id: string;
@@ -15,6 +19,15 @@ export interface JobTypeDef {
   readonly places: readonly string[];
   readonly steps: readonly StepDef[];
   readonly minTier?: number;
+  /** The subject runs from the player until caught. */
+  readonly runaway?: boolean;
+}
+export interface ModifierDef {
+  readonly id: string;
+  readonly minTier: number;
+  readonly cond: 'quiet' | 'time' | 'nodrop' | 'fire';
+  readonly bonus: number;
+  readonly limitMs: number;
 }
 export interface SubjectDef {
   readonly id: string;
@@ -47,12 +60,14 @@ export interface JobOffer {
   subject: number;
   place: number;
   count: number;
+  /** Modifier index or -1. */
+  mod: number;
   tier: number;
   /** Cell index the job starts from. */
   origin: number;
 }
 
-export const SS_NONE = 0, SS_IDLE = 1, SS_FOLLOW = 2, SS_CARRIED = 3, SS_TREE = 4, SS_DONE = 5;
+export const SS_NONE = 0, SS_IDLE = 1, SS_FOLLOW = 2, SS_CARRIED = 3, SS_TREE = 4, SS_DONE = 5, SS_FLEE = 6;
 
 export interface Subject {
   idx: number;
@@ -69,6 +84,10 @@ export interface Subject {
   tugUntil: number;
   /** Game-clock ms the subject is removed after the job (0 = not leaving). */
   leaveAt: number;
+  /** Where a follower is heading and when to choose again (game-clock ms). */
+  aimX: number;
+  aimY: number;
+  aimUntil: number;
 }
 
 export interface Job {
@@ -84,4 +103,9 @@ export interface Job {
   subjects: number[];
   /** Game-clock ms since every subject has been out of reach, -1 when fine. */
   lostSince: number;
+  /** Loud or squeaky farts during the job, and accidental drops (for modifier bonuses). */
+  noisy: number;
+  drops: number;
+  /** Strike presses so far in the current step. */
+  hits: number;
 }

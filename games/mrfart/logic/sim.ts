@@ -2,18 +2,27 @@
 import { NO_BODY } from '../physics/PhysicsApi';
 import type { Pose } from '../physics/PhysicsApi';
 import { TILE, nodePos } from './map';
+import { newStats } from './endings';
+import type { RunStats } from './endings';
+import { createInventory, cycleItem, newMods, restock, useItem } from './items';
+import type { FartMods, Inventory } from './items';
 import { dayIndexAt, hourAt } from './clock';
 import { generateOffer } from './jobs';
 import type { Job, JobOffer, Subject, Zone } from './jobTypes';
 import { stepPipeline } from './pipeline';
 import { createSubjects, stepSubjects } from './subjects';
+import { createTrail, pushTrail } from './trail';
+import type { Trail } from './trail';
 import type { VerbCtx } from './verbs';
 import { stepMeters, scheduleRoll } from './meters';
-import { createPerson, spawnPersonBody, stepPeople } from './people';
+import { createPerson, stepPeople } from './people';
+import { buildRoute } from './routes';
+import { streamBodies } from './stream';
 import { createPieces, createPuffs, updatePieces, updatePuffs } from './pools';
 import type { Pieces, Puffs } from './pools';
 import { settleDay, stepWatchers } from './reputation';
-import { STATUS_PLAYING, TAG_PLAYER, TAG_PROP, tagOf } from './types';
+import { PR_NONE, PR_SHOP } from './verbs';
+import { STATUS_PLAYING, TAG_PLAYER, tagOf } from './types';
 import type { FartInfo, Meters, Person, Player, Prop, SimDeps, SimInput } from './types';
 
 export interface Sim {
@@ -43,8 +52,22 @@ export interface Sim {
   /** The player asked for the job board this step; the wiring layer opens it. */
   wantBoard: boolean;
   verbCtx: VerbCtx;
-  /** 0 playing, 1 reputation ran out. */
+  trail: Trail;
+  /** Scratch: the point a follower should head for. */
+  aim: { x: number; y: number };
+  /** 0 playing, 1 lost, 2 won. */
   status: number;
+  /** Id of the ending reached, '' while playing. */
+  ending: string;
+  inv: Inventory;
+  stats: RunStats;
+  mods: FartMods;
+  /** A is held down this step. */
+  hold: boolean;
+  /** Shop doors in px: x, y pairs. */
+  shopDoors: number[];
+  /** The player asked to shop this step; the wiring layer opens the menu. */
+  wantShop: boolean;
   lastFart: FartInfo;
   qbuf: Int32Array;
   toBreak: Int32Array;
@@ -59,7 +82,7 @@ export function createSim(deps: SimDeps): Sim {
 
   const start = { x: 0, y: 0 };
   nodePos(map, 0, 0, start);
-  const player: Player = { x: start.x, y: start.y, px: start.x, py: start.y, h: NO_BODY, facing: 0, moved: 0, running: false };
+  const player: Player = { x: start.x, y: start.y, px: start.x, py: start.y, h: NO_BODY, facing: 0, moved: 0, ix: 0, iy: 0, running: false };
   player.h = physics.addBody({
     kind: 'player', shape: 'capsule', x: start.x, y: start.y, r: rules.player.radius, hh: 2, mass: rules.player.mass,
     damping: rules.player.damping, lockRotation: true, tag: tagOf(TAG_PLAYER, 0),
@@ -69,18 +92,12 @@ export function createSim(deps: SimDeps): Sim {
   for (const spawn of map.props) {
     const def = deps.props.find((d) => d.id === spawn.def);
     if (!def) throw new Error(`map.json: prop "${spawn.def}" has no definition.`);
-    const idx = props.length;
-    const h = physics.addBody({
-      kind: 'prop', shape: 'box', x: spawn.x, y: spawn.y, hw: def.w / 2, hh: def.h / 2, mass: def.mass, damping: def.damping, angularDamping: 4,
-      tag: tagOf(TAG_PROP, idx),
-    });
-    props.push({ idx, def, x: spawn.x, y: spawn.y, px: spawn.x, py: spawn.y, angle: 0, pangle: 0, h, knocked: false, broken: false });
+    props.push({ idx: props.length, def, x: spawn.x, y: spawn.y, px: spawn.x, py: spawn.y, angle: 0, pangle: 0, h: NO_BODY, knocked: false, broken: false });
   }
 
   const people: Person[] = [];
   deps.people.forEach((def, i) => {
-    const p = createPerson(i, def);
-    people.push(p);
+    people.push(createPerson(i, def, def.loop ? [] : buildRoute(def, i, map, rules, deps.rng.people)));
   });
 
   const reduced = deps.reducedFx === true;
@@ -89,15 +106,18 @@ export function createSim(deps: SimDeps): Sim {
     pieces: createPieces(reduced ? rules.caps.piecesReduced : rules.caps.pieces),
     puffs: createPuffs(reduced ? rules.caps.puffsReduced : rules.caps.puffs),
     meters: { fart: 0, stress: 0, reputation: rules.reputation.start, intolToday: 0, clenchSince: -1, ballooned: false, nextRollAt: 0, lastFartAt: -1e9 },
-    day: dayIndexAt(0, rules.world.dayMs, rules.world.startHour), watchers: 0, status: STATUS_PLAYING,
+    day: dayIndexAt(0, rules.world.dayMs, rules.world.startHour), watchers: 0, status: STATUS_PLAYING, ending: '', trail: createTrail(), aim: { x: 0, y: 0 },
+    inv: createInventory(deps.items.length), stats: newStats(), mods: newMods(), hold: false, shopDoors: [], wantShop: false,
     subjects: createSubjects(rules.caps.subjects), job: null, jobSeq: 0, carrying: -1, progress: { tasksDone: 0, coins: 0, absurd: 0 },
     board: { offers: [], hour: -1 }, boardZone: { x: start.x - 22, y: start.y, r: rules.jobs.boardR }, prompt: 0, wantBoard: false,
-    verbCtx: { sim: null as unknown as Sim, job: null as unknown as Job, step: { verb: '', zone: 'subject' }, press: false },
+    verbCtx: { sim: null as unknown as Sim, job: null as unknown as Job, step: { verb: '', zone: 'subject' }, press: false, held: false },
     lastFart: { count: 0, kind: 0, x: 0, y: 0, force: 0, radius: 0, at: -1e9 },
     qbuf: new Int32Array(256), toBreak: new Int32Array(256), toBreakN: 0,
     pose: { x: 0, y: 0, angle: 0, vx: 0, vy: 0 },
   };
-  for (const p of people) spawnPersonBody(sim, p);
+  for (const c of map.cells) if (c.kind === 'shop') sim.shopDoors.push(c.doorX, c.doorY);
+  restock(sim);
+  streamBodies(sim, true);
   scheduleRoll(sim);
   refreshBoard(sim, true);
   return sim;
@@ -166,6 +186,35 @@ function savePrev(sim: Sim): void {
   }
 }
 
+/** Everything that only runs while the run is on: watchers, subjects, jobs, items, meters, midnight. */
+function stepRules(sim: Sim, input: SimInput): void {
+  const { rules } = sim.deps;
+  sim.hold = input.hold === true;
+  stepWatchers(sim);
+  stepSubjects(sim);
+  stepPipeline(sim, input.interact);
+  stepShop(sim, input.interact);
+  if (input.cycle) cycleItem(sim, input.cycle);
+  if (input.use) useItem(sim);
+  refreshBoard(sim, false);
+  stepMeters(sim, input);
+  const d = dayIndexAt(sim.now, rules.world.dayMs, rules.world.startHour);
+  if (d > sim.day) settleDay(sim, d);
+}
+
+/** Shop prompt: at a shop door with nothing else to press. */
+function stepShop(sim: Sim, interact: boolean): void {
+  if (sim.prompt !== PR_NONE) return;
+  const r = sim.deps.rules.jobs.boardR;
+  const d = sim.shopDoors;
+  for (let i = 0; i < d.length; i += 2) {
+    if (Math.hypot(d[i]! - sim.player.x, d[i + 1]! - sim.player.y) > r) continue;
+    sim.prompt = PR_SHOP;
+    if (interact) sim.wantShop = true;
+    return;
+  }
+}
+
 export function stepSim(sim: Sim, nowMs: number, input: SimInput): void {
   const { physics, rules } = sim.deps;
   sim.now = nowMs;
@@ -178,17 +227,15 @@ export function stepSim(sim: Sim, nowMs: number, input: SimInput): void {
   const nx = len > 1 ? input.mx / len : input.mx, ny = len > 1 ? input.my / len : input.my;
   physics.setTargetVelocity(pl.h, nx * sp, ny * sp, rules.player.gain);
   pl.running = input.run;
+  pl.ix = nx * sp;
+  pl.iy = ny * sp;
   if (len > 0.1) pl.facing = Math.abs(input.mx) > Math.abs(input.my) ? (input.mx < 0 ? 2 : 3) : input.my < 0 ? 1 : 0;
   stepPeople(sim);
+  streamBodies(sim, false);
   physics.step();
   readPoses(sim);
-  stepWatchers(sim);
-  stepSubjects(sim);
-  stepPipeline(sim, input.interact);
-  refreshBoard(sim, false);
-  stepMeters(sim, input);
-  const d = dayIndexAt(sim.now, rules.world.dayMs, rules.world.startHour);
-  if (d > sim.day) settleDay(sim, d);
+  pushTrail(sim);
+  if (sim.status === STATUS_PLAYING) stepRules(sim, input);
   updatePieces(sim.pieces, sim.now, 1 / 60, sim.deps.map);
   updatePuffs(sim.puffs, sim.now, 1 / 60);
 }

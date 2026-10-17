@@ -11,6 +11,11 @@
     "mrfart:step_done",
     "mrfart:job_done",
     "mrfart:job_failed",
-    "mrfart:subject_dropped"
+    "mrfart:subject_dropped",
+    "mrfart:work_hit",
+    "mrfart:item_used",
+    "mrfart:item_found",
+    "mrfart:item_bought",
+    "mrfart:game_won"
   ]
 }

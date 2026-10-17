@@ -26,7 +26,7 @@ async function setup(type: string, subject: string, place: string, origin = 0) {
   m.sim.meters.nextRollAt = 1e12;
   const offer: JobOffer = {
     type: idOf(catalog.types, type), subject: idOf(catalog.subjects, subject), place: idOf(catalog.places, place), count: 1,
-    tier: catalog.subjects[idOf(catalog.subjects, subject)]!.tier, origin,
+    tier: catalog.subjects[idOf(catalog.subjects, subject)]!.tier, origin, mod: -1,
   };
   expect(startJob(m.sim, offer)).toBe(true);
   return { m, offer };
@@ -95,7 +95,7 @@ describe('tier and counts (design 4.5)', () => {
         expect(map.cells.some((c, i) => ['house', 'shop'].includes(c.kind) && placeZone(map, catalog.places[pi]!, i, jr.zoneR, scratch)), `${pid} resolvable`).toBe(true);
         for (const s of subs)
           for (const count of [1, 2]) {
-            const text = jobText(str, catalog, { type: idOf(catalog.types, t.id), subject: idOf(catalog.subjects, s.id), place: pi, count, tier: s.tier, origin: 0 });
+            const text = jobText(str, catalog, { type: idOf(catalog.types, t.id), subject: idOf(catalog.subjects, s.id), place: pi, count, tier: s.tier, origin: 0, mod: -1 });
             expect(text, `${t.id}/${s.id}/${pid}`).not.toMatch(/[[\]{}]/);
           }
       }
@@ -253,7 +253,7 @@ describe('failing and leash safety', () => {
   test('on Rapier a leashed goat survives the strongest fart: finite poses, rope back within 15% of its length', async () => {
     const m = await makeSim({ people: [], physics: 'rapier' });
     m.sim.meters.nextRollAt = 1e12;
-    const offer: JobOffer = { type: idOf(catalog.types, 'walk_leash'), subject: idOf(catalog.subjects, 'goat'), place: idOf(catalog.places, 'park'), count: 1, tier: 1, origin: 0 };
+    const offer: JobOffer = { type: idOf(catalog.types, 'walk_leash'), subject: idOf(catalog.subjects, 'goat'), place: idOf(catalog.places, 'park'), count: 1, tier: 1, origin: 0, mod: -1 };
     expect(startJob(m.sim, offer)).toBe(true);
     const s = subj(m);
     tp(m, s.x, s.y + 8);

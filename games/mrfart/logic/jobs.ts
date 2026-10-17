@@ -1,5 +1,5 @@
 // Job generator and board: what is on offer, at which absurdity tier. Pure given content, map and a seeded stream.
-import type { JobOffer, JobTypeDef, PlaceDef, SubjectDef } from './jobTypes';
+import type { JobOffer, JobTypeDef, ModifierDef, PlaceDef, SubjectDef } from './jobTypes';
 import type { MapData } from './map';
 import type { Rng } from './rng';
 import type { Rules } from './rules';
@@ -9,6 +9,7 @@ export interface Catalog {
   types: readonly JobTypeDef[];
   subjects: readonly SubjectDef[];
   places: readonly PlaceDef[];
+  mods: readonly ModifierDef[];
 }
 
 /** Absurdity tier: floor(tasksDone / tierEvery) up to maxTier; past mixAfter tasks a mix with a bias to the top. */
@@ -37,6 +38,14 @@ export function originCandidates(map: MapData, x: number, y: number, limit: numb
   return idx.slice(0, limit);
 }
 
+/** A modifier index for the tier, or -1. The chance is always rolled so the stream stays the same at every tier. */
+export function modFor(cat: Catalog, tier: number, chance: number, rng: Rng): number {
+  const hit = rng.chance(chance);
+  const ok: number[] = [];
+  for (let i = 0; i < cat.mods.length; i++) if (cat.mods[i]!.minTier <= tier) ok.push(i);
+  return hit && ok.length > 0 ? ok[rng.int(0, ok.length - 1)]! : -1;
+}
+
 export function generateOffer(cat: Catalog, map: MapData, rules: Rules, rng: Rng, tasksDone: number, x: number, y: number): JobOffer | null {
   const jr = rules.jobs;
   const tier = tierFor(tasksDone, jr, rng);
@@ -63,7 +72,9 @@ export function generateOffer(cat: Catalog, map: MapData, rules: Rules, rng: Rng
     }
     if (options.length === 0) continue;
     const st = cat.subjects[subject]!.tier;
-    return { type: ti, subject, place: options[rng.int(0, options.length - 1)]!, count: countFor(st, type.maxCount, jr, rng), tier: st, origin };
+    const place = options[rng.int(0, options.length - 1)]!;
+    const count = countFor(st, type.maxCount, jr, rng);
+    return { type: ti, subject, place, count, mod: modFor(cat, st, jr.modChance, rng), tier: st, origin };
   }
   return null;
 }
@@ -71,10 +82,12 @@ export function generateOffer(cat: Catalog, map: MapData, rules: Rules, rng: Rng
 /** Plain-English text for an offer, all words from strings. `str` is ctx.strings. */
 export function jobText(str: (key: string, params?: Record<string, string | number>) => string, cat: Catalog, o: JobOffer): string {
   const type = cat.types[o.type]!, subj = cat.subjects[o.subject]!, place = cat.places[o.place]!;
-  return str(type.textKey, {
+  const text = str(type.textKey, {
     count: o.count,
     subject: str(o.count === 1 ? `subject_${subj.id}` : `subject_${subj.id}_pl`),
     place: str(`place_${place.id}`),
     from: str(`from_${place.id}`),
+    at: str(`at_${place.id}`),
   });
+  return o.mod >= 0 ? `${text} ${str(`mod_${cat.mods[o.mod]!.id}`)}` : text;
 }

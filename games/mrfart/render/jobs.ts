@@ -16,6 +16,18 @@ export function drawBoard(g: Gfx2d, sim: Sim, cx: number, cy: number): void {
   g.rect(z.x - cx - 1, z.y - cy - 2, 2, 6, 12);
 }
 
+/** A little sign over each shop door. */
+export function drawShops(g: Gfx2d, sim: Sim, cx: number, cy: number): void {
+  const d = sim.shopDoors;
+  for (let i = 0; i < d.length; i += 2) {
+    const x = d[i]! - cx, y = d[i + 1]! - cy;
+    if (x < -20 || y < -20 || x > SCREEN_W + 20 || y > SCREEN_H + 20) continue;
+    g.rect(x - 6, y - 16, 12, 8, 18);
+    g.frame(x - 6, y - 16, 12, 8, 2);
+    g.drawText('$', x - 2, y - 15, { colour: 2 });
+  }
+}
+
 export function drawZone(g: Gfx2d, sim: Sim, cx: number, cy: number): void {
   const job = sim.job;
   if (!job) return;
@@ -35,6 +47,8 @@ export function drawZone(g: Gfx2d, sim: Sim, cx: number, cy: number): void {
 
 export function drawSubjects(g: Gfx2d, sim: Sim, cx: number, cy: number, alpha: number): void {
   const physics = sim.deps.physics;
+  const mod = sim.job && sim.job.offer.mod >= 0 ? sim.deps.catalog.mods[sim.job.offer.mod]! : null;
+  const fire = mod !== null && mod.cond === 'fire';
   for (let i = 0; i < sim.subjects.length; i++) {
     const s = sim.subjects[i]!;
     if (!s.active) continue;
@@ -49,5 +63,11 @@ export function drawSubjects(g: Gfx2d, sim: Sim, cx: number, cy: number, alpha: 
     g.frame(x - w / 2, y - h / 2, w, h, 2);
     g.rect(x - w / 2 + 1, y - h / 2 + 1, 2, 2, 7);
     if (s.state === SS_CARRIED) g.rect(x - 1, y + h / 2, 2, 3, 2);
+    if (fire) {
+      const f = Math.sin(sim.now / 70 + i * 2);
+      g.rect(x - 3, y - h / 2 - 5 - f * 2, 3, 5, 10);
+      g.rect(x + 1, y - h / 2 - 7 + f * 2, 3, 6, 18);
+      g.rect(x - 1, y - h / 2 - 3, 2, 3, 19);
+    }
   }
 }
