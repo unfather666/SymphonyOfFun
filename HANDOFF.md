@@ -20,8 +20,8 @@ One section per area. Update your own section in each milestone commit (BUILD-PL
 - Check: `npm run check`. Browser smoke + budget numbers: `agent-tests/racer-smoke.mjs` (needs `playwright-core` outside the repo; header has the command).
 - Music: patterns are authored as data in `games/racer/content/patterns/*.json` (all in C; major and minor patterns share one chord progression each so genres mix). The generator script is not in the repo; add patterns by hand in the same format (see `songgen.ts` PatternDef) or ask for the script. Next: M4 (full pattern library, saves, touch, polish).
 
-## Mr Fart (M3 done 2026-10-17)
-- State: M0 (#2), M1 (#5), M2 (#9) merged. M3 (`mrfart-m3`): all 20 job types, 20 subjects, modifiers, items, endings, 6x4 map, 60 people with streaming bodies, pacing table in `games/mrfart/README.md`.
-- Next: M4 pixel art, day/night tint, touch controls, reducedFx, save sections with a migration fixture, budget row, README. Branch `mrfart-m4` from main.
+## Mr Fart (M4 done 2026-10-17)
+- State: M0 to M3 merged (#2, #5, #9, #12). M4 (`mrfart-m4`): sprite data, night tint, touch taps, reducedFx, save sections with a v1 fixture, 10-minute scripted playthrough, budget row. The game is complete; remaining work is polish only.
+- Sprites are data; the generator script is not in the repo. To change a look, edit the JSON in `games/mrfart/content/sprites/` (frames are rows of chars, keys map chars to palette indices).
 - Adding content: a JSON def in the matching `content/` folder plus strings in `strings.json`; the content tests enforce counts and strings.
 - Check: `npm run check`. Visual smoke: `?game=mrfart&seed=1`.

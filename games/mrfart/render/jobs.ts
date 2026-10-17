@@ -1,13 +1,15 @@
 // Drawing for jobs: the board sign, step zones with an edge arrow, subjects and leashes. Reads state only.
 import type { Gfx2d } from '../../../src/core/api';
 import { SCREEN_H, SCREEN_W } from '../../../src/core/api';
-import { SS_CARRIED, SS_TREE } from '../logic/jobTypes';
+import { SS_FLEE, SS_FOLLOW, SS_TREE } from '../logic/jobTypes';
 import { zoneFor } from '../logic/verbs';
 import type { Sim } from '../logic/sim';
 
 const TAU = Math.PI * 2;
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 const leashBuf = new Float64Array(16);
+/** Sprite size per subject id; the wiring layer fills it from the sprite defs. */
+export const SIZES = new Map<string, number>();
 
 export function drawBoard(g: Gfx2d, sim: Sim, cx: number, cy: number): void {
   const z = sim.boardZone;
@@ -58,11 +60,10 @@ export function drawSubjects(g: Gfx2d, sim: Sim, cx: number, cy: number, alpha: 
       const n = physics.leashPoints(s.leash, leashBuf);
       for (let k = 0; k + 1 < n; k++) g.line(leashBuf[k * 2]! - cx, leashBuf[k * 2 + 1]! - cy, leashBuf[k * 2 + 2]! - cx, leashBuf[k * 2 + 3]! - cy, 12);
     }
-    const w = d.r * 2 + (d.mass > 5 ? 4 : 0), h = d.r * 2;
-    g.rect(x - w / 2, y - h / 2, w, h, d.colour);
-    g.frame(x - w / 2, y - h / 2, w, h, 2);
-    g.rect(x - w / 2 + 1, y - h / 2 + 1, 2, 2, 7);
-    if (s.state === SS_CARRIED) g.rect(x - 1, y + h / 2, 2, 3, 2);
+    const size = SIZES.get(d.id) ?? 16, h = d.r * 2;
+    const moving = (s.state === SS_FOLLOW || s.state === SS_FLEE) && Math.hypot(s.x - s.px, s.y - s.py) > 0.02;
+    const frame = moving ? (sim.steps >> 3) & 1 : 0;
+    g.drawSprite(`subj_${d.id}`, frame, Math.round(x - size / 2), Math.round(y - size / 2), sim.player.x > s.x);
     if (fire) {
       const f = Math.sin(sim.now / 70 + i * 2);
       g.rect(x - 3, y - h / 2 - 5 - f * 2, 3, 5, 10);

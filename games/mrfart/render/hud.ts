@@ -27,13 +27,13 @@ function stepProgress(sim: Sim, text: Text): string {
   return '';
 }
 
-export function drawHud(g: Gfx2d, sim: Sim, text: Text, jobLine?: (o: JobOffer) => string): void {
+export function drawHud(g: Gfx2d, sim: Sim, text: Text, jobLine?: (o: JobOffer) => string, touch = false, clenchOn = false): void {
   const { rules } = sim.deps;
   const m = sim.meters;
   const frac = Math.min(1, m.fart / rules.meter.max);
   const wob = frac > 0.85 ? Math.sin(sim.now / 40) * (frac - 0.85) * 12 : 0;
   const y = SCREEN_H - 14 + wob;
-  g.drawText(text('meter'), 8, y + 1, { colour: 7, shadow: 2 });
+  g.drawText(text('meter'), 8, y + 1, { colour: clenchOn ? 18 : 7, shadow: 2 });
   bar(g, 40, y, 120, frac, frac < 0.4 ? 22 : frac < 0.7 ? 18 : 10);
   if (m.clenchSince >= 0) g.drawText(text('hint_clench'), 168, y + 1, { colour: 18, shadow: 2 });
 
@@ -60,12 +60,13 @@ export function drawHud(g: Gfx2d, sim: Sim, text: Text, jobLine?: (o: JobOffer) 
       g.drawText(text('timer', { n: left }), SCREEN_W - 6, SCREEN_H - 25, { colour: left < 15 ? 10 : 7, align: 'right' });
     }
   }
+  if (touch) g.drawText('<', SCREEN_W - 128, SCREEN_H - 12, { colour: 5, shadow: 2 });
   const inv = sim.inv;
   const held = inv.items[inv.sel];
   g.drawText(held === undefined ? text('item_none') : text('item_hud', { name: text(`item_${sim.deps.items[held]!.id}`), n: inv.sel + 1, total: inv.items.length }),
     SCREEN_W - 6, SCREEN_H - 12, { colour: held === undefined ? 6 : 7, shadow: 2, align: 'right' });
   if (sim.prompt > 0) g.drawText(text(PROMPT_KEYS[sim.prompt]!), SCREEN_W / 2, SCREEN_H - 52, { colour: 7, shadow: 2, align: 'center' });
-  if (sim.now < 8000 && !sim.job) {
+  if (sim.options.hints && sim.now < 8000 && !sim.job) {
     g.drawText(text('hint_move'), 8, 40, { colour: 7, shadow: 2 });
     g.drawText(text('hint_run'), 8, 50, { colour: 7, shadow: 2 });
   }
