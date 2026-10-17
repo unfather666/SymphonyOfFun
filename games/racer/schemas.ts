@@ -39,6 +39,31 @@ export const rulesSchema: Schema = {
   levelSeconds: n(10, 900),
   lives: n(1, 9, true),
   deathMs: n(500, 10000),
+  hazardStartBeat: n(0, 64, true),
+  minorBase: n(0, 1),
+  minorScale: n(0, 1),
+  minorGapBeats: n(0, 8, true),
+  majorChance: n(0, 1),
+  majorMinIntensity: n(0, 1),
+  pickupChance: n(0, 1),
+  hitCooldownMs: n(0, 3000),
+  carHalfW: n(0.02, 0.5),
+  coinValue: n(0, 1000, true),
+  piecesCap: n(16, 1024, true),
+  smokeCap: n(8, 512, true),
+  pieceLifeMs: n(200, 6000),
+  pieceGravity: n(0, 60),
+  magnetLanes: n(0.2, 3),
+  magnetMeters: n(2, 80),
+  finishMinHealth: n(0, 100),
+  syncScore: n(0, 1000, true),
+  dodgeScore: n(0, 1000, true),
+  pieceScore: n(0, 1000, true),
+  deathScore: n(0, 5000, true),
+  smokeBelowHealth: n(1, 100),
+  smokePerSec: n(0, 200),
+  respawnGraceMs: n(0, 5000),
+  slideSteerFrac: n(0, 1),
 };
 
 export const kindSchema: Schema = {
@@ -64,6 +89,7 @@ export const themeSchema: Schema = {
   ice: n(0, 1),
   props: { type: 'id[]' },
   kindWeights: { type: 'object' },
+  hazardWeights: { type: 'object' },
 };
 
 export const levelSchema: Schema = {
@@ -85,4 +111,55 @@ export const patternSchema: Schema = {
   bpmMax: n(40, 260),
   meter: { ...n(3, 4, true), optional: true },
   steps: { type: 'number[]' },
+};
+
+const partTable = { type: 'any' } as const;
+
+export const hazardSchema: Schema = {
+  major: { type: 'boolean' },
+  parts: partTable,
+  halfW: n(0.05, 1.5),
+  halfLen: n(0.2, 8),
+  span: n(1, 3, true),
+  damageMin: n(0, 100),
+  damageMax: n(0, 100),
+  breakInto: n(0, 40, true),
+  pieceColour: n(0, 15, true),
+  motion: { type: 'string', oneOf: ['static', 'sweep', 'periodic'] },
+  periodBeats: n(1, 32),
+  activeFrom: n(0, 1),
+  activeTo: n(0, 1),
+  sweepAmp: n(0, 1.2),
+  slideMs: n(0, 5000),
+  hornable: { type: 'boolean' },
+  speedLoss: n(0, 1),
+  visual: { type: 'string', oneOf: ['none', 'slide', 'squish', 'drop'] },
+  calamity: { type: 'id', optional: true },
+};
+
+export const powerSchema: Schema = {
+  coin: { type: 'boolean' },
+  weight: n(0, 100),
+  durationMs: n(0, 60000),
+  colour: n(0, 15, true),
+  parts: partTable,
+  heal: n(0, 100),
+  speedMul: n(0.2, 3),
+  invulnMinor: { type: 'boolean' },
+  shield: n(0, 5, true),
+  magnet: { type: 'boolean' },
+  clearAhead: n(0, 32, true),
+  clearHornable: { type: 'boolean' },
+  value: n(0, 1000, true),
+};
+
+export const calamitySchema: Schema = {
+  trigger: { type: 'string', oneOf: ['hazard', 'fall', 'health_zero', 'finish_low'] },
+  cinematicMs: n(500, 8000),
+  camera: { type: 'string', oneOf: ['chase', 'fall', 'orbit'] },
+  shake: n(0, 20),
+  flash: { type: 'string' },
+  pieces: n(0, 64, true),
+  sfx: { type: 'string' },
+  theme: { type: 'id', optional: true },
 };

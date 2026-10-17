@@ -1,9 +1,12 @@
 // The 3D view: pooled segment meshes, the car, chase camera. Reads the sim, never changes it.
-import { Color, DoubleSide, Fog, Group, Mesh, MeshBasicMaterial, PerspectiveCamera, Scene, type WebGLRenderer } from 'three';
+import { BoxGeometry, Color, DoubleSide, Fog, Group, Mesh, MeshBasicMaterial, PerspectiveCamera, Scene, SphereGeometry, type WebGLRenderer } from 'three';
+import { cameraPose, type CamPose } from './camera';
+import { createPieceViews } from './pieces';
+import { createWorldObjects } from './worldObjects';
 import { clearGeo, flushGeo, makeGeo, paletteFloats, parts, type Geo } from './geo';
 import { buildSegment, type SegmentAssets } from './segmentMesh';
 import { hasSeg } from '../../logic/track';
-import type { Sim } from '../../logic/sim';
+import { PHASE_RUN, type Sim } from '../../logic/sim';
 import type { Rules, ThemeDef } from '../../logic/types';
 
 export interface SceneOpts {
@@ -15,6 +18,9 @@ export interface SceneOpts {
   /** Car body parts, one table per damage state. */
   carStates: readonly (readonly (readonly number[])[])[];
   archIndex: number;
+  /** Pool capacities (reduced effects lowers them). */
+  piecesCap: number;
+  smokeCap: number;
 }
 
 export interface RacerScene {
@@ -67,6 +73,22 @@ export function createScene(renderer: WebGLRenderer, o: SceneOpts): RacerScene {
   });
   carGroup.rotation.order = 'YXZ';
   scene.add(carGroup);
+  // Boost flame behind the car and a shield bubble around it, shown from the sim's timers.
+  const flameGeo = new BoxGeometry(0.7, 0.5, 1.6);
+  const flameMat = new MeshBasicMaterial({ color: 0xff9a2f, fog: false });
+  const flame = new Mesh(flameGeo, flameMat);
+  flame.position.set(0, 0.6, 2.9);
+  flame.visible = false;
+  carGroup.add(flame);
+  const bubbleGeo = new SphereGeometry(2.8, 10, 7);
+  const bubbleMat = new MeshBasicMaterial({ color: 0x4af0ff, transparent: true, opacity: 0.28, fog: false, depthWrite: false });
+  const bubble = new Mesh(bubbleGeo, bubbleMat);
+  bubble.position.set(0, 0.9, 0);
+  bubble.visible = false;
+  carGroup.add(bubble);
+  const world = createWorldObjects(scene, pal);
+  const pieceViews = createPieceViews(scene, o.theme.palette, o.piecesCap, o.smokeCap);
+  const cam: CamPose = { px: 0, py: 0, pz: 0, tx: 0, ty: 0, tz: 0 };
 
   let camYaw = 0;
   let camReady = false;
@@ -100,7 +122,12 @@ export function createScene(renderer: WebGLRenderer, o: SceneOpts): RacerScene {
       const pitch = car.ppitch + (car.pitch - car.ppitch) * alpha;
       const roll = car.proll + (car.roll - car.proll) * alpha;
       const state = car.health > 60 ? 0 : car.health > 25 ? 1 : 2;
-      for (let i = 0; i < carMeshes.length; i++) carMeshes[i]!.visible = i === state;
+      const blink = sim.phase === PHASE_RUN && nowMs < sim.hitUntilMs && (nowMs >> 6) % 2 === 0;
+      for (let i = 0; i < carMeshes.length; i++) carMeshes[i]!.visible = i === state && !sim.carHidden && !blink;
+      flame.visible = nowMs < car.boostUntilMs && !sim.carHidden;
+      bubble.visible = sim.power.shieldCharges > 0 && !sim.carHidden;
+      world.update(sim, nowMs);
+      pieceViews.update(sim.pieces, sim.smoke, nowMs);
       carGroup.position.set(x, y, z);
       carGroup.rotation.set(pitch, -yaw, roll);
 
@@ -108,9 +135,9 @@ export function createScene(renderer: WebGLRenderer, o: SceneOpts): RacerScene {
         camYaw = yaw;
         camReady = true;
       } else camYaw += (yaw - camYaw) * rules.cameraLag;
-      const fx = Math.sin(camYaw), fz = -Math.cos(camYaw);
-      camera.position.set(x - fx * rules.cameraBack + shakeX * 0.02, y + rules.cameraUp + shakeY * 0.02, z - fz * rules.cameraBack);
-      camera.lookAt(x + fx * 10, y + 1.2, z + fz * 10);
+      cameraPose(sim, x, y, z, camYaw, nowMs, cam);
+      camera.position.set(cam.px + shakeX * 0.02, cam.py + shakeY * 0.02, cam.pz);
+      camera.lookAt(cam.tx, cam.ty, cam.tz);
       const since = nowMs - sim.beat.edgeMs;
       const pulse = since >= 0 && since < 250 ? (1 - since / 250) ** 2 : 0;
       const fov = rules.fovBase + rules.fovPulse * pulse + Math.min(6, car.speed * 0.06);
@@ -126,6 +153,12 @@ export function createScene(renderer: WebGLRenderer, o: SceneOpts): RacerScene {
     dispose() {
       for (const g of geos) g.geometry.dispose();
       for (const g of carGeos) g.geometry.dispose();
+      world.dispose();
+      pieceViews.dispose();
+      flameGeo.dispose();
+      flameMat.dispose();
+      bubbleGeo.dispose();
+      bubbleMat.dispose();
       material.dispose();
     },
   };

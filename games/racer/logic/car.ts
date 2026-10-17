@@ -17,6 +17,13 @@ export interface Car {
   syncStacks: number;
   syncUntilMs: number;
   boostUntilMs: number;
+  /** Top-speed multiplier while boosting. */
+  boostMul: number;
+  /** Steering is locked to slideSteer until this time (puddles). */
+  slideUntilMs: number;
+  slideSteer: number;
+  /** Last steering input, remembered for slides. */
+  lastSteer: number;
   offroad: boolean;
   /** Set when the car went over an edge or into a gap; the sim turns it into a death. */
   fell: boolean;
@@ -39,7 +46,7 @@ export interface Car {
 
 export function newCar(): Car {
   return {
-    s: 0, lane: 0, speed: 0, h: 0, vh: 0, airborne: false, health: 100, syncStacks: 0, syncUntilMs: 0, boostUntilMs: 0,
+    s: 0, lane: 0, speed: 0, h: 0, vh: 0, airborne: false, health: 100, syncStacks: 0, syncUntilMs: 0, boostUntilMs: 0, boostMul: 1, slideUntilMs: 0, slideSteer: 0, lastSteer: 0,
     offroad: false, fell: false, landed: false, x: 0, y: 0, z: 0, yaw: 0, pitch: 0, roll: 0, px: 0, py: 0, pz: 0, pyaw: 0, ppitch: 0, proll: 0, plane: 0,
   };
 }
@@ -56,7 +63,7 @@ const scratch: Pose = newPose();
 
 export function carMaxSpeed(car: Car, env: CarEnv, nowMs: number): number {
   const sync = nowMs < car.syncUntilMs ? car.syncStacks * env.rules.syncBonusPerStack : 0;
-  const boost = nowMs < car.boostUntilMs ? 1.5 : 1;
+  const boost = nowMs < car.boostUntilMs ? car.boostMul : 1;
   return env.maxSpeed * (1 + sync) * boost;
 }
 
@@ -96,7 +103,9 @@ export function stepCar(car: Car, inp: DriveInput, nowMs: number, env: CarEnv): 
   if (car.speed < 0) car.speed = 0;
 
   const rate = r.steerRate * (inp.brake ? r.brakeSteerBoost : 1);
-  car.lane += inp.steer * rate * STEP_S;
+  const steer = nowMs < car.slideUntilMs ? car.slideSteer : inp.steer;
+  car.lastSteer = inp.steer;
+  car.lane += steer * rate * STEP_S;
   if (car.lane > r.laneHardLimit) car.lane = r.laneHardLimit;
   else if (car.lane < -r.laneHardLimit) car.lane = -r.laneHardLimit;
 
@@ -123,7 +132,7 @@ export function stepCar(car: Car, inp: DriveInput, nowMs: number, env: CarEnv): 
   car.offroad = Math.abs(car.lane) > limit;
   if (!car.airborne && (seg.gap || (seg.drop && car.offroad))) car.fell = true;
 
-  const target = -inp.steer * 0.14;
+  const target = -steer * 0.14;
   car.roll += (target - car.roll) * 0.2;
   placeCar(car, env);
 }

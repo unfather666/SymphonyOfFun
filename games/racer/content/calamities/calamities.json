@@ -1,0 +1,17 @@
+[
+{"id":"cliff","trigger":"fall","cinematicMs":2600,"camera":"fall","shake":3,"flash":"#ffffff","pieces":10,"sfx":"fail","tags":["major"]},
+{"id":"rolled_into_sea","trigger":"fall","cinematicMs":2800,"camera":"fall","shake":4,"flash":"#7fb8d8","pieces":12,"sfx":"fail","theme":"harbour","tags":["major"]},
+{"id":"gas_station","trigger":"hazard","cinematicMs":2800,"camera":"orbit","shake":8,"flash":"#ff7a2f","pieces":24,"sfx":"explode","tags":["major"]},
+{"id":"train","trigger":"hazard","cinematicMs":2600,"camera":"chase","shake":7,"flash":"#ffffff","pieces":20,"sfx":"explode","tags":["major"]},
+{"id":"parade","trigger":"hazard","cinematicMs":2800,"camera":"chase","shake":5,"flash":"#ffd23f","pieces":22,"sfx":"explode","tags":["major"]},
+{"id":"bridge_out","trigger":"hazard","cinematicMs":2800,"camera":"fall","shake":4,"flash":"#7fb8d8","pieces":16,"sfx":"fail","tags":["major"]},
+{"id":"tornado","trigger":"hazard","cinematicMs":3000,"camera":"orbit","shake":6,"flash":"#cfd6e0","pieces":24,"sfx":"explode","tags":["major"]},
+{"id":"ufo_beam","trigger":"hazard","cinematicMs":3000,"camera":"fall","shake":2,"flash":"#4af0ff","pieces":14,"sfx":"fail","tags":["major"]},
+{"id":"giant_chicken","trigger":"hazard","cinematicMs":2600,"camera":"chase","shake":6,"flash":"#f4f1e8","pieces":20,"sfx":"explode","tags":["major"]},
+{"id":"fireworks_truck","trigger":"hazard","cinematicMs":3000,"camera":"orbit","shake":9,"flash":"#ffd23f","pieces":30,"sfx":"explode","tags":["major"]},
+{"id":"ice_cream_truck","trigger":"hazard","cinematicMs":2800,"camera":"chase","shake":5,"flash":"#ff9ad0","pieces":22,"sfx":"explode","tags":["major"]},
+{"id":"falling_piano","trigger":"hazard","cinematicMs":2600,"camera":"chase","shake":7,"flash":"#ffffff","pieces":18,"sfx":"explode","tags":["major"]},
+{"id":"out_of_fuel_finish","trigger":"finish_low","cinematicMs":3000,"camera":"chase","shake":2,"flash":"#ffffff","pieces":6,"sfx":"fail","tags":["major"]},
+{"id":"moon_overshoot","trigger":"fall","cinematicMs":3200,"camera":"fall","shake":2,"flash":"#05060f","pieces":8,"sfx":"fail","theme":"moon_base","tags":["major"]},
+{"id":"engine_fire","trigger":"health_zero","cinematicMs":2600,"camera":"orbit","shake":6,"flash":"#ff7a2f","pieces":20,"sfx":"explode"}
+]

@@ -15,9 +15,9 @@ One section per area. Update your own section in each milestone commit (BUILD-PL
 - Decisions: see `games/shooter/README.md` "Decisions" and PR descriptions. Core ask: sequencer detune (README).
 
 ## Racer
-- State (M2 done, 2026-10-17; M1 before it): car, all 11 road kinds generated and drawn, HUD, beat clock hooked to core `chip:beat`, autopilot (`logic/bot.ts`); Three view in `games/racer/render/three/`. Layout and decisions in `games/racer/README.md`. Regenerate the generator hash fixture with `UPDATE_FIXTURES=1 npx vitest run games/racer/tests/trackgen.test.ts` only when a generator change is intended.
+- State (M3 done, 2026-10-17): sim phases, hazards/pickups/pools/calamities on top of the road and car, autopilot (`logic/bot.ts`) clears every level in tests; Three view in `games/racer/render/three/`. Layout and decisions in `games/racer/README.md`. Regenerate the generator hash fixture with `UPDATE_FIXTURES=1 npx vitest run games/racer/tests/trackgen.test.ts` only when a generator change is intended.
 - Check: `npm run check`. Browser smoke + budget numbers: `agent-tests/racer-smoke.mjs` (needs `playwright-core` outside the repo; header has the command).
-- Music: patterns are authored as data in `games/racer/content/patterns/*.json` (all in C; major and minor patterns share one chord progression each so genres mix). The generator script is not in the repo; add patterns by hand in the same format (see `songgen.ts` PatternDef) or ask for the script. Next: M3 hazards/death/pieces/power-ups, M4 10 levels/polish.
+- Music: patterns are authored as data in `games/racer/content/patterns/*.json` (all in C; major and minor patterns share one chord progression each so genres mix). The generator script is not in the repo; add patterns by hand in the same format (see `songgen.ts` PatternDef) or ask for the script. Next: M4 (full pattern library, saves, touch, polish).
 
 ## Mr Fart (M1 done 2026-10-17)
 - State: M0 merged (#2): physics behind `PhysicsApi`, sim in `logic/`, placeholder render. M1 (`mrfart-m1`): stress, clench, witnesses, intolerance, midnight settlement, reputation, people reactions; 55 game tests.

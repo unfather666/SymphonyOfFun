@@ -100,6 +100,18 @@ export function parts(g: Geo, ox: number, oy: number, oz: number, yaw: number, l
   }
 }
 
+/**
+ * Parts table moved by (dx, dz) in the table's own frame and stretched upward by `sy`, rotated by `yaw` about the origin.
+ * Used for animated world objects: sliding trains, dropping pianos.
+ */
+export function partsMoved(g: Geo, ox: number, oy: number, oz: number, yaw: number, list: readonly (readonly number[])[], palette: Float32Array, dx: number, dy: number, dz: number, sy: number, from = 0, to = list.length): void {
+  for (let i = from; i < to; i++) {
+    const p = list[i]!;
+    const c = (p[6] ?? 0) * 3;
+    box(g, ox, oy, oz, yaw, p[0]! + dx, p[1]! * sy + dy, p[2]! + dz, p[3]!, p[4]! * sy, p[5]!, palette[c]!, palette[c + 1]!, palette[c + 2]!);
+  }
+}
+
 /** '#rrggbb' strings to a Float32Array of rgb triples (sRGB values used as-is: colour management is off). */
 export function paletteFloats(hex: readonly string[]): Float32Array {
   const out = new Float32Array(48);

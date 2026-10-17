@@ -36,7 +36,31 @@ export interface Rules {
   levelSeconds: number;
   lives: number;
   deathMs: number;
-  [key: string]: number;
+  hazardStartBeat: number;
+  minorBase: number;
+  minorScale: number;
+  minorGapBeats: number;
+  majorChance: number;
+  majorMinIntensity: number;
+  pickupChance: number;
+  hitCooldownMs: number;
+  carHalfW: number;
+  coinValue: number;
+  piecesCap: number;
+  smokeCap: number;
+  pieceLifeMs: number;
+  pieceGravity: number;
+  magnetLanes: number;
+  magnetMeters: number;
+  finishMinHealth: number;
+  syncScore: number;
+  dodgeScore: number;
+  pieceScore: number;
+  deathScore: number;
+  smokeBelowHealth: number;
+  smokePerSec: number;
+  respawnGraceMs: number;
+  slideSteerFrac: number;
 }
 
 export interface KindDef {
@@ -65,7 +89,7 @@ export interface ThemeDef {
   ice: number;
   props: string[];
   kindWeights: Record<string, number>;
-  [key: string]: unknown;
+  hazardWeights: Record<string, number>;
 }
 
 export interface LevelDef {
@@ -102,6 +126,76 @@ export interface Segment {
   propType: number[];
   propX: number[];
   propT: number[];
+  /** Hazard on this segment: def index or -1, lane centre, 0..1 along, 0..1 timing offset, state (see HZ_*). */
+  hz: number;
+  hzLane: number;
+  hzT: number;
+  hzPhase: number;
+  hzState: number;
+  /** Pickup on this segment: power def index or -1, lane, 0..1 along, state (see HZ_*). */
+  pk: number;
+  pkLane: number;
+  pkT: number;
+  pkState: number;
+}
+
+export const HZ_NONE = 0;
+export const HZ_ALIVE = 1;
+export const HZ_BROKEN = 2;
+export const HZ_PASSED = 3;
+
+export interface HazardDef {
+  id: string;
+  major: boolean;
+  /** Boxes [x, y, z, w, h, d, paletteIndex], centred on the hazard's lane. */
+  parts: number[][];
+  /** Half width in lane units, half length in metres, lanes covered when placed. */
+  halfW: number;
+  halfLen: number;
+  span: number;
+  damageMin: number;
+  damageMax: number;
+  breakInto: number;
+  pieceColour: number;
+  motion: 'static' | 'sweep' | 'periodic';
+  periodBeats: number;
+  activeFrom: number;
+  activeTo: number;
+  sweepAmp: number;
+  slideMs: number;
+  hornable: boolean;
+  speedLoss: number;
+  visual: 'none' | 'slide' | 'squish' | 'drop';
+  calamity?: string;
+}
+
+export interface PowerDef {
+  id: string;
+  coin: boolean;
+  weight: number;
+  durationMs: number;
+  colour: number;
+  parts: number[][];
+  heal: number;
+  speedMul: number;
+  invulnMinor: boolean;
+  shield: number;
+  magnet: boolean;
+  clearAhead: number;
+  clearHornable: boolean;
+  value: number;
+}
+
+export interface CalamityDef {
+  id: string;
+  trigger: 'hazard' | 'fall' | 'health_zero' | 'finish_low';
+  cinematicMs: number;
+  camera: 'chase' | 'fall' | 'orbit';
+  shake: number;
+  flash: string;
+  pieces: number;
+  sfx: string;
+  theme?: string;
 }
 
 export interface Pose {
