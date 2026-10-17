@@ -12,7 +12,7 @@ function makeEnemy(dummyDef: EnemyDef, dummyBrain: CBrain): Enemy {
   return {
     alive: false, idx: -1, slot: 0, born: 0, def: dummyDef, brain: dummyBrain,
     x: 0, y: 0, px: 0, py: 0, vx: 0, vy: 0, kx: 0, ky: 0, hp: 0, state: 0, stateAt: 0, heading: 0, nextActAt: 0,
-    hurtAt: -1e9, burnUntil: 0, burnTickAt: 0, slowUntil: 0, blindUntil: 0, room: -1, elite: false, los: false, phase: 0,
+    hurtAt: -1e9, burnUntil: 0, burnTickAt: 0, slowUntil: 0, blindUntil: 0, room: -1, elite: false, los: false, phase: 0, maxHp: 0, bossPhase: 0,
   };
 }
 const makeBullet = (): Bullet => ({
@@ -55,7 +55,7 @@ const newRooms = (plan: LevelPlan): RoomState[] => plan.rooms.map((r) => ({ wave
 export function createWorld(init: WorldInit): World {
   const { rules, plan } = init;
   const first = init.defs[0]!;
-  const dummyBrain: CBrain = { start: 0, states: [] };
+  const dummyBrain: CBrain = { start: 0, states: [], phases: [] };
   const map: TileMap = { w: plan.w, h: plan.h, data: plan.tiles.slice() };
   const w: World = {
     rules, rng: init.rng, madRng: init.madRng, fxRng: init.fxRng, now: init.now, stepNo: 0, startedAt: init.now, status: 'play', plan, map,
@@ -135,7 +135,9 @@ export function spawnEnemy(w: World, defId: string, x: number, y: number, elite:
   e.x = e.px = x;
   e.y = e.py = y;
   e.vx = e.vy = e.kx = e.ky = 0;
-  e.hp = def.hp * (elite ? w.rules.elite_hp_mul : 1);
+  e.hp = def.hp * w.plan.hpMul * (elite ? w.rules.elite_hp_mul : 1);
+  e.maxHp = e.hp;
+  e.bossPhase = 0;
   e.state = brain.start;
   e.stateAt = w.now;
   e.heading = w.rng.float() * Math.PI * 2;

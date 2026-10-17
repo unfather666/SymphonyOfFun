@@ -46,6 +46,8 @@ export const RULE_LIMITS = {
   overdrive_rate_mul: [0.2, 1, 0.6],
   elite_hp_mul: [1, 10, 2],
   elite_every: [2, 100, 12],
+  level_hp_step: [0, 0.2, 0.015],
+  level_points_mult: [1, 100000, 120],
   madness_decay_per_s: [0, 50, 4],
   madness_decay_ambient_max: [0, 1, 0.6],
   madness_t1: [1, 100, 20],

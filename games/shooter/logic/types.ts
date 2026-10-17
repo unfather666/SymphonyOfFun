@@ -4,113 +4,8 @@ import type { Pool, PoolItem } from './pool';
 import type { Rng } from './rng';
 import type { Rules } from './rules';
 import type { TileMap } from './tiles';
-
-// ---- content defs (frozen JSON, cast at the wiring boundary) ----
-export interface EnemyDef {
-  id: string;
-  tags: readonly string[];
-  hp: number;
-  speed: number;
-  /** Half-width of the hit box in px. */
-  size: number;
-  sprite: string;
-  brain: string;
-  touchDamage: number;
-  score: number;
-  tier: number;
-  flies?: boolean;
-  /** A hit from behind (bullet travelling the way the enemy faces) kills outright. */
-  backstab?: boolean;
-  /** Drains madness only while the player is inside its viewing cone with a clear line. */
-  gaze?: boolean;
-  /** Heading sweep in degrees per second (eyes). */
-  turnDegS?: number;
-  /** Only drawn under light. */
-  hidden?: boolean;
-  /** ms between hallucinated ghosts this enemy sends into the player's view. */
-  ghostMs?: number;
-  shotSpeed?: number;
-  shotDamage?: number;
-  shotCount?: number;
-  shotSpread?: number;
-  madnessAura?: number;
-  auraR?: number;
-  splitInto?: string;
-  splitCount?: number;
-}
-
-export interface BrainStateDef {
-  kind: string;
-  ms: number;
-  next: string;
-  speedMul?: number;
-  dist?: number;
-  zig?: number;
-  nearR?: number;
-  nearTo?: string;
-}
-export interface BrainDef {
-  id: string;
-  tags: readonly string[];
-  start: string;
-  states: Record<string, BrainStateDef>;
-}
-export interface CState {
-  kind: number;
-  ms: number;
-  next: number;
-  speedMul: number;
-  dist: number;
-  zig: number;
-  nearR: number;
-  nearTo: number;
-}
-export interface CBrain {
-  start: number;
-  states: CState[];
-}
-
-// ---- level plan (hand-written room or generated) ----
-export interface SpawnEntry {
-  def: string;
-  x: number;
-  y: number;
-  elite?: boolean;
-}
-export interface RoomPlan {
-  /** Tile rectangle. */
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  waves: SpawnEntry[][];
-}
-export interface ScriptEntry {
-  /** Fires when this many waves have started (any room), or ms after the level began. */
-  atWave?: number;
-  atMs?: number;
-  kind: 'blackout' | 'spotlight' | 'strobe' | 'pulse';
-  ms: number;
-  x?: number;
-  y?: number;
-  r?: number;
-  hz?: number;
-}
-
-export interface LevelPlan {
-  id: string;
-  w: number;
-  h: number;
-  tiles: Uint8Array;
-  /** Pixels. */
-  start: { x: number; y: number };
-  exit: { x: number; y: number } | null;
-  rooms: RoomPlan[];
-  /** Darkness alpha 0..1. */
-  ambient: number;
-  tier: number;
-  script: ScriptEntry[];
-}
+import type { EnemyDef, BrainStateDef, BrainPhaseDef, BrainDef, CState, CPhase, CBrain, SpawnEntry, RoomPlan, ScriptEntry, LevelPlan } from './defs';
+export type { EnemyDef, BrainStateDef, BrainPhaseDef, BrainDef, CState, CPhase, CBrain, SpawnEntry, RoomPlan, ScriptEntry, LevelPlan } from './defs';
 
 // ---- pooled entities ----
 export interface Enemy extends PoolItem {
@@ -142,6 +37,9 @@ export interface Enemy extends PoolItem {
   los: boolean;
   /** Per-enemy phase offset for zigzag. */
   phase: number;
+  maxHp: number;
+  /** Next brain phase to trigger (bosses). */
+  bossPhase: number;
 }
 
 export interface Bullet extends PoolItem {

@@ -14,5 +14,20 @@
   "tags": [
    "psi"
   ]
+ },
+ {
+  "id": "hound",
+  "tier": 1,
+  "hp": 14,
+  "speed": 95,
+  "size": 6,
+  "sprite": "hound",
+  "brain": "hound",
+  "touchDamage": 8,
+  "score": 25,
+  "tags": [
+   "beast",
+   "fast"
+  ]
  }
 ]

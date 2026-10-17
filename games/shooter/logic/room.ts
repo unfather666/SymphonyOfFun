@@ -54,7 +54,7 @@ export function parseRoom(def: RoomDef): { plan: LevelPlan | null; errors: strin
   const plan: LevelPlan = {
     id: def.id, w, h, tiles, start, exit,
     rooms: [{ x: 1, y: 1, w: w - 2, h: h - 2, waves }],
-    ambient: def.ambient, tier: def.tier, script: def.script ? [...def.script] : [],
+    ambient: def.ambient, tier: def.tier, script: def.script ? [...def.script] : [], level: 0, tint: '#000000', hpMul: 1,
   };
   return { plan, errors };
 }

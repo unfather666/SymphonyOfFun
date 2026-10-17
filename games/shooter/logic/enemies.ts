@@ -4,6 +4,8 @@ import { hurtPlayer, damageEnemy } from './combat';
 import { lineClear, moveBox, tileAt, T_WATER, BLOCKED_X, BLOCKED_Y } from './tiles';
 import { STATES } from './states';
 import { drain } from './madness';
+import { CUE } from './cues';
+import { cue } from './world';
 import type { Enemy, World } from './types';
 
 function switchState(w: World, e: Enemy, to: number): void {
@@ -18,7 +20,12 @@ function switchState(w: World, e: Enemy, to: number): void {
 function think(w: World, e: Enemy): void {
   const s = e.brain.states[e.state]!;
   const p = w.player;
-  if (s.nearTo >= 0 && (p.x - e.x) ** 2 + (p.y - e.y) ** 2 < s.nearR * s.nearR) switchState(w, e, s.nearTo);
+  const ph = e.brain.phases[e.bossPhase];
+  if (ph && e.hp <= e.maxHp * ph.hp) {
+    e.bossPhase++;
+    cue(w, CUE.bossRoar);
+    switchState(w, e, ph.state);
+  } else if (s.nearTo >= 0 && (p.x - e.x) ** 2 + (p.y - e.y) ** 2 < s.nearR * s.nearR) switchState(w, e, s.nearTo);
   else if (w.now - e.stateAt >= s.ms) switchState(w, e, s.next);
   if (!e.alive) return;
   const cur = e.brain.states[e.state]!;

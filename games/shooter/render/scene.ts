@@ -68,10 +68,11 @@ export function drawScene(ctx: CoreContext, w: World, alpha: number, rig: HudRig
     const x = lerp(e.px, e.x, alpha) - cam.x;
     const y = lerp(e.py, e.y, alpha) - cam.y;
     if (e.def.hidden && !litAt(w, e.x, e.y)) continue;
-    g.drawSprite(e.def.sprite, frame, x - 8, y - 8, e.vx < 0);
+    const ds = e.def.drawSize ?? 16;
+    g.drawSprite(e.def.sprite, frame, x - ds / 2, y - ds / 2, e.vx < 0);
     if (e.def.turnDegS) g.line(x, y, x + Math.cos(e.heading) * 14, y + Math.sin(e.heading) * 14, 10);
-    if (w.now - e.hurtAt < w.rules.hit_flash_ms) g.frame(x - 7, y - 7, 14, 14, 7);
-    else if (e.elite) g.frame(x - 7, y - 7, 14, 14, 18);
+    if (w.now - e.hurtAt < w.rules.hit_flash_ms) g.frame(x - ds / 2 + 1, y - ds / 2 + 1, ds - 2, ds - 2, 7);
+    else if (e.elite) g.frame(x - ds / 2 + 1, y - ds / 2 + 1, ds - 2, ds - 2, 18);
   }
 
   if (!(w.now < p.iUntil && w.now >= p.dashUntil && (w.stepNo >> 2) & 1)) {

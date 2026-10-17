@@ -6,10 +6,10 @@
   "hud_madness": "MADNESS",
   "hud_level": "LEVEL {n}",
   "dead_title": "SIGNAL LOST",
-  "dead_hint": "RESTARTING THE ROOM",
+  "dead_hint": "RESTARTING  PRESS K FOR LEVEL SELECT",
   "clear_title": "ROOM CLEAR",
   "clear_score": "SCORE {n}  BONUS {b}",
-  "clear_hint": "PRESS J TO GO AGAIN",
+  "clear_hint": "PRESS J FOR LEVEL SELECT",
   "content_problem": "Some content was dropped; see the console.",
   "item_harpoon_head": "HARPOON HEAD",
   "item_harpoon_chain": "HARPOON CHAIN",
@@ -107,5 +107,12 @@
   "kind_aux": "AUX",
   "load_problem": "Save problem: {msg}",
   "hud_warn": "!",
-  "hud_inverted": "AXIS INVERTED"
+  "hud_inverted": "AXIS INVERTED",
+  "select_title": "DEEP SIGNAL",
+  "select_level": "LEVEL {n}",
+  "select_boss": "LEVEL {n}  BOSS",
+  "select_locked": "LOCKED  NEEDS {p} POINTS  (YOU HAVE {have})",
+  "select_points": "POINTS {n}",
+  "select_hint": "MOVE  A START  Y RIG",
+  "hud_boss": "BOSS"
 }

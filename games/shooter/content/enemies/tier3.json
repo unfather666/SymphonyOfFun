@@ -1,0 +1,20 @@
+[
+ {
+  "id": "shoggoth",
+  "tier": 3,
+  "hp": 90,
+  "speed": 28,
+  "size": 11,
+  "sprite": "shoggoth",
+  "brain": "shoggoth",
+  "touchDamage": 18,
+  "score": 120,
+  "tags": [
+   "blob",
+   "big"
+  ],
+  "splitInto": "spawnling",
+  "splitCount": 3,
+  "drawSize": 24
+ }
+]

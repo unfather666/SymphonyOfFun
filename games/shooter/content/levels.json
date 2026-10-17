@@ -1,0 +1,468 @@
+[
+ {
+  "id": "tier0",
+  "tier": 0,
+  "ambient": 0.55,
+  "tint": "#000000",
+  "waves": 2,
+  "waveSize": 4,
+  "enemies": [
+   {
+    "def": "cultist",
+    "weight": 3
+   },
+   {
+    "def": "deep_one",
+    "weight": 3
+   }
+  ],
+  "tricks": [],
+  "scriptEntries": 0,
+  "pillars": 0.15,
+  "water": 0.2
+ },
+ {
+  "id": "tier1",
+  "tier": 1,
+  "ambient": 0.59,
+  "tint": "#02161a",
+  "waves": 2,
+  "waveSize": 5,
+  "enemies": [
+   {
+    "def": "cultist",
+    "weight": 2
+   },
+   {
+    "def": "deep_one",
+    "weight": 2
+   },
+   {
+    "def": "hound",
+    "weight": 3
+   },
+   {
+    "def": "whisperer",
+    "weight": 1
+   }
+  ],
+  "tricks": [
+   "pulse"
+  ],
+  "scriptEntries": 1,
+  "pillars": 0.2,
+  "water": 0.3,
+  "boss": "dagon",
+  "bossMinions": [
+   {
+    "def": "deep_one",
+    "count": 3
+   }
+  ]
+ },
+ {
+  "id": "tier2",
+  "tier": 2,
+  "ambient": 0.63,
+  "tint": "#031a12",
+  "waves": 3,
+  "waveSize": 5,
+  "enemies": [
+   {
+    "def": "hound",
+    "weight": 2
+   },
+   {
+    "def": "whisperer",
+    "weight": 2
+   },
+   {
+    "def": "spawnling",
+    "weight": 2,
+    "pack": 8
+   },
+   {
+    "def": "eye",
+    "weight": 1
+   },
+   {
+    "def": "cultist",
+    "weight": 1
+   }
+  ],
+  "tricks": [
+   "pulse",
+   "blackout"
+  ],
+  "scriptEntries": 2,
+  "pillars": 0.25,
+  "water": 0.3,
+  "boss": "dagon",
+  "bossMinions": [
+   {
+    "def": "hound",
+    "count": 3
+   }
+  ]
+ },
+ {
+  "id": "tier3",
+  "tier": 3,
+  "ambient": 0.67,
+  "tint": "#0b1a02",
+  "waves": 3,
+  "waveSize": 6,
+  "enemies": [
+   {
+    "def": "hound",
+    "weight": 2
+   },
+   {
+    "def": "shoggoth",
+    "weight": 2
+   },
+   {
+    "def": "whisperer",
+    "weight": 1
+   },
+   {
+    "def": "spawnling",
+    "weight": 2,
+    "pack": 8
+   },
+   {
+    "def": "eye",
+    "weight": 1
+   },
+   {
+    "def": "deep_one",
+    "weight": 1
+   }
+  ],
+  "tricks": [
+   "blackout",
+   "spotlight",
+   "pulse"
+  ],
+  "scriptEntries": 3,
+  "pillars": 0.3,
+  "water": 0.4,
+  "boss": "dagon",
+  "bossMinions": [
+   {
+    "def": "deep_one",
+    "count": 4
+   }
+  ]
+ },
+ {
+  "id": "tier4",
+  "tier": 4,
+  "ambient": 0.72,
+  "tint": "#1a0208",
+  "waves": 4,
+  "waveSize": 7,
+  "enemies": [
+   {
+    "def": "mi_go",
+    "weight": 3
+   },
+   {
+    "def": "shoggoth",
+    "weight": 2
+   },
+   {
+    "def": "hound",
+    "weight": 2
+   },
+   {
+    "def": "cultist",
+    "weight": 2
+   },
+   {
+    "def": "eye",
+    "weight": 1
+   }
+  ],
+  "tricks": [
+   "strobe",
+   "blackout",
+   "pulse"
+  ],
+  "scriptEntries": 3,
+  "pillars": 0.3,
+  "water": 0.4,
+  "boss": "hastur_herald",
+  "bossMinions": [
+   {
+    "def": "whisperer",
+    "count": 2
+   },
+   {
+    "def": "cultist",
+    "count": 3
+   }
+  ]
+ },
+ {
+  "id": "tier5",
+  "tier": 5,
+  "ambient": 0.76,
+  "tint": "#10031a",
+  "waves": 4,
+  "waveSize": 8,
+  "enemies": [
+   {
+    "def": "priest",
+    "weight": 2
+   },
+   {
+    "def": "mi_go",
+    "weight": 2
+   },
+   {
+    "def": "shoggoth",
+    "weight": 2
+   },
+   {
+    "def": "whisperer",
+    "weight": 2
+   },
+   {
+    "def": "spawnling",
+    "weight": 1,
+    "pack": 8
+   }
+  ],
+  "tricks": [
+   "spotlight",
+   "blackout",
+   "strobe",
+   "pulse"
+  ],
+  "scriptEntries": 4,
+  "pillars": 0.35,
+  "water": 0.4,
+  "boss": "hastur_herald",
+  "bossMinions": [
+   {
+    "def": "priest",
+    "count": 1
+   },
+   {
+    "def": "cultist",
+    "count": 3
+   }
+  ]
+ },
+ {
+  "id": "tier6",
+  "tier": 6,
+  "ambient": 0.8,
+  "tint": "#031a1a",
+  "waves": 5,
+  "waveSize": 8,
+  "enemies": [
+   {
+    "def": "dreamer",
+    "weight": 3
+   },
+   {
+    "def": "priest",
+    "weight": 2
+   },
+   {
+    "def": "mi_go",
+    "weight": 2
+   },
+   {
+    "def": "shoggoth",
+    "weight": 2
+   },
+   {
+    "def": "eye",
+    "weight": 1
+   }
+  ],
+  "tricks": [
+   "blackout",
+   "spotlight",
+   "strobe",
+   "pulse"
+  ],
+  "scriptEntries": 4,
+  "pillars": 0.35,
+  "water": 0.5,
+  "boss": "hastur_herald",
+  "bossMinions": [
+   {
+    "def": "dreamer",
+    "count": 2
+   },
+   {
+    "def": "mi_go",
+    "count": 2
+   }
+  ]
+ },
+ {
+  "id": "tier7",
+  "tier": 7,
+  "ambient": 0.84,
+  "tint": "#1a1302",
+  "waves": 5,
+  "waveSize": 9,
+  "enemies": [
+   {
+    "def": "dreamer",
+    "weight": 3
+   },
+   {
+    "def": "priest",
+    "weight": 2
+   },
+   {
+    "def": "shoggoth",
+    "weight": 3
+   },
+   {
+    "def": "mi_go",
+    "weight": 2
+   },
+   {
+    "def": "spawnling",
+    "weight": 2,
+    "pack": 8
+   },
+   {
+    "def": "eye",
+    "weight": 2
+   }
+  ],
+  "tricks": [
+   "blackout",
+   "spotlight",
+   "strobe",
+   "pulse"
+  ],
+  "scriptEntries": 5,
+  "pillars": 0.4,
+  "water": 0.5,
+  "boss": "star_spawn",
+  "bossMinions": [
+   {
+    "def": "spawnling",
+    "count": 8
+   }
+  ]
+ },
+ {
+  "id": "tier8",
+  "tier": 8,
+  "ambient": 0.88,
+  "tint": "#150218",
+  "waves": 6,
+  "waveSize": 10,
+  "enemies": [
+   {
+    "def": "dreamer",
+    "weight": 3
+   },
+   {
+    "def": "priest",
+    "weight": 3
+   },
+   {
+    "def": "shoggoth",
+    "weight": 3
+   },
+   {
+    "def": "mi_go",
+    "weight": 3
+   },
+   {
+    "def": "eye",
+    "weight": 2
+   },
+   {
+    "def": "hound",
+    "weight": 2
+   }
+  ],
+  "tricks": [
+   "blackout",
+   "spotlight",
+   "strobe",
+   "pulse"
+  ],
+  "scriptEntries": 5,
+  "pillars": 0.4,
+  "water": 0.5,
+  "boss": "star_spawn",
+  "bossMinions": [
+   {
+    "def": "priest",
+    "count": 2
+   },
+   {
+    "def": "mi_go",
+    "count": 2
+   }
+  ]
+ },
+ {
+  "id": "tier9",
+  "tier": 9,
+  "ambient": 0.92,
+  "tint": "#1a0000",
+  "waves": 6,
+  "waveSize": 11,
+  "enemies": [
+   {
+    "def": "dreamer",
+    "weight": 4
+   },
+   {
+    "def": "priest",
+    "weight": 3
+   },
+   {
+    "def": "shoggoth",
+    "weight": 3
+   },
+   {
+    "def": "mi_go",
+    "weight": 3
+   },
+   {
+    "def": "eye",
+    "weight": 3
+   },
+   {
+    "def": "whisperer",
+    "weight": 2
+   }
+  ],
+  "tricks": [
+   "blackout",
+   "spotlight",
+   "strobe",
+   "pulse"
+  ],
+  "scriptEntries": 6,
+  "pillars": 0.45,
+  "water": 0.5,
+  "boss": "star_spawn",
+  "finalBoss": "the_signal",
+  "bossMinions": [
+   {
+    "def": "eye",
+    "count": 2
+   },
+   {
+    "def": "dreamer",
+    "count": 2
+   }
+  ]
+ }
+]

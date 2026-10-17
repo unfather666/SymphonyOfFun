@@ -30,7 +30,7 @@ export function drawLighting(g: Gfx2d, g2d: CanvasRenderingContext2D, w: World, 
   const ambient = w.light.strobeOn && !reduced ? Math.max(w.light.ambient, w.rules.ambient_blackout) : w.light.ambient;
   const r = w.rules;
   const m = g.mask;
-  m.begin(ambient);
+  m.begin(ambient, w.plan.tint);
   const breathe = 1 + 0.15 * w.light.pulse;
   let used = 0;
   const sx = f.px - cam.x;
