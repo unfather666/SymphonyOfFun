@@ -1,0 +1,30 @@
+name: desktop
+# Manual only, and only when Un asks. Not yet run: first run is part of stage S2.
+on:
+  workflow_dispatch:
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+      - run: npm ci
+      # Tauri CLI is pinned here rather than in package.json so every PR's npm ci stays lean.
+      - run: node scripts/make-icon.mjs src-tauri/app-icon.png
+      - run: npx --yes @tauri-apps/cli@2.12.3 icon src-tauri/app-icon.png
+      - run: npx --yes @tauri-apps/cli@2.12.3 build
+      - name: Stamp build number on the executable
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem src-tauri/target/release -Filter *.exe | Select-Object -First 1
+          New-Item -ItemType Directory -Force out | Out-Null
+          Copy-Item $exe.FullName "out/SymphonyOfFun-ver${{ github.run_number }}.exe"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SymphonyOfFun-ver${{ github.run_number }}
+          path: out

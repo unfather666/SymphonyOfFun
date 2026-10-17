@@ -1,0 +1,8 @@
+# Folder owners (BUILD-PLAN §6 S0 item 7). With one human in the repo this only bites if
+# branch protection on main requires code-owner review; the folder guard in `npm run check`
+# is what keeps each game PR inside its own folder.
+*                   @unfather666
+/src/core/          @unfather666
+/games/shooter/     @unfather666
+/games/racer/       @unfather666
+/games/mrfart/      @unfather666

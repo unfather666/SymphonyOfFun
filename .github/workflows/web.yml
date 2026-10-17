@@ -1,0 +1,20 @@
+name: web
+# Manual only (BUILD-PLAN §12 item 3): Action minutes are a spend.
+on:
+  workflow_dispatch:
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx vite build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SymphonyOfFun-web-ver${{ github.run_number }}
+          path: dist
